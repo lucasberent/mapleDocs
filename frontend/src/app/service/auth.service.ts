@@ -1,36 +1,30 @@
 import {Injectable} from '@angular/core';
-import {AuthRequest} from '../dto/auth-request';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import * as jwt_decode from 'jwt-decode';
 import {Globals} from '../global/globals';
+import {LoginDTO} from '../dto/login-dto';
+import {RegisterDto} from '../dto/register-dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private authBaseUri: string = this.globals.backendUri + '/authenticate';
+  private authBaseUrl: string = this.globals.backendUri + '/authenticate';
+  private registerBaseUrl: string = this.globals.backendUri + '/register';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
 
-  /**
-   * Login in the user. If it was successful, a valid JWT token will be stored
-   * @param authRequest User data
-   */
-  loginUser(authRequest: AuthRequest): Observable<string> {
-    return this.httpClient.post(this.authBaseUri, authRequest, {responseType: 'text'})
+  authenticate(authRequest: LoginDTO): Observable<string> {
+    return this.httpClient.post(this.authBaseUrl, authRequest, {responseType: 'text'})
       .pipe(
         tap((authResponse: string) => this.setToken(authResponse))
       );
   }
 
-
-  /**
-   * Check if a valid JWT token is saved in the localStorage
-   */
   isLoggedIn() {
     return !!this.getToken() && (this.getTokenExpirationDate(this.getToken()).valueOf() > new Date().valueOf());
   }
@@ -52,9 +46,9 @@ export class AuthService {
       const decoded: any = jwt_decode(this.getToken());
       const authInfo: string[] = decoded.rol;
       if (authInfo.includes('ROLE_ADMIN')) {
-        return 'ADMIN';
+        return 'ROLE_ADMIN';
       } else if (authInfo.includes('ROLE_USER')) {
-        return 'USER';
+        return 'ROLE_USER';
       }
     }
     return 'UNDEFINED';
@@ -76,4 +70,10 @@ export class AuthService {
     return date;
   }
 
+  register(registerDTO: RegisterDto) {
+    return this.httpClient.post(this.registerBaseUrl, registerDTO)
+      .pipe(
+        tap((authResponse: string) => this.setToken(authResponse))
+      );
+  }
 }

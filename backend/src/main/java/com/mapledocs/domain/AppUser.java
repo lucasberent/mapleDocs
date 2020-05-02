@@ -20,5 +20,5 @@ public class AppUser {
     @Column(name = "login")
     private String login;
     @OneToMany(fetch = FetchType.LAZY)
-    private List<UserMaDmaps> maDmpSet;
+    private List<UserMaDmp> maDmpSet;
 }

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class LoginDTO {
+public class RegisterDTO {
     @NotNull
     @NotEmpty
     @Length(min = 5)

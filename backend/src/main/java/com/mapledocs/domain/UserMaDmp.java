@@ -1,5 +1,7 @@
 package com.mapledocs.domain;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -9,9 +11,16 @@ import javax.persistence.Id;
     the documentstore.
  */
 @Entity
-public class UserMaDmaps {
+@NoArgsConstructor
+public class UserMaDmp {
     @Id
     @GeneratedValue
     private Long id;
+    private Long userId;
     private Long maDmpId;
+
+    public UserMaDmp(Long userid, Long maDmpId) {
+        this.userId = userid;
+        this.maDmpId = maDmpId;
+    }
 }

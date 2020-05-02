@@ -1,6 +1,7 @@
 package com.mapledocs.domain;
 
 import lombok.Data;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,4 @@ public class AppUser {
     @NotNull
     @Column(name = "login")
     private String login;
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<UserMaDmp> maDmpSet;
 }

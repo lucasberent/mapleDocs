@@ -57,7 +57,6 @@ public class UserService {
         user.setLogin(registerDTO.getLogin());
         user.setRole(UserRole.ROLE_USER);
         user.setPassword(new BCryptPasswordEncoder().encode(registerDTO.getPassword()));
-        user.setMaDmpSet(new ArrayList<>());
         return user;
     }
 }

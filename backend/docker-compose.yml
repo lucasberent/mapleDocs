@@ -2,6 +2,7 @@ version: '3.3'
 services:
   mapledocs-postgresql:
     image: postgres:latest
+    container_name: postgres-db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -9,6 +10,7 @@ services:
       - 5432:5432
   mapledocs-mongodb:
     image: mongo:latest
+    container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME:
       MONGO_INITDB_ROOT_PASSWORD:
@@ -16,5 +18,11 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
+  mapledocs-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    container_name: elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
 volumes:
   mongodb_data_container:

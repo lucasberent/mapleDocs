@@ -55,9 +55,11 @@ public class MaDmpRepository {
         List<String> fieldsToHide = document.getList("fieldsToHide", String.class);
         document.remove(Constants.USER_ID_FIELD);
         document.remove("_id");
-        if (fieldsToHide != null && !documentUserId.equals(currUserId)) {
-            for (String s : fieldsToHide) {
-                document.get("dmp", Document.class).remove(s);
+        if (fieldsToHide != null) {
+            if (!documentUserId.equals(currUserId)) {
+                for (String s : fieldsToHide) {
+                    document.get("dmp", Document.class).remove(s);
+                }
             }
             document.remove("fieldsToHide");
         }

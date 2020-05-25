@@ -48,7 +48,7 @@ public class MaDmpRepository {
         return parseDocumentToMaDmpDTO(this.mongoCollection.find(new Document("_id", id)).first());
     }
 
-    public MaDmpDTO parseDocumentToMaDmpDTO(final Document document) {
+    public MaDmpDTO parseDocumentToMaDmpDTO(final Document document) { // todo user can see all fields (also hidden) of own dmaps
         LOGGER.debug("parsing document {}", document);
         Long userId = document.getLong(Constants.USER_ID_FIELD);
         String docId = document.getObjectId("_id").toString();

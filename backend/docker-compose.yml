@@ -23,6 +23,19 @@ services:
     container_name: elasticsearch
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.initial_master_nodes=mapledocs-elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+  mapledocs-logstash:
+    image: docker.elastic.co/logstash/logstash:7.7.0
+    container_name: logstash
+    volumes:
+      - ~/logstash-pipeline/:/usr/share/logstash/pipeline/:ro
+    command: bash -c "logstash-plugin install logstash-input-mongodb && logstash"
+    depends_on:
+      - mapledocs-elasticsearch
+
 
 volumes:
   mongodb_data_container:

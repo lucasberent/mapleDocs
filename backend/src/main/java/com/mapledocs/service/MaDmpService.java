@@ -35,24 +35,24 @@ public class MaDmpService {
         maDmpDTO.setUserId(currUser.getId());
         Map<String, Object> parsed = new GsonJsonParser().parseMap(maDmpDTO.getJson());
         if (parsed.get("dmp_id") == null) {
-            this.assignNewDoiToMaDMP(parsed);
+            this.assignNewDoiToMaDmp(parsed);
         }
         parsed.put("fieldsToHide", maDmpDTO.getFieldsToHide());
         maDmpDTO.setJson(new Gson().toJson(parsed));
-        this.maDmpRepository.saveMaDMP(maDmpDTO);
+        this.maDmpRepository.saveMaDmp(maDmpDTO);
     }
 
-    private void assignNewDoiToMaDMP(Map<String, Object> maDMP) {
+    private void assignNewDoiToMaDmp(Map<String, Object> maDmp) {
         String doi = null;
         try {
             doi = this.doiService.getNewDoi(buildDoiRequestDto());
         } catch (DoiServiceException e) {
-            throw new MaDmpServiceCreationException("Cannot create doi for maDMP, failed with exception: " + e.getMessage());
+            throw new MaDmpServiceCreationException("Cannot create doi for maDmp, failed with exception: " + e.getMessage());
         }
         Map<String, String> dmpId = new HashMap<>();
         dmpId.put("identifier", doi);
         dmpId.put("type", "doi");
-        maDMP.put("dmp_id", dmpId);
+        maDmp.put("dmp_id", dmpId);
     }
 
     private GetDoiRequestDTO buildDoiRequestDto() {
@@ -69,26 +69,19 @@ public class MaDmpService {
     }
 
     @Transactional
-    public List<MaDmpDTO> findAllForCurrentUser() {
-        Long currUserId = this.getCurrentUserOrNotLoggedIn().getId();
-
-        return this.maDmpRepository.findAllByUserId(currUserId);
-    }
-
-    @Transactional
     public List<MaDmpDTO> findAllPaged(int page, int size) {
-        return maDmpRepository.findAllPaged(page, size);
+        return maDmpRepository.findAllPaged(page, size, this.getCurrentUserOrNotLoggedIn().getId());
     }
 
 
     @Transactional
     public void deleteMaDmp(final Long id) {
-        MaDmpDTO maDmpDTO = this.maDmpRepository.findOneById(id);
+        MaDmpDTO maDmpDTO = this.maDmpRepository.findOneById(id, this.getCurrentUserOrNotLoggedIn().getId());
         Long userId = this.getCurrentUserOrNotLoggedIn().getId();
         if (!userId.equals(maDmpDTO.getUserId())) {
             throw new ForbiddenException("User cannot delete documents of another user");
         }
-        this.maDmpRepository.removeMaDMP(id);
+        this.maDmpRepository.removeMaDmp(id);
     }
 
     private AppUser getCurrentUserOrNotLoggedIn() {

@@ -33,7 +33,7 @@ public class DoiApiClient {
 
     private DoiResponseDTO doCreateDoiRequest(final HttpEntity<Map<String, Object>> request) throws DoiApiClientException {
         RestTemplate restTemplate = new RestTemplateBuilder().build();
-
+        LOGGER.debug("Creating new doi with request: {} at api {}", request, Constants.DOI_SERVICE_URI);
         try {
             ResponseEntity<DoiResponseDTO> response = restTemplate
                     .postForEntity(Constants.DOI_SERVICE_URI, request, DoiResponseDTO.class);

@@ -40,9 +40,4 @@ class DoiApiClientIntegrationTest {
         assertThat(response).isNotNull();
         assertThat(response.getResponsePayload()).contains("id");
     }
-
-    @Test
-    public void testCreateDoiWithInvalidParams_shouldThrowException() {
-
-    }
 }

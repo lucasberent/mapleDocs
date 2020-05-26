@@ -35,7 +35,15 @@ services:
     command: bash -c "logstash-plugin install logstash-input-mongodb && logstash"
     depends_on:
       - mapledocs-elasticsearch
-
+  mapledocs-app:
+    image: mapledocs-app
+    container_name: app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mapledocs-postgresql
+      - mapledocs-mongodb
+      - mapledocs-logstash
 
 volumes:
   mongodb_data_container:

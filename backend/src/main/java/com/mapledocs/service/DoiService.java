@@ -7,6 +7,8 @@ import com.mapledocs.service.doiApi.DoiApiClient;
 import com.mapledocs.service.doiApi.DoiApiClientException;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.Map;
 @Getter
 @Setter
 public class DoiService {
+    private static final Logger LOG = LoggerFactory.getLogger(DoiService.class);
+
     private final DoiApiClient doiApiClient;
     private final GsonJsonParser parser;
 
@@ -37,6 +41,8 @@ public class DoiService {
 
     private String getDoiStringFromDTO(final DoiResponseDTO doiResponseDTO) throws DoiServiceException {
         String result = null;
+        LOG.info(doiResponseDTO.toString());
+        LOG.info(doiResponseDTO.getResponsePayload());
         Map<String, Object> jsonPayload = parser.parseMap(doiResponseDTO.getResponsePayload());
         this.validateResponsePayload(jsonPayload);
         Map<String, Object> data = parser.parseMap(jsonPayload.get("data").toString());

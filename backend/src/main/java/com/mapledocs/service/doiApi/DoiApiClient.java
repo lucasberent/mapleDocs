@@ -37,6 +37,7 @@ public class DoiApiClient {
         try {
             ResponseEntity<DoiResponseDTO> response = restTemplate
                     .postForEntity(Constants.DOI_SERVICE_URI, request, DoiResponseDTO.class);
+            LOGGER.info(response.toString());
             if (!response.getStatusCode().is2xxSuccessful()) {
                 throw new DoiApiClientException("Doi creation failed with code: " + response.getStatusCode()
                         + " and error: " + response.getBody());

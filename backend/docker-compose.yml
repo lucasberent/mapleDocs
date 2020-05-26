@@ -25,8 +25,8 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - cluster.initial_master_nodes=mapledocs-elasticsearch
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - 9200:9200
+      - 9300:9300
   mapledocs-logstash:
     image: docker.elastic.co/logstash/logstash:7.7.0
     container_name: logstash
@@ -39,7 +39,7 @@ services:
     image: mapledocs-app
     container_name: app
     ports:
-      - "8080:8080"
+      - 8080:8080
     depends_on:
       - mapledocs-postgresql
       - mapledocs-mongodb

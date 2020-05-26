@@ -13,3 +13,5 @@ less, the elasticsearch service might fail.
  * Build the docker container: run run ´docker build -t mapledocs-app:latest .´
  
  * Run the services with docker-compose: ´docker-compose up´
+
+Alternatively, just use the script ´build_and_run.sh´

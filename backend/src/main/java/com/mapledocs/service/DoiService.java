@@ -30,37 +30,27 @@ public class DoiService {
 
     public String getNewDoi(final GetDoiRequestDTO getDoiRequestDTO) throws DoiServiceException {
         String result = null;
-        DoiResponseDTO doiResponseDTO = null;
+        DoiResponseDTO doiResponse = null;
         try {
-            doiResponseDTO = this.doiApiClient.getNewDoi(getDoiRequestDTO);
-            return this.getDoiStringFromDTO(doiResponseDTO);
+            doiResponse = this.doiApiClient.getNewDoi(getDoiRequestDTO);
+            return this.getDoiStringFromJSONResponse(doiResponse);
         } catch (DoiApiClientException e) {
             throw new DoiServiceException(e.getMessage());
         }
     }
 
-    private String getDoiStringFromDTO(final DoiResponseDTO doiResponseDTO) throws DoiServiceException {
-        String result = null;
-        LOG.info(doiResponseDTO.toString());
-        LOG.info(doiResponseDTO.getResponsePayload());
-        Map<String, Object> jsonPayload = parser.parseMap(doiResponseDTO.getResponsePayload());
-        this.validateResponsePayload(jsonPayload);
-        Map<String, Object> data = parser.parseMap(jsonPayload.get("data").toString());
-        if (data != null) {
-            if (data.containsKey("id")) {
-                result = data.get("id").toString();
+    private String getDoiStringFromJSONResponse(final DoiResponseDTO doiResponse) throws DoiServiceException {
+        if (doiResponse.getData() != null) {
+            Object id = doiResponse.getData().get("id");
+            if (id instanceof String) {
+                return (String) doiResponse.getData().get("id");
+            }
+            else {
+                throw new DoiServiceException("Received payload does not contain doi");
             }
         }
-        return result;
-    }
-
-    private void validateResponsePayload(Map<String, Object> jsonPayload) throws DoiServiceException {
-        if (jsonPayload == null) {
+        else {
             throw new DoiServiceException("Received Empty payload instead of created doi response");
-        }
-        Map<String, Object> data = parser.parseMap(jsonPayload.get("data").toString());
-        if (data == null || !data.containsKey("id") || data.get("id") == null || data.get("id").toString().isEmpty()) {
-            throw new DoiServiceException("Received payload does not contain doi");
         }
     }
 }

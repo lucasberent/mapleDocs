@@ -1,1 +1,8 @@
-<p>search works!</p>
+<p>Search</p>
+<div>
+  <input #searchBox (keyup.enter)="onEnter(searchBox.value)">
+  <button (click)="doSearch(searchBox.value)">search</button>
+</div>
+
+<li *ngFor="let madmp of madmps" (click)="onSelect(madmp)">
+

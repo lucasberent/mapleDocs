@@ -12,8 +12,8 @@ import {RegisterDto} from '../dto/register-dto';
 })
 export class AuthService {
 
-  private authBaseUrl: string = this.globals.backendUri + '/authenticate';
-  private registerBaseUrl: string = this.globals.backendUri + '/register';
+  private authBaseUrl: string = this.globals.backendUri + '/authentication';
+  private registerBaseUrl: string = this.globals.backendUri + '/users';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }

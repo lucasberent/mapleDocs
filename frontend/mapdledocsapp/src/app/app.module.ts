@@ -9,14 +9,16 @@ import {RegisterComponent} from './components/register/register.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {httpInterceptorProviders} from './interceptors';
 import {HttpClientModule} from '@angular/common/http';
-import { HeaderComponent } from './components/header-component/header.component';
-import { MadmpdetailsComponent } from './components/madmpdetails/madmpdetails.component';
-import { UploadComponent } from './components/upload/upload.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {HeaderComponent} from './components/header-component/header.component';
+import {MadmpdetailsComponent} from './components/madmpdetails/madmpdetails.component';
+import {UploadComponent} from './components/upload/upload.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButton, MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatCommonModule} from "@angular/material/core";
+import {MatIcon, MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import {MatSidenavModule} from "@angular/material/sidenav";
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatCommonModule,
+    MatIconModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

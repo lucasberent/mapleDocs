@@ -28,7 +28,7 @@ export class UploadService {
   uploadMaDmp(maDmp: CreateMaDmpDto): Observable<string> {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-      responseType: 'text'
+      responseType: 'text' as 'json'
     };
     console.log('posting madmp in service');
     return this.httpClient.post<string>(this.maDmpBaseUrl, maDmp, httpOptions);

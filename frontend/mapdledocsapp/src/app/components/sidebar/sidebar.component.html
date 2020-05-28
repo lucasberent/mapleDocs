@@ -1,0 +1,10 @@
+<div *ngIf="!getCurrentRoute().endsWith('/login') && !getCurrentRoute().endsWith('/register')">
+  <mat-nav-list>
+    <mat-list-item routerLink="/search" [class]="getCurrentRoute().endsWith('/search') ? 'active' : null">
+      search
+    </mat-list-item>
+    <mat-list-item routerLink="/upload" [class]="getCurrentRoute().endsWith('/upload') ? 'active' : null">
+      upload
+    </mat-list-item>
+  </mat-nav-list>
+</div>

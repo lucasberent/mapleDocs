@@ -24,6 +24,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ToastrModule } from 'ngx-toastr';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { ToastrModule } from 'ngx-toastr';
     RegisterComponent,
     HeaderComponent,
     MadmpdetailsComponent,
-    UploadComponent
+    UploadComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,

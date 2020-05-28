@@ -7,7 +7,7 @@ import {saveAs} from "file-saver";
 @Component({
   selector: 'app-madmpdetails',
   templateUrl: './madmpdetails.component.html',
-  styleUrls: ['./madmpdetails.component.css']
+  styleUrls: ['./madmpdetails.component.scss']
 })
 export class MadmpdetailsComponent implements OnInit {
 

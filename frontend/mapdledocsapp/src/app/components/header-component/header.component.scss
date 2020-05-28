@@ -1,0 +1,15 @@
+@import '~@angular/material/theming.scss';
+@include mat-core();
+
+.mapledocs-link {
+  text-decoration: none;
+  color: #fff;
+}
+
+mat-toolbar .fill {
+  flex: 1 1 auto;
+}
+
+mat-toolbar .logout {
+  background-color: mat-color($mat-deep-purple, 150);
+}

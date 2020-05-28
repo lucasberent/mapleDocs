@@ -1,18 +1,9 @@
-<div *ngIf="!getCurrentRoute().endsWith('/login') && !getCurrentRoute().endsWith('/register')">
-<mat-action-list style="padding-left: 2em">
-  <mat-list-item routerLink="/search">
-    search
-  </mat-list-item>
-  <mat-list-item routerLink="/upload">
-    upload
-  </mat-list-item>
-</mat-action-list>
-<div style="padding-left: 2em;">
-<a mat-stroked-button
-   color="primary"
-   #logout
-   (click)="onLogout()">
-  logout
-</a>
-</div>
-</div>
+<mat-toolbar color="primary">
+  <span><a class="mapledocs-link" href="/">Mapledocs</a></span>
+  <span class="fill"></span>
+  <a mat-flat-button class="logout"
+     #logout
+     (click)="onLogout()">
+    logout
+  </a>
+</mat-toolbar>

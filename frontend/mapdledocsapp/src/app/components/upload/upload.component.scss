@@ -1,0 +1,12 @@
+@import '~@angular/material/theming.scss';
+@include mat-core();
+
+.sub-toolbar {
+  background-color: mat-color($mat-deep-purple, 400);
+  box-shadow: 0 6px 7px -7px rgba(0,0,0, 0.5) inset;
+  border-top: mat-color($mat-deep-purple, 700) solid;
+
+  .title {
+    color: #fff;
+  }
+}

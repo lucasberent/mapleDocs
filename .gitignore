@@ -31,3 +31,5 @@ build/
 .vscode/
 
 src/main/resources/auth.properties
+
+frontend/node_modules

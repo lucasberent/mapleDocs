@@ -63,11 +63,12 @@ export class UploadComponent implements OnInit {
       console.log('no file chosen');
       return;
     }
-    this.uploadService.uploadMaDmp(createMaDmpDto);
+    this.uploadService.uploadMaDmp(createMaDmpDto)
+      .subscribe();
   }
 
   onClearSelection() {
-    this.fileInput.nativeElement.value='';
+    this.fileInput.nativeElement.value = '';
     this.handleAbortUpload();
   }
 }

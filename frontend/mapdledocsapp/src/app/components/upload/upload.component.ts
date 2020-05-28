@@ -4,6 +4,7 @@ import {Ajv} from 'ajv';
 import {UploadService} from '../../service/upload.service';
 import {HttpClient} from '@angular/common/http';
 import {CreateMaDmpDto} from '../../dto/create-madmp-dto';
+import { ToastrService } from 'ngx-toastr';
 
 // @ts-ignore
 const Ajv = require('ajv');
@@ -22,7 +23,8 @@ export class UploadComponent implements OnInit {
 
   constructor(private uploadService: UploadService,
               private httpClient: HttpClient,
-              private router: Router) {
+              private router: Router,
+              private toastr: ToastrService) {
   }
 
   ngOnInit(): void {
@@ -65,11 +67,12 @@ export class UploadComponent implements OnInit {
   upload(createMaDmpDto: CreateMaDmpDto) {
     if (!createMaDmpDto) {
       console.log('no file chosen');
+      this.toastr.error('no file chosen, select .json to upload');
       return;
     }
     this.uploadService.uploadMaDmp(createMaDmpDto)
       .subscribe(dmpId => {
-        this.router.navigate([this.DETAILS_ROUTE + '/' + dmpId]);
+        this.toastr.success('upload successful')
       });
   }
 

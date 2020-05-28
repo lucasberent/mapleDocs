@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-header',
@@ -8,7 +9,7 @@ import {Router} from "@angular/router";
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private toastrService:ToastrService) {
   }
 
   ngOnInit(): void {
@@ -19,6 +20,7 @@ export class HeaderComponent implements OnInit {
     console.log('logging out');
     localStorage.removeItem('authToken');
     this.router.navigate(['/login']);
+    this.toastrService.success('logged out successfully')
   }
 
   getCurrentRoute(): string {

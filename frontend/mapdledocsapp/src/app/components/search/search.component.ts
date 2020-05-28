@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {MaDmpDto} from "../../dto/madmp-dto";
 import {MaDmpDisplayObject} from "../../dto/madmp-display-object";
 import {newArray} from "@angular/compiler/src/util";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-search',
@@ -13,11 +14,16 @@ import {newArray} from "@angular/compiler/src/util";
 export class SearchComponent implements OnInit {
   madmpDisplayList: MaDmpDisplayObject[] = [];
 
-  constructor(private searchService: SearchService, private router: Router) {
+  constructor(private searchService: SearchService, private router: Router, private toastrService:ToastrService) {
   }
 
   ngOnInit(): void {
-    this.searchService.findMaDmps('', 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps)); // TODO pagination
+    this.searchService.findMaDmps('', 1, 10).subscribe(madmps => {
+      if(madmps.length == 0){
+        this.toastrService.info('no madmps for search criteria found');
+      }
+      this.setDisplayMadmps(madmps)
+    }); // TODO pagination
   }
 
   private setDisplayMadmps(madmps: MaDmpDto[]) {

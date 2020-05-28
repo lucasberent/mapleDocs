@@ -23,6 +23,8 @@ import {MatCommonModule} from "@angular/material/core";
 import {MatIconModule} from "@angular/material/icon";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
+import { ToastrModule } from 'ngx-toastr';
+
 
 @NgModule({
   declarations: [
@@ -51,7 +53,8 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
     MatTabsModule,
     MatSidenavModule,
     MatToolbarModule,
-    NgxJsonViewerModule
+    NgxJsonViewerModule,
+    ToastrModule.forRoot()
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

@@ -1,3 +1,4 @@
+<div *ngIf="!getCurrentRoute().endsWith('/login') && !getCurrentRoute().endsWith('/register')">
 <mat-action-list style="padding-left: 2em">
   <mat-list-item routerLink="/search">
     search
@@ -10,8 +11,8 @@
 <a mat-stroked-button
    color="primary"
    #logout
-   (click)="onLogout()"
-   *ngIf="!getCurrentRoute().endsWith('/login') && !getCurrentRoute().endsWith('/register')">
+   (click)="onLogout()">
   logout
 </a>
+</div>
 </div>

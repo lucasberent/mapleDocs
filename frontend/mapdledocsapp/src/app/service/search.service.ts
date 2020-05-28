@@ -4,6 +4,7 @@ import {Globals} from '../global/globals';
 import {Observable, of} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {MaDmpDto} from "../dto/madmp-dto";
+import {ToastrService} from "ngx-toastr";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class SearchService {
 
   private searchBaseUrl: string = this.globals.backendUri + '/madmps';
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
+  constructor(private httpClient: HttpClient, private globals: Globals, private toastrService: ToastrService) {
   }
 
   findMaDmps(searchString: string, page: number, size: number): Observable<MaDmpDto[]> {
@@ -28,7 +29,7 @@ export class SearchService {
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-
+      this.toastrService.error('error while' + operation + ': ' +error.message);
       console.error(error); // log to console instead
       console.log(`${operation} failed: ${error.message}`);
       // Let the app keep running by returning an empty result.
@@ -41,7 +42,7 @@ export class SearchService {
       return this.httpClient.get<MaDmpDto>(this.searchBaseUrl + '/details/' + id)
         .pipe(
           tap(_ => {console.log('fetched madmp')}),
-          catchError(this.handleError<any>('fetching madmps'))
+          catchError(err => this.handleError<any>('fetching madmps', err))
         );
     }
   }

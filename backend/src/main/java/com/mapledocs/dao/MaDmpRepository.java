@@ -1,9 +1,12 @@
 package com.mapledocs.dao;
 
 import com.mapledocs.api.dto.MaDmpDTO;
+import com.mapledocs.api.dto.MaDmpSearchDTO;
+import com.mapledocs.api.exception.NotFoundException;
 import com.mapledocs.util.Constants;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,7 @@ public class MaDmpRepository {
         mongoCollection.insertOne(document);
     }
 
-    public void removeMaDmp(final Long docId) {
+    public void removeMaDmp(final String docId) {
         LOGGER.info("Deleting maDmp with id{}", docId);
         mongoCollection.deleteOne(new Document("_id", docId));
     }
@@ -44,11 +47,14 @@ public class MaDmpRepository {
         return result;
     }
 
-    public MaDmpDTO findOneById(final Long id, long currUserId) {
-        return parseDocumentToMaDmpDTO(this.mongoCollection.find(new Document("_id", id)).first(), currUserId);
+    public MaDmpDTO findOneById(final String docId, long currUserId) {
+        return parseDocumentToMaDmpDTO(this.mongoCollection.find(new Document("_id", new ObjectId(docId))).first(), currUserId);
     }
 
     public MaDmpDTO parseDocumentToMaDmpDTO(final Document document, final Long currUserId) {
+        if (document == null) {
+            throw new NotFoundException("Document not found");
+        }
         LOGGER.debug("parsing document {}", document);
         Long documentUserId = document.getLong(Constants.USER_ID_FIELD);
         String docId = document.getObjectId("_id").toString();
@@ -64,7 +70,6 @@ public class MaDmpRepository {
             document.remove("fieldsToHide");
         }
         MaDmpDTO result = new MaDmpDTO(document.toJson(), documentUserId);
-        result.setFieldsToHide(fieldsToHide);
         result.setDocId(docId);
         LOGGER.debug("parsing result: {}", result);
         return result;
@@ -75,6 +80,16 @@ public class MaDmpRepository {
         int skipElems = size * (page - 1);
         mongoCollection.find().skip(skipElems).limit(size).cursor().forEachRemaining(document ->
                 result.add(parseDocumentToMaDmpDTO(document, currUserId)));
+        return result;
+    }
+
+    public List<MaDmpDTO> findAllByDocIds(MaDmpSearchDTO maDmpSearchDto, final long currUserId) {
+        List<MaDmpDTO> result = new ArrayList<>();
+
+        maDmpSearchDto.getDocIds().forEach(docId ->
+                result.add(
+                        parseDocumentToMaDmpDTO(
+                                this.mongoCollection.find(new Document("_id", docId)).first(), currUserId)));
         return result;
     }
 }

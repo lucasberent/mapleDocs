@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/authentication")
 public class UserJWTController {
     private final TokenProvider tokenProvider;
 
@@ -38,7 +38,7 @@ public class UserJWTController {
         this.userService = userService;
     }
 
-    @PostMapping("/authentication")
+    @PostMapping
     public ResponseEntity<JWTToken> authenticate(@Valid @RequestBody LoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDTO.getLogin(), loginDTO.getPassword());
@@ -50,14 +50,14 @@ public class UserJWTController {
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication);
-
+        System.out.println("token: " + jwt);
         AppUser appUser = userService.getUserByLogin(loginDTO.getLogin()).orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         return new ResponseEntity<>(new JWTToken(jwt, appUser.getLogin()), httpHeaders, HttpStatus.OK);
     }
 
-    @GetMapping("/refreshToken")
+    @GetMapping
     public ResponseEntity<String> refreshToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(authHeader.indexOf("Bearer "));
         this.tokenProvider.validateToken(token);
@@ -76,12 +76,12 @@ public class UserJWTController {
         private String payload;
         private final String login;
 
-        JWTToken(String idToken, String login) {
-            this.payload = idToken;
+        JWTToken(String payload, String login) {
+            this.payload = payload;
             this.login = login;
         }
 
-        @JsonProperty("id_token")
+        @JsonProperty("payload")
         String getPayload() {
             return payload;
         }

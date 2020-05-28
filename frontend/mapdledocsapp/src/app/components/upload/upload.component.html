@@ -1,0 +1,10 @@
+<p>Upload MaDMP</p>
+<div class="form-group">
+  <label for="file">Choose .json file for upload</label>
+  <input #fileInput type="file"
+         id="file"
+         (change)="handleFileInput(fileInput.files)">
+  <button (click)="handleUpload()">upload</button>
+  <button (click)="onClearSelection()">clear selection</button>
+  <button routerLink="/search">back to search</button>
+</div>

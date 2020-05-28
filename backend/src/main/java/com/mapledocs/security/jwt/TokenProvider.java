@@ -99,7 +99,7 @@ public class TokenProvider implements InitializingBean {
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             log.info("Invalid JWT token.");
-            log.trace("Invalid JWT token trace.", e);
+            log.info("Invalid JWT token debug error: {} , token: {}", e, authToken);
         }
         return false;
     }

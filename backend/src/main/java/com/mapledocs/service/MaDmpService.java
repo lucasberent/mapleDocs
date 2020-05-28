@@ -3,10 +3,8 @@ package com.mapledocs.service;
 import com.google.gson.Gson;
 import com.mapledocs.api.dto.GetDoiRequestDTO;
 import com.mapledocs.api.dto.MaDmpDTO;
-import com.mapledocs.api.exception.DoiServiceException;
-import com.mapledocs.api.exception.ForbiddenException;
-import com.mapledocs.api.exception.MaDmpServiceCreationException;
-import com.mapledocs.api.exception.NotLoggedInException;
+import com.mapledocs.api.dto.MaDmpSearchDTO;
+import com.mapledocs.api.exception.*;
 import com.mapledocs.config.DoiServiceAuthProperties;
 import com.mapledocs.dao.MaDmpRepository;
 import com.mapledocs.dao.UserRepository;
@@ -17,6 +15,7 @@ import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.ValidationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,9 @@ public class MaDmpService {
 
     @Transactional
     public void createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException {
+        if (maDmpDTO == null || maDmpDTO.getJson() == null || maDmpDTO.getJson().isEmpty()) {
+            throw new ValidationException("json empty");
+        }
         AppUser currUser = this.getCurrentUserOrNotLoggedIn();
         maDmpDTO.setUserId(currUser.getId());
         Map<String, Object> parsed = new GsonJsonParser().parseMap(maDmpDTO.getJson());
@@ -75,17 +77,28 @@ public class MaDmpService {
 
 
     @Transactional
-    public void deleteMaDmp(final Long id) {
-        MaDmpDTO maDmpDTO = this.maDmpRepository.findOneById(id, this.getCurrentUserOrNotLoggedIn().getId());
+    public void deleteMaDmp(final String docId) {
+        MaDmpDTO maDmpDTO = this.maDmpRepository.findOneById(docId, this.getCurrentUserOrNotLoggedIn().getId());
         Long userId = this.getCurrentUserOrNotLoggedIn().getId();
         if (!userId.equals(maDmpDTO.getUserId())) {
             throw new ForbiddenException("User cannot delete documents of another user");
         }
-        this.maDmpRepository.removeMaDmp(id);
+        this.maDmpRepository.removeMaDmp(docId);
     }
 
     private AppUser getCurrentUserOrNotLoggedIn() {
         return userRepository.findByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
                 new NotLoggedInException("Current user not logged in")));
+    }
+
+    public MaDmpDTO findOne(final String docId) {
+        if (docId == null) {
+            throw new NotFoundException("MaDMP with not found for id " + docId);
+        }
+        return this.maDmpRepository.findOneById(docId, this.getCurrentUserOrNotLoggedIn().getId());
+    }
+
+    public List<MaDmpDTO> findAllPagedByDocId(final MaDmpSearchDTO maDmpSearchDto) {
+        return this.maDmpRepository.findAllByDocIds(maDmpSearchDto, this.getCurrentUserOrNotLoggedIn().getId());
     }
 }

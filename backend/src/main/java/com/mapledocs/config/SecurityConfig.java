@@ -1,6 +1,7 @@
 package com.mapledocs.config;
 
 import com.mapledocs.security.jwt.JWTConfigurer;
+import com.mapledocs.security.jwt.JWTFilter;
 import com.mapledocs.security.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -66,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/authentication").permitAll()
-                .antMatchers("api/vi/madmps").permitAll()
                 .antMatchers("/api/v1/**").authenticated()
                 .and()
                 .httpBasic()

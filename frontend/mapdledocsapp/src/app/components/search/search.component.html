@@ -4,9 +4,6 @@
     <input #searchBox (keyup.enter)="onEnter(searchBox.value)"/>
     <button (click)="doSearch(searchBox.value)">search</button>
   </div>
-  <div>
-    <button (click)="onToUpload()">Upload a maDMP</button>
-  </div>
 </div>
 <li *ngFor="let madmp of madmpDisplayList" routerLink="/details/{{madmp.docId}}">
   Title: {{madmp.madmp['dmp']['title']}}

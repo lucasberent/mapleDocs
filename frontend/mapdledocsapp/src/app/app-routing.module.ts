@@ -33,10 +33,6 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: '**',
-    component: LoginComponent
-  },
-  {
     path: '',
     redirectTo: '/search',
     pathMatch: 'full'

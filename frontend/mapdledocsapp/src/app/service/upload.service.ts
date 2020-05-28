@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Globals} from '../global/globals';
 import {Observable, of} from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import {CreateMaDmpDto} from '../dto/create-madmp-dto';
 
 @Injectable({
@@ -24,11 +25,12 @@ export class UploadService {
     };
   }
 
-  uploadMaDmp(maDmp: CreateMaDmpDto): Observable<any> { // TODO fix
+  uploadMaDmp(maDmp: CreateMaDmpDto): Observable<string> {
     const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      responseType: 'text' as 'json'
     };
     console.log('posting madmp in service');
-    return this.httpClient.post(this.maDmpBaseUrl, maDmp, httpOptions);
+    return this.httpClient.post<string>(this.maDmpBaseUrl, maDmp, httpOptions);
   }
 }

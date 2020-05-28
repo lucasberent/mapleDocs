@@ -16,9 +16,12 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButton, MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
+import {MatListModule} from "@angular/material/list";
+import {MatTabsModule} from "@angular/material/tabs";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatCommonModule} from "@angular/material/core";
 import {MatIcon, MatIconModule} from "@angular/material/icon";
+import {MatToolbarModule} from "@angular/material/toolbar";
 
 @NgModule({
   declarations: [
@@ -42,7 +45,11 @@ import {MatIcon, MatIconModule} from "@angular/material/icon";
     MatInputModule,
     MatSidenavModule,
     MatCommonModule,
-    MatIconModule
+    MatIconModule,
+    MatListModule,
+    MatTabsModule,
+    MatSidenavModule,
+    MatToolbarModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

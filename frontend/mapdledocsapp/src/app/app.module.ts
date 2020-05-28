@@ -12,6 +12,10 @@ import {HttpClientModule} from '@angular/common/http';
 import { HeaderComponent } from './components/header-component/header.component';
 import { MadmpdetailsComponent } from './components/madmpdetails/madmpdetails.component';
 import { UploadComponent } from './components/upload/upload.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatButton, MatButtonModule} from "@angular/material/button";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
   declarations: [
@@ -28,7 +32,11 @@ import { UploadComponent } from './components/upload/upload.component';
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

@@ -76,6 +76,6 @@ export class AuthService {
   }
 
   register(registerDTO: RegisterDto) {
-    this.httpClient.post(this.registerBaseUrl, registerDTO);
+    return this.httpClient.post(this.registerBaseUrl, registerDTO);
   }
 }

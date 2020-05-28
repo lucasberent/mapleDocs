@@ -2,7 +2,9 @@ package com.mapledocs.api.dto;
 
 import lombok.Data;
 
+import java.util.Map;
+
 @Data
 public class DoiResponseDTO {
-    private String responsePayload;
+    private Map<String, Object> data;
 }

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {SearchService} from '../../service/search.service';
 import {MaDmpDto} from "../../dto/madmp-dto";
+import {saveAs, saveAs as importedSaveAs} from "file-saver";
 
 @Component({
   selector: 'app-madmpdetails',
@@ -35,4 +36,8 @@ export class MadmpdetailsComponent implements OnInit {
       });
   }
 
+  onDownload() {
+    const blob = new Blob([JSON.stringify(this.json)], { type: 'text' });
+    saveAs(blob, 'madmp.json');
+  }
 }

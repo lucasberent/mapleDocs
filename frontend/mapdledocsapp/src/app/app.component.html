@@ -2,11 +2,13 @@
   <span>Mapledocs</span>
 </mat-toolbar>
 <mat-drawer-container>
-  <mat-drawer mode="side" opened>
+  <mat-drawer mode="side" opened style="width: 8%">
     <app-header></app-header>
   </mat-drawer>
   <mat-drawer-content>
-    <router-outlet></router-outlet>
+    <div align="center">
+      <router-outlet></router-outlet>
+    </div>
   </mat-drawer-content>
 </mat-drawer-container>
 

@@ -1,2 +1,15 @@
-<p>maDMP details</p>
-<pre>{{json | json}}</pre>
+<mat-tab-group>
+  <p>Interactive viewer</p>
+  <mat-tab label="Interactive View" style="padding-left: 2em">
+    <div align="left">
+      <ngx-json-viewer [json]=json></ngx-json-viewer>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Raw View">
+    <div align="left">
+    <button mat-stroked-button color="primary" (click)="onDownload()">download</button>
+    <pre>{{json | json}}</pre>
+    </div>
+  </mat-tab>
+</mat-tab-group>

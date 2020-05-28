@@ -13,15 +13,16 @@ import {HeaderComponent} from './components/header-component/header.component';
 import {MadmpdetailsComponent} from './components/madmpdetails/madmpdetails.component';
 import {UploadComponent} from './components/upload/upload.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButton, MatButtonModule} from "@angular/material/button";
+import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatListModule} from "@angular/material/list";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatCommonModule} from "@angular/material/core";
-import {MatIcon, MatIconModule} from "@angular/material/icon";
+import {MatIconModule} from "@angular/material/icon";
 import {MatToolbarModule} from "@angular/material/toolbar";
+import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import {MatToolbarModule} from "@angular/material/toolbar";
     MatListModule,
     MatTabsModule,
     MatSidenavModule,
-    MatToolbarModule
+    MatToolbarModule,
+    NgxJsonViewerModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

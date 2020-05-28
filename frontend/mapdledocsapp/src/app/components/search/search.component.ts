@@ -25,13 +25,7 @@ export class SearchComponent implements OnInit {
     madmps.forEach(madmp => {
       const json = JSON.parse(madmp.json);
       const docId = madmp.docId;
-      console.log('json: ');
-      console.log(json);
-      console.log('docId:');
-      console.log(docId);
       const madmpDisplay = new MaDmpDisplayObject(json, docId);
-      console.log('displayobj:')
-      console.log(madmpDisplay);
       this.madmpDisplayList.push(madmpDisplay);
     });
   }
@@ -41,8 +35,10 @@ export class SearchComponent implements OnInit {
   }
 
   doSearch(value: string) {
-    console.log('searching for: ' + value);
-    this.searchService.findMaDmps(value, 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps));
+    if (value.length >= 4 || value.length == 0) {
+      console.log('searching for: ' + value);
+      this.searchService.findMaDmps(value, 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps));
+    }
   }
 
   onToUpload() {

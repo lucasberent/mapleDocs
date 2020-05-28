@@ -21,8 +21,13 @@
     "@angular/platform-browser": "~9.1.9",
     "@angular/platform-browser-dynamic": "~9.1.9",
     "@angular/router": "~9.1.9",
+    "@types/file-saver": "^2.0.1",
     "ajv": "^6.12.2",
+    "angular4-jsoneditor": "^1.0.7",
+    "file-saver": "^2.0.2",
+    "jqwidgets-ng": "^9.1.6",
     "jwt-decode": "^2.2.0",
+    "ngx-json-viewer": "^2.4.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

@@ -6,25 +6,24 @@
     <div>
       <div>
         <mat-form-field>
-          <input type="text" placeholder="Enter search terms" matInput #searchBox (keyup.enter)="onEnter(searchBox.value)"/>
-
-          <!-- TODO replace with automatic search -->
-          <button (click)="doSearch(searchBox.value)">search</button>
+          <input
+            type="text"
+            placeholder="Enter search terms"
+            matInput #searchBox
+            (keyup.enter)="onEnter(searchBox.value)"
+            (keyup)="doSearch(searchBox.value)"/>
         </mat-form-field>
-      </div>
-      <div>
-        <button (click)="onToUpload()">Upload a maDMP</button>
       </div>
     </div>
   </mat-tab>
   <mat-tab label="Combine Search Conditions">
-
+    <!-- TODO -->
   </mat-tab>
 </mat-tab-group>
-<mat-list>
-  <mat-list-item *ngFor="let madmp of madmpDisplayList" routerLink="/details/{{madmp.docId}}">
+<mat-action-list>
+  <mat-list-item *ngFor="let madmp of madmpDisplayList" routerLink="/details/{{madmp.docId}}" style="cursor:pointer">
     Title: {{madmp.madmp['dmp']['title']}}
     Identifier: {{madmp.madmp['dmp_id']['identifier']}}
     Author: {{madmp.madmp['dmp']['contact']['name']}}
   </mat-list-item>
-</mat-list>
+</mat-action-list>

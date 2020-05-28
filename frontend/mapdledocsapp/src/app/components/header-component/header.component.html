@@ -1,9 +1,17 @@
-
-  <button mat-stroked-button
-        color="primary"
-        #logout
-        (click)="onLogout()"
-        *ngIf="!getCurrentRoute().endsWith('/login') && !getCurrentRoute().endsWith('/register')">
-  logout</button>
-  <button mat-stroked-button routerLink="/search">to search</button>
-  <button mat-stroked-button routerLink="/upload">to upload</button>
+<mat-action-list style="padding-left: 2em">
+  <mat-list-item routerLink="/search">
+    search
+  </mat-list-item>
+  <mat-list-item routerLink="/upload">
+    upload
+  </mat-list-item>
+</mat-action-list>
+<div style="padding-left: 2em;">
+<a mat-stroked-button
+   color="primary"
+   #logout
+   (click)="onLogout()"
+   *ngIf="!getCurrentRoute().endsWith('/login') && !getCurrentRoute().endsWith('/register')">
+  logout
+</a>
+</div>

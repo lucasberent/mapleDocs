@@ -1,4 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Router} from '@angular/router';
 import {Ajv} from 'ajv';
 import {UploadService} from '../../service/upload.service';
 import {HttpClient} from '@angular/common/http';
@@ -16,9 +17,12 @@ export class UploadComponent implements OnInit {
   maDmpJsonSchema: any;
   ajv: Ajv = null;
   madmpToCreate: CreateMaDmpDto;
+  DETAILS_ROUTE = '/details';
   @ViewChild('fileInput') fileInput: ElementRef;
 
-  constructor(private uploadService: UploadService, private httpClient: HttpClient) {
+  constructor(private uploadService: UploadService,
+              private httpClient: HttpClient,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -64,7 +68,9 @@ export class UploadComponent implements OnInit {
       return;
     }
     this.uploadService.uploadMaDmp(createMaDmpDto)
-      .subscribe();
+      .subscribe(dmpId => {
+        this.router.navigate([this.DETAILS_ROUTE + '/' + dmpId]);
+      });
   }
 
   onClearSelection() {

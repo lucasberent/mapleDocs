@@ -25,11 +25,12 @@ export class UploadService {
     };
   }
 
-  uploadMaDmp(maDmp: CreateMaDmpDto): Observable<any> { // TODO fix
+  uploadMaDmp(maDmp: CreateMaDmpDto): Observable<string> {
     const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      responseType: 'text'
     };
     console.log('posting madmp in service');
-    return this.httpClient.post(this.maDmpBaseUrl, maDmp, httpOptions);
+    return this.httpClient.post<string>(this.maDmpBaseUrl, maDmp, httpOptions);
   }
 }

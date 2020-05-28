@@ -24,10 +24,10 @@ public class MaDmpController {
 
     @PostMapping
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
-    public ResponseEntity<MaDmpDTO> createMaDmp(@RequestBody MaDmpDTO maDmpDTO) {
+    public ResponseEntity<String> createMaDmp(@RequestBody MaDmpDTO maDmpDTO) {
         LOGGER.debug("Creating Madmp for DTO: {}", maDmpDTO);
-        this.maDmpService.createMaDmp(maDmpDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        String id = this.maDmpService.createMaDmp(maDmpDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(id);
     }
 
     @GetMapping

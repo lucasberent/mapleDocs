@@ -1,9 +1,9 @@
 # Introduction
-This project was made in the course of the course Data Stewardship, summer term 2020 at TU Vienna. The goal of this opensource project is to provide a system that allows users to manage and expose machine readible data management plans to achieve FAIR data (https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), (https://www.rd-alliance.org/groups/exposing-data-management-plans-wg).
+This project was made in the course of the course Data Stewardship, summer term 2020 at TU Vienna. The goal of this opensource project is to provide a system that allows users to manage and expose machine readible data management plans to achieve FAIR data [TU Vienna FAIR](https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), [Exposing maDMPs](https://www.rd-alliance.org/groups/exposing-data-management-plans-wg).
 
 ## Key features
 We have built a highly scalable and modern system that allows users to:
-- Upload maDMPs which are validated according to the standard defined in (https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
+- Upload maDMPs which are validated according to the standard defined in [RDA DMP Common Standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
 - Control which fields are visible to other users of the system i.e. specifically hide fields of the maDMP
 - View and Download maDMPs
 - Search for maDMPs
@@ -11,9 +11,9 @@ We have built a highly scalable and modern system that allows users to:
 ## Key technologies 
 ### Backend:
 - MongoDB for efficient data access and flexible storage
-- ElasticSearch (https://www.elastic.co/de/) and Logstash (https://www.elastic.co/de/logstash) for full-text and highly efficient and scalable searching
-- Spring Boot (https://spring.io/projects/spring-boot) for a secures,scalable and highly maintainable application
-- Docker (https://www.docker.com/) for containerization for easy and portable deployment 
+- [ElasticSearch](https://www.elastic.co/de/) and [Logstash](https://www.elastic.co/de/logstash) for full-text and highly efficient and scalable searching
+- [Spring Boot](https://spring.io/projects/spring-boot) for a secures,scalable and highly maintainable application
+- [Docker](https://www.docker.com/) for containerization for easy and portable deployment 
 
 ### Front end:
 - Anuglar and material design for a modern and flexible UX
@@ -45,9 +45,9 @@ Once an according file is created and the properties are set accordingly, the ap
 - https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard
 
 # Contributors
-- https://github.com/arselzer
-- https://github.com/lucasberent
+- [Alexander Selzer] https://github.com/arselzer
+- [Lucas Berent] https://github.com/lucasberent
 
 # License
 - https://choosealicense.com/licenses/mit/
-- https://github.com/lucasberent/mapleDocs/blob/master/backend/LICENSE
+- [MIT] https://github.com/lucasberent/mapleDocs/blob/master/backend/LICENSE

@@ -23,7 +23,7 @@
           <mat-panel-title>Ethical Issues</mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-radio-group #ethicalIssues [(ngModel)]="ethicalIssuesValue" (change)="doSearchCombined(ethicalIssuesValue)">
+        <mat-radio-group #ethicalIssues [(ngModel)]="ethicalIssuesValue" (change)="doSearchCombined()">
           <mat-radio-button value="no">
             no
           </mat-radio-button>
@@ -43,13 +43,13 @@
       <div class="datepickers">
       <mat-form-field>
         <mat-label>From</mat-label>
-        <input matInput [matDatepicker]="creationFrom">
+        <input matInput [matDatepicker]="creationFrom" [(ngModel)]="creationFromDate" (dateChange)="doSearchCombined()">
         <mat-datepicker-toggle matSuffix [for]="creationFrom"></mat-datepicker-toggle>
         <mat-datepicker #creationFrom></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
         <mat-label>To</mat-label>
-        <input matInput [matDatepicker]="creationTo">
+        <input matInput [matDatepicker]="creationTo" [(ngModel)]="creationToDate" (dateChange)="doSearchCombined()">
         <mat-datepicker-toggle matSuffix [for]="creationTo"></mat-datepicker-toggle>
         <mat-datepicker #creationTo></mat-datepicker>
       </mat-form-field>
@@ -63,13 +63,13 @@
       <div class="datepickers">
       <mat-form-field>
         <mat-label>From</mat-label>
-        <input matInput [matDatepicker]= "modificationFrom">
+        <input matInput [matDatepicker]= "modificationFrom" [(ngModel)]="modificationFromDate" (dateChange)="doSearchCombined()">
         <mat-datepicker-toggle matSuffix [for]="modificationFrom"></mat-datepicker-toggle>
         <mat-datepicker #modificationFrom></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
         <mat-label>To</mat-label>
-        <input matInput [matDatepicker]="modificationTo">
+        <input matInput [matDatepicker]="modificationTo" [(ngModel)]="modificationToDate" (dateChange)="doSearchCombined()">
         <mat-datepicker-toggle matSuffix [for]="modificationTo"></mat-datepicker-toggle>
         <mat-datepicker #modificationTo></mat-datepicker>
       </mat-form-field>

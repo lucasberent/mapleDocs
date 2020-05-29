@@ -70,7 +70,8 @@ export class SearchService {
       );
   }
 
-  findMaDmpsCombined(ethicalIssues: string, page: number, size: number): Observable<SearchResponse<any>> {
+  findMaDmpsCombined(ethicalIssues: string, creationFromDate: Date, creationToDate: Date,
+                     modificationFromDate: Date, modificationToDate: Date, page: number, size: number): Observable<SearchResponse<any>> {
     let andQueries = [];
 
     console.log(ethicalIssues);
@@ -78,6 +79,36 @@ export class SearchService {
       andQueries.push({
         term: {
           dmp_ethical_issues_exist: ethicalIssues
+        }
+      });
+    }
+
+    if (creationFromDate !== null || creationToDate !== null) {
+      let conditions = {};
+      if (creationFromDate !== null) {
+        conditions['gte'] = creationFromDate;
+      }
+      if (creationToDate !== null) {
+        conditions['lte'] = creationToDate;
+      }
+      andQueries.push({
+        range: {
+          dmp_created: conditions
+        }
+      });
+    }
+
+    if (modificationFromDate !== null || modificationToDate !== null) {
+      let conditions = {};
+      if (modificationFromDate !== null) {
+        conditions['gte'] = modificationFromDate;
+      }
+      if (modificationToDate !== null) {
+        conditions['lte'] = modificationToDate;
+      }
+      andQueries.push({
+        range: {
+          dmp_modified: conditions
         }
       });
     }

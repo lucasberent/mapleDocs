@@ -12,12 +12,25 @@ import {ToastrService} from "ngx-toastr";
 export class SearchService {
 
   private searchBaseUrl: string = this.globals.backendUri + '/madmps';
+  private searchUrl: string = this.globals.elasticsearchUri + '/madmps_private';
 
   constructor(private httpClient: HttpClient, private globals: Globals, private toastrService: ToastrService) {
   }
 
   findMaDmps(searchString: string, page: number, size: number): Observable<MaDmpDto[]> {
-    return this.httpClient.get<any[]>(this.searchBaseUrl + '?page=1&size=10')
+    return this.httpClient.post<any[]>(this.searchUrl + '/_search', {
+      "from": page,
+      "size": size,
+      "query": {
+        "multi_match" : {
+          "query":    searchString,
+          "fields": ["dmp_contact_contact_id_identifier", "dmp_contact_contact_id_type",
+            "dmp_contact_mbox", "dmp_contact_name", "dmp_description",
+            "dmp_dmp_id_identifier", "dmp_dmp_id_type", "dmp_language", "dmp_title"
+          ]
+        }
+      }
+    })
       .pipe(
         tap(list => {
           console.log('fetched madmps')

@@ -25,6 +25,10 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ToastrModule } from 'ngx-toastr';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {MatSelectModule} from "@angular/material/select";
+import { TreeviewModule } from 'ngx-treeview';
 
 
 @NgModule({
@@ -56,7 +60,11 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     MatSidenavModule,
     MatToolbarModule,
     NgxJsonViewerModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    MatProgressSpinnerModule,
+    MatGridListModule,
+    MatSelectModule,
+    TreeviewModule.forRoot()
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

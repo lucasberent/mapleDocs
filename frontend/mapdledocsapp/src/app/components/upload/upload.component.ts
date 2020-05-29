@@ -4,7 +4,10 @@ import {Ajv} from 'ajv';
 import {UploadService} from '../../service/upload.service';
 import {HttpClient} from '@angular/common/http';
 import {CreateMaDmpDto} from '../../dto/create-madmp-dto';
-import { ToastrService } from 'ngx-toastr';
+import {ToastrService} from 'ngx-toastr';
+import {FormControl} from "@angular/forms";
+import {getMatIconFailedToSanitizeLiteralError} from "@angular/material/icon";
+import {TreeviewItem} from "ngx-treeview";
 
 // @ts-ignore
 const Ajv = require('ajv');
@@ -15,11 +18,16 @@ const Ajv = require('ajv');
   styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent implements OnInit {
+  fieldsToHideFormControl = new FormControl();
   maDmpJsonSchema: any;
   ajv: Ajv = null;
   madmpToCreate: CreateMaDmpDto;
+  madmpShowJson: any;
   DETAILS_ROUTE = '/details';
   @ViewChild('fileInput') fileInput: ElementRef;
+  uploading: boolean = false;
+  madmpFields: any[];
+  selectedFieldsToHide: string[] = [];
 
   constructor(private uploadService: UploadService,
               private httpClient: HttpClient,
@@ -37,31 +45,51 @@ export class UploadComponent implements OnInit {
     const fileToUpload = files.item(0);
     if (!fileToUpload || !files) {
       console.log('no file selected')
-      this.handleAbortUpload();
+      this.resetInputs();
     }
     if (!fileToUpload.name.endsWith('.json')) {
-      alert('only json files accepted');
-      this.handleAbortUpload();
+      this.toastr.error('only json files accepted');
+      this.resetInputs();
       return;
     }
     fileToUpload.text().then(contents => {
       const valid = this.ajv.validate(this.maDmpJsonSchema, contents);
       if (!valid) {
-        alert('maDmp not valid according to schema version 1.0');
-        this.handleAbortUpload();
+        this.toastr.error('maDmp not valid according to schema version 1.0');
+        this.resetInputs();
       } else {
         console.log('maDmp validated successfully against schema version 1.0');
-        this.madmpToCreate = new CreateMaDmpDto(contents);
+        this.madmpToCreate = new CreateMaDmpDto(contents, []);
+        this.madmpShowJson = JSON.parse(this.madmpToCreate.json);
+        this.madmpFields = Object.keys(this.madmpShowJson['dmp']);
       }
     });
   }
 
   handleUpload() {
+    this.uploading = true;
+    this.madmpToCreate.fieldsToHide = this.selectedFieldsToHide;
     this.upload(this.madmpToCreate);
+    this.uploading = false;
+    this.resetInputs();
   }
 
-  handleAbortUpload() {
+  resetInputs() {
     this.madmpToCreate = null;
+    this.madmpShowJson = null;
+    this.madmpFields = null;
+    this.fileInput.nativeElement.value = '';
+    this.resetFieldsToHide();
+  }
+
+  handleUpdateFieldsToHide(fieldNames: string[]) {
+    if (fieldNames) {
+      this.selectedFieldsToHide = fieldNames
+      fieldNames.forEach((field) => {
+        delete this.madmpShowJson['dmp'][field];
+      });
+      console.log('added ' + fieldNames + ' to fields to hide')
+    }
   }
 
   upload(createMaDmpDto: CreateMaDmpDto) {
@@ -77,7 +105,19 @@ export class UploadComponent implements OnInit {
   }
 
   onClearSelection() {
-    this.fileInput.nativeElement.value = '';
-    this.handleAbortUpload();
+    this.resetInputs();
+  }
+
+  isUploading() {
+    return this.uploading;
+  }
+
+  resetFieldsToHide() {
+    this.fieldsToHideFormControl = new FormControl();
+    this.selectedFieldsToHide = [];
+  }
+
+  onClearHideFieldsSelection() {
+    this.resetFieldsToHide();
   }
 }

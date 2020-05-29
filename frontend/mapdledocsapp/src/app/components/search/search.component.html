@@ -1,15 +1,16 @@
 <mat-toolbar class="sub-toolbar">
   <span class="title">Search maDMPs</span>
 </mat-toolbar>
-<mat-tab-group>
+<mat-tab-group (selectedTabChange)="onSelectedTabChange()">
   <mat-tab label="Full-Text Search">
     <div>
       <div>
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <input
             type="text"
             placeholder="Enter search terms"
             matInput #searchBox
+            [ngModel]="searchBoxValue"
             (keyup.enter)="onEnter(searchBox.value)"
             (keyup)="doSearch(searchBox.value)"/>
         </mat-form-field>
@@ -17,7 +18,83 @@
     </div>
   </mat-tab>
   <mat-tab label="Combine Search Conditions">
-    <!-- TODO -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Ethical Issues</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-radio-group>
+          <mat-radio-button value="no">
+            no
+          </mat-radio-button>
+          <mat-radio-button value="yes">
+            yes
+          </mat-radio-button>
+          <mat-radio-button value="any">
+            any
+          </mat-radio-button>
+        </mat-radio-group>
+      </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Creation Date</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="datepickers">
+      <mat-form-field>
+        <mat-label>From</mat-label>
+        <input matInput [matDatepicker]="creationFrom">
+        <mat-datepicker-toggle matSuffix [for]="creationFrom"></mat-datepicker-toggle>
+        <mat-datepicker #creationFrom></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>To</mat-label>
+        <input matInput [matDatepicker]="creationTo">
+        <mat-datepicker-toggle matSuffix [for]="creationTo"></mat-datepicker-toggle>
+        <mat-datepicker #creationTo></mat-datepicker>
+      </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Modification Date</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="datepickers">
+      <mat-form-field>
+        <mat-label>From</mat-label>
+        <input matInput [matDatepicker]= "modificationFrom">
+        <mat-datepicker-toggle matSuffix [for]="modificationFrom"></mat-datepicker-toggle>
+        <mat-datepicker #modificationFrom></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>To</mat-label>
+        <input matInput [matDatepicker]="modificationTo">
+        <mat-datepicker-toggle matSuffix [for]="modificationTo"></mat-datepicker-toggle>
+        <mat-datepicker #modificationTo></mat-datepicker>
+      </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+  </mat-tab>
+  <mat-tab label="Search specific JSON fields" class="custom-search">
+    <mat-form-field appearance="outline">
+      <input
+        type="text"
+        placeholder="Field (e.g. contact.name)"
+        matInput #fieldInput
+        [ngModel]="fieldInputValue"
+        (keyup.enter)="onEnterCustom(fieldInput.value, valueInput.value)"
+        (keyup)="doSearchCustom(fieldInput.value, valueInput.value)"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <input
+        type="text"
+        placeholder="Enter search terms"
+        matInput #valueInput
+        [ngModel]="valueInputValue"
+        (keyup.enter)="onEnterCustom(fieldInput.value, valueInput.value)"
+        (keyup)="doSearchCustom(fieldInput.value, valueInput.value)"/>
+    </mat-form-field>
   </mat-tab>
 </mat-tab-group>
 <mat-action-list>

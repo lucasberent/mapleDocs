@@ -22,10 +22,14 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatCommonModule} from "@angular/material/core";
 import {MatIconModule} from "@angular/material/icon";
 import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatExpansionModule} from "@angular/material/expansion";
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ToastrModule } from 'ngx-toastr';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-
+import {MatRadioModule} from "@angular/material/radio";
+import {MatNativeDateModule} from "@angular/material/core";
 
 @NgModule({
   declarations: [
@@ -56,7 +60,12 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     MatSidenavModule,
     MatToolbarModule,
     NgxJsonViewerModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    MatRadioModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatCheckboxModule,
+    MatNativeDateModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

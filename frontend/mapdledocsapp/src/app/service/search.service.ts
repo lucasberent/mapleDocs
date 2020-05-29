@@ -44,6 +44,32 @@ export class SearchService {
       );
   }
 
+  findMaDmpsCustomField(field: string, searchString: string, page: number, size: number): Observable<SearchResponse<any>> {
+    const searchField = "dmp_" + field.replace('.', '_');
+    return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
+      from: page,
+      size: size,
+      query: {
+        multi_match : {
+          query: searchString,
+          // fields: ['dmp_contact_contact_id_identifier', 'dmp_contact_contact_id_type',
+          //   'dmp_contact_mbox', 'dmp_contact_name', 'dmp_description', 'dmp_id_identifier',
+          //   'dmp_dmp_id_identifier', 'dmp_dmp_id_type', 'dmp_language', 'dmp_title'
+          // ],
+          fields: [searchField],
+          fuzziness: 'AUTO'
+        }
+      }
+    })
+      .pipe(
+        tap(list => {
+          console.log('fetched madmps');
+          console.log(list);
+        }),
+        catchError(this.handleError<any>('fetching madmps'))
+      );
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       this.toastrService.error('error while' + operation + ': ' + error.message);

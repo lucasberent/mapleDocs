@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {SearchService} from '../../service/search.service';
 import {Router} from "@angular/router";
 import {MaDmpDto} from "../../dto/madmp-dto";
@@ -14,6 +14,10 @@ import {SearchResponse} from "../../dto/search-response";
 })
 export class SearchComponent implements OnInit {
   madmpDisplayList: MaDmpDisplayObject[] = [];
+
+  searchBoxValue = '';
+  fieldInputValue = '';
+  valueInputValue = '';
 
   constructor(private searchService: SearchService, private router: Router, private toastrService:ToastrService) {
   }
@@ -37,6 +41,10 @@ export class SearchComponent implements OnInit {
     });
   }
 
+  onSelectedTabChange() {
+    this.setDisplayMadmps(<any>[]);
+  }
+
   onEnter(value: string) {
     this.doSearch(value);
   }
@@ -45,6 +53,17 @@ export class SearchComponent implements OnInit {
     if (value.length >= 4 || value.length === 0) {
       console.log('searching for: ' + value);
       this.searchService.findMaDmps(value, 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps));
+    }
+  }
+
+  onEnterCustom(field: string, value: string) {
+    this.doSearch(value);
+  }
+
+  doSearchCustom(field: string, value: string) {
+    if (field.length >= 4 && value.length >= 4) {
+      console.log('searching for: ' + field + " = " + value);
+      this.searchService.findMaDmpsCustomField(field, value, 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps));
     }
   }
 

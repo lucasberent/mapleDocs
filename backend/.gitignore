@@ -31,3 +31,5 @@ build/
 .vscode/
 
 src/main/resources/auth.properties
+
+zip_files

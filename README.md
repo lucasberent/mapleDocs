@@ -16,7 +16,7 @@ We have built a highly scalable and modern system that allows users to:
 - [Docker](https://www.docker.com/) for containerization for easy and portable deployment 
 
 ### Front end:
-- [Anuglar](https://angular.io/) and material design for a modern and flexible UX
+- [Angular](https://angular.io/) and material design for a modern and flexible UX
 
 # Prerequisites
 - In order to assign dois to maDMPs at upload, we have integrated the DataCite API, hence if one wants to use this feature a Datacite account is necessary. In order to configure the account refer to Chapter *Configuration*.

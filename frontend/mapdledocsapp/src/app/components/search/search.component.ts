@@ -19,6 +19,12 @@ export class SearchComponent implements OnInit {
   fieldInputValue = '';
   valueInputValue = '';
 
+  ethicalIssuesValue;
+  creationFromDate;
+  creationToDate;
+  modificationFromDate;
+  modificationToDate;
+
   constructor(private searchService: SearchService, private router: Router, private toastrService:ToastrService) {
   }
 
@@ -63,8 +69,14 @@ export class SearchComponent implements OnInit {
   doSearchCustom(field: string, value: string) {
     if (field.length >= 4 && value.length >= 4) {
       console.log('searching for: ' + field + " = " + value);
-      this.searchService.findMaDmpsCustomField(field, value, 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps));
+      this.searchService.findMaDmpsCustomField(field, value, 1, 10)
+        .subscribe(madmps => this.setDisplayMadmps(madmps));
     }
+  }
+
+  doSearchCombined(ethicalIssues: string) {
+    this.searchService.findMaDmpsCombined(ethicalIssues, 1, 10)
+      .subscribe(madmps => this.setDisplayMadmps(madmps));
   }
 
   onToUpload() {

@@ -70,6 +70,36 @@ export class SearchService {
       );
   }
 
+  findMaDmpsCombined(ethicalIssues: string, page: number, size: number): Observable<SearchResponse<any>> {
+    let andQueries = [];
+
+    console.log(ethicalIssues);
+    if (ethicalIssues === 'yes' || ethicalIssues === 'no') {
+      andQueries.push({
+        term: {
+          dmp_ethical_issues_exist: ethicalIssues
+        }
+      });
+    }
+
+    return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
+      from: page,
+      size: size,
+      query: {
+        bool: {
+          must: andQueries
+        }
+      }
+    })
+      .pipe(
+        tap(list => {
+          console.log('fetched madmps');
+          console.log(list);
+        }),
+        catchError(this.handleError<any>('fetching madmps'))
+      );
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       this.toastrService.error('error while' + operation + ': ' + error.message);

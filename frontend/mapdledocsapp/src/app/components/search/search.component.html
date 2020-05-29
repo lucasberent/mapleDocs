@@ -23,7 +23,7 @@
           <mat-panel-title>Ethical Issues</mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-radio-group>
+        <mat-radio-group #ethicalIssues [(ngModel)]="ethicalIssuesValue" (change)="doSearchCombined(ethicalIssuesValue)">
           <mat-radio-button value="no">
             no
           </mat-radio-button>

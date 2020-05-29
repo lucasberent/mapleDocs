@@ -37,32 +37,32 @@ ids = list(map(lambda node: node.content.split(":")[2], result))
 
 zips = []
 
-# for dmp_id in ids:
-#     response = urllib.request.urlopen(zenodo_base + "/records/" + dmp_id)
-#     if response.getcode() == 200:
-#         data = json.loads(response.read())
-#         print("fetched record: " + dmp_id)
-#         files = data["files"]
-#         for file in files:
-#             if file["type"] == "zip":
-#                 zip_url = file["links"]["self"]
-#                 if (zip_url != None):
-#                     zips.append(zip_url)
-#                     print("found zip: " + zip_url)
-#     else:
-#         print("error: returned " + str(response.getcode()))
-#
-# if not os.path.exists("zip_files"):
-#     os.mkdir("zip_files")
-# counter = 0
-# for zip_url in zips:
-#     response = urllib.request.urlopen(zip_url)
-#     file = open("zip_files/" + str(counter) + ".zip", mode="wb")
-#     file.write(response.read())
-#     counter += 1
-#
-# if not os.path.exists("dmp_files"):
-#     os.mkdir("dmp_files")
+for dmp_id in ids:
+    response = urllib.request.urlopen(zenodo_base + "/records/" + dmp_id)
+    if response.getcode() == 200:
+        data = json.loads(response.read())
+        print("fetched record: " + dmp_id)
+        files = data["files"]
+        for file in files:
+            if file["type"] == "zip":
+                zip_url = file["links"]["self"]
+                if (zip_url != None):
+                    zips.append(zip_url)
+                    print("found zip: " + zip_url)
+    else:
+        print("error: returned " + str(response.getcode()))
+
+if not os.path.exists("zip_files"):
+    os.mkdir("zip_files")
+counter = 0
+for zip_url in zips:
+    response = urllib.request.urlopen(zip_url)
+    file = open("zip_files/" + str(counter) + ".zip", mode="wb")
+    file.write(response.read())
+    counter += 1
+
+if not os.path.exists("dmp_files"):
+    os.mkdir("dmp_files")
 for zip_file in os.listdir("zip_files"):
     with zipfile.ZipFile("zip_files/" + zip_file, "r") as zip:
         for contained_file_name in zip.namelist():

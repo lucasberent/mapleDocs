@@ -10,13 +10,13 @@ We have built a highly scalable and modern system that allows users to:
 
 ## Key technologies 
 ### Backend:
-- MongoDB for efficient data access and flexible storage
+- [MongoDB](https://www.mongodb.com/) for efficient data access and flexible storage
 - [ElasticSearch](https://www.elastic.co/de/) and [Logstash](https://www.elastic.co/de/logstash) for full-text and highly efficient and scalable searching
 - [Spring Boot](https://spring.io/projects/spring-boot) for a secures,scalable and highly maintainable application
 - [Docker](https://www.docker.com/) for containerization for easy and portable deployment 
 
 ### Front end:
-- Anuglar and material design for a modern and flexible UX
+- [Anuglar](https://angular.io/) and material design for a modern and flexible UX
 
 # Prerequisites
 - In order to assign dois to maDMPs at upload, we have integrated the DataCite API, hence if one wants to use this feature a Datacite account is necessary. In order to configure the account refer to Chapter *Configuration*.
@@ -30,8 +30,8 @@ The application assigns new dois to maDMPs that do not have one yet at upload ti
 Once an according file is created and the properties are set accordingly, the application can start and assign new dois to maDMPs on upload.
 
 # Installation and Running the project 
-- Backend: refer to the README in the /backend directory
-- Frontend: refer to the README in the /frontend directory
+- Backend: refer to the README in the [/backend directory](https://github.com/lucasberent/mapleDocs/blob/master/backend/README.md)
+- Frontend: refer to the README in the [/frontend directory](https://github.com/lucasberent/mapleDocs/blob/master/frontend/mapdledocsapp/README.md)
 
 # Examples and Screencasts
 
@@ -45,9 +45,9 @@ Once an according file is created and the properties are set accordingly, the ap
 - https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard
 
 # Contributors
-- [Alexander Selzer] https://github.com/arselzer
-- [Lucas Berent] https://github.com/lucasberent
+- [Alexander Selzer](https://github.com/arselzer)
+- [Lucas Berent](https://github.com/lucasberent)
 
 # License
 - https://choosealicense.com/licenses/mit/
-- [MIT] https://github.com/lucasberent/mapleDocs/blob/master/backend/LICENSE
+- [MIT](https://github.com/lucasberent/mapleDocs/blob/master/backend/LICENSE)

@@ -70,7 +70,7 @@ import {MatNativeDateModule} from "@angular/material/core";
     MatExpansionModule,
     MatDatepickerModule,
     MatCheckboxModule,
-    MatNativeDateModule
+    MatNativeDateModule,
     MatProgressSpinnerModule,
     MatGridListModule,
     MatSelectModule,

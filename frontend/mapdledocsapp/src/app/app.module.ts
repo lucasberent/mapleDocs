@@ -9,13 +9,23 @@ import {RegisterComponent} from './components/register/register.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {httpInterceptorProviders} from './interceptors';
 import {HttpClientModule} from '@angular/common/http';
-import { HeaderComponent } from './components/header-component/header.component';
-import { MadmpdetailsComponent } from './components/madmpdetails/madmpdetails.component';
-import { UploadComponent } from './components/upload/upload.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatButton, MatButtonModule} from "@angular/material/button";
+import {HeaderComponent} from './components/header-component/header.component';
+import {MadmpdetailsComponent} from './components/madmpdetails/madmpdetails.component';
+import {UploadComponent} from './components/upload/upload.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
+import {MatListModule} from "@angular/material/list";
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatCommonModule} from "@angular/material/core";
+import {MatIconModule} from "@angular/material/icon";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import { NgxJsonViewerModule } from 'ngx-json-viewer';
+import { ToastrModule } from 'ngx-toastr';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+
 
 @NgModule({
   declarations: [
@@ -25,7 +35,8 @@ import {MatInputModule} from "@angular/material/input";
     RegisterComponent,
     HeaderComponent,
     MadmpdetailsComponent,
-    UploadComponent
+    UploadComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +47,16 @@ import {MatInputModule} from "@angular/material/input";
     BrowserAnimationsModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatSidenavModule,
+    MatCommonModule,
+    MatIconModule,
+    MatListModule,
+    MatTabsModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    NgxJsonViewerModule,
+    ToastrModule.forRoot()
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

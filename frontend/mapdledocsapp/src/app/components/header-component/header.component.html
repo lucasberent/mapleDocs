@@ -1,1 +1,9 @@
-<button #logout (click)="onLogout()" *ngIf="!getCurrentRoute().endsWith('/login') && !getCurrentRoute().endsWith('/register')">logout</button>
+<mat-toolbar color="primary">
+  <span><a class="mapledocs-link" href="/">Mapledocs</a></span>
+  <span class="fill"></span>
+  <a mat-flat-button class="logout"
+     #logout
+     (click)="onLogout()">
+    logout
+  </a>
+</mat-toolbar>

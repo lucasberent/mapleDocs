@@ -26,11 +26,12 @@ public class MaDmpRepository {
         mongoCollection = mongoDbFactory.getDb(Constants.MONGO_DB).getCollection(Constants.COLLECTION);
     }
 
-    public void saveMaDmp(final MaDmpDTO maDmpDTO) {
+    public String saveMaDmp(final MaDmpDTO maDmpDTO) {
         LOGGER.info("Saving maDmp {}", maDmpDTO);
         Document document = Document.parse(maDmpDTO.getJson());
         document.append(Constants.USER_ID_FIELD, maDmpDTO.getUserId());
         mongoCollection.insertOne(document);
+        return document.getObjectId("_id").toString();
     }
 
     public void removeMaDmp(final String docId) {

@@ -30,8 +30,21 @@ The application assigns new dois to maDMPs that do not have one yet at upload ti
 Once an according file is created and the properties are set accordingly, the application can start and assign new dois to maDMPs on upload.
 
 # Installation and Running the project 
-- Backend: refer to the README in the [/backend directory](https://github.com/lucasberent/mapleDocs/blob/master/backend/README.md)
-- Frontend: refer to the README in the [/frontend directory](https://github.com/lucasberent/mapleDocs/blob/master/frontend/mapdledocsapp/README.md)
+## Backend (Application Server)
+First, make sure max_map_count is at least 262144, otherwise set it with: ´sudo sysctl -w vm.max_map_count=262144´. If it is
+less, the elasticsearch service might fail.
+ 
+ * Build the spring application: run ´mvn -Dmaven.test.skip=true package´ in backend/
+ 
+ * Build the docker container: run run ´docker build -t mapledocs-app:latest .´
+ 
+ * Run the services with docker-compose: ´docker-compose up´
+
+Alternatively, just use the script ´build_and_run.sh´
+
+## Frontend
+
+In frontend/, run `npm install` and `npm start` to start the development server
 
 # Examples and Screencasts
 

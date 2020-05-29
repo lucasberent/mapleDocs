@@ -29,7 +29,7 @@ public class MaDmpService {
     private final DoiServiceAuthProperties doiServiceAuthProperties;
 
     @Transactional
-    public void createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException {
+    public String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException {
         if (maDmpDTO == null || maDmpDTO.getJson() == null || maDmpDTO.getJson().isEmpty()) {
             throw new ValidationException("json empty");
         }
@@ -41,7 +41,7 @@ public class MaDmpService {
         }
         parsed.put("fieldsToHide", maDmpDTO.getFieldsToHide());
         maDmpDTO.setJson(new Gson().toJson(parsed));
-        this.maDmpRepository.saveMaDmp(maDmpDTO);
+        return this.maDmpRepository.saveMaDmp(maDmpDTO);
     }
 
     private void assignNewDoiToMaDmp(Map<String, Object> maDmp) {

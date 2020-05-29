@@ -4,33 +4,34 @@ import {Router} from "@angular/router";
 import {MaDmpDto} from "../../dto/madmp-dto";
 import {MaDmpDisplayObject} from "../../dto/madmp-display-object";
 import {newArray} from "@angular/compiler/src/util";
+import {ToastrService} from "ngx-toastr";
+import {SearchResponse} from "../../dto/search-response";
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+  styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit {
   madmpDisplayList: MaDmpDisplayObject[] = [];
 
-  constructor(private searchService: SearchService, private router: Router) {
+  constructor(private searchService: SearchService, private router: Router, private toastrService:ToastrService) {
   }
 
   ngOnInit(): void {
-    this.searchService.findMaDmps('', 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps)); // TODO pagination
+    this.searchService.findMaDmps('', 1, 10).subscribe(madmps => {
+      if (madmps.hits.total === 0){
+        this.toastrService.info('no madmps for search criteria found');
+      }
+      this.setDisplayMadmps(madmps);
+    }); // TODO pagination
   }
 
-  private setDisplayMadmps(madmps: MaDmpDto[]) {
+  private setDisplayMadmps(madmps: SearchResponse<any>) {
     this.madmpDisplayList = [];
-    madmps.forEach(madmp => {
-      const json = JSON.parse(madmp.json);
-      const docId = madmp.docId;
-      console.log('json: ');
-      console.log(json);
-      console.log('docId:');
-      console.log(docId);
-      const madmpDisplay = new MaDmpDisplayObject(json, docId);
-      console.log('displayobj:')
+    madmps.hits.hits.forEach(searchResult => {
+      const docId = searchResult._source['mongo_id'];
+      const madmpDisplay = new MaDmpDisplayObject(searchResult._source, docId);
       console.log(madmpDisplay);
       this.madmpDisplayList.push(madmpDisplay);
     });
@@ -41,8 +42,10 @@ export class SearchComponent implements OnInit {
   }
 
   doSearch(value: string) {
-    console.log('searching for: ' + value);
-    this.searchService.findMaDmps(value, 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps));
+    if (value.length >= 4 || value.length === 0) {
+      console.log('searching for: ' + value);
+      this.searchService.findMaDmps(value, 1, 10).subscribe(madmps => this.setDisplayMadmps(madmps));
+    }
   }
 
   onToUpload() {

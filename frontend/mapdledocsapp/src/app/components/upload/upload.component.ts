@@ -1,8 +1,10 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Router} from '@angular/router';
 import {Ajv} from 'ajv';
 import {UploadService} from '../../service/upload.service';
 import {HttpClient} from '@angular/common/http';
 import {CreateMaDmpDto} from '../../dto/create-madmp-dto';
+import { ToastrService } from 'ngx-toastr';
 
 // @ts-ignore
 const Ajv = require('ajv');
@@ -10,15 +12,19 @@ const Ajv = require('ajv');
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.css']
+  styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent implements OnInit {
   maDmpJsonSchema: any;
   ajv: Ajv = null;
   madmpToCreate: CreateMaDmpDto;
+  DETAILS_ROUTE = '/details';
   @ViewChild('fileInput') fileInput: ElementRef;
 
-  constructor(private uploadService: UploadService, private httpClient: HttpClient) {
+  constructor(private uploadService: UploadService,
+              private httpClient: HttpClient,
+              private router: Router,
+              private toastr: ToastrService) {
   }
 
   ngOnInit(): void {
@@ -61,13 +67,17 @@ export class UploadComponent implements OnInit {
   upload(createMaDmpDto: CreateMaDmpDto) {
     if (!createMaDmpDto) {
       console.log('no file chosen');
+      this.toastr.error('no file chosen, select .json to upload');
       return;
     }
-    this.uploadService.uploadMaDmp(createMaDmpDto);
+    this.uploadService.uploadMaDmp(createMaDmpDto)
+      .subscribe(dmpId => {
+        this.toastr.success('upload successful')
+      });
   }
 
   onClearSelection() {
-    this.fileInput.nativeElement.value='';
+    this.fileInput.nativeElement.value = '';
     this.handleAbortUpload();
   }
 }

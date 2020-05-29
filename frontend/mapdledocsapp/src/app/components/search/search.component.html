@@ -22,8 +22,8 @@
 </mat-tab-group>
 <mat-action-list>
   <mat-list-item *ngFor="let madmp of madmpDisplayList" routerLink="/details/{{madmp.docId}}" style="cursor:pointer">
-    Title: {{madmp.madmp['dmp']['title']}}
-    Identifier: {{madmp.madmp['dmp_id']['identifier']}}
-    Author: {{madmp.madmp['dmp']['contact']['name']}}
+    Title: {{madmp.madmp['dmp_title']}}
+    Identifier: {{madmp.madmp['dmp_id_identifier']}}
+    Author: {{madmp.madmp['dmp_contact_name']}}
   </mat-list-item>
 </mat-action-list>

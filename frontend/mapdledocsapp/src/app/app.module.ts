@@ -28,6 +28,11 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ToastrModule } from 'ngx-toastr';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {MatSelectModule} from "@angular/material/select";
+import { TreeviewModule } from 'ngx-treeview';
+
 import {MatRadioModule} from "@angular/material/radio";
 import {MatNativeDateModule} from "@angular/material/core";
 
@@ -66,6 +71,10 @@ import {MatNativeDateModule} from "@angular/material/core";
     MatDatepickerModule,
     MatCheckboxModule,
     MatNativeDateModule
+    MatProgressSpinnerModule,
+    MatGridListModule,
+    MatSelectModule,
+    TreeviewModule.forRoot()
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

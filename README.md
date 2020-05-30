@@ -67,4 +67,4 @@ The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tu
 
 # License
 - https://choosealicense.com/licenses/mit/
-- [MIT](https://github.com/lucasberent/mapleDocs/blob/master/backend/LICENSE)
+- [MIT](https://github.com/lucasberent/mapleDocs/blob/master/LICENSE)

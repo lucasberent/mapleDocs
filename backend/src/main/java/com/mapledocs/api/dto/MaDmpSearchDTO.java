@@ -8,19 +8,5 @@ import java.util.List;
 
 @Data
 public class MaDmpSearchDTO {
-    public MaDmpSearchDTO(String json) {
-        this();
-    }
-
-    public MaDmpSearchDTO() {
-
-    }
-
-    @NotNull
-    @NotEmpty
-    private String json;
-    private Long userId;
-    private String docId;
-
-    private List<String> fieldsToHide;
+    private List<String> docIds;
 }

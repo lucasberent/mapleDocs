@@ -19,7 +19,7 @@ We have built a highly scalable and modern system that allows users to:
 - [Angular](https://angular.io/) and material design for a modern and flexible UX
 
 # Prerequisites
-- In order to assign dois to maDMPs at upload, we have integrated the DataCite API, hence if one wants to use this feature a Datacite account is necessary. In order to configure the account refer to Chapter *Configuration*.
+- In order to assign dois to maDMPs at upload, we have integrated the DataCite API, hence if one wants to use this feature a Datacite account is necessary. In order to configure the account refer to Chapter *Configuration*. Warning: the datacite API proved to be unreliable, often returing 503 and timing out for hours.
 
 # Configuration
 The application assigns new dois to maDMPs that do not have one yet at upload time. In order to do that we have integrated the datacite API. The respective configuration has to be done in a .properties file: "auth.properties" in the same directory as the application.properties file. The needed properties are: 
@@ -31,20 +31,24 @@ Once an according file is created and the properties are set accordingly, the ap
 
 # Installation and Running the project 
 ## Backend (Application Server)
-First, make sure max_map_count is at least 262144, otherwise set it with: ´sudo sysctl -w vm.max_map_count=262144´. If it is
+First, make sure max_map_count is at least 262144, otherwise set it with: `sudo sysctl -w vm.max_map_count=262144`. If it is
 less, the elasticsearch service might fail.
  
- * Build the spring application: run ´mvn -Dmaven.test.skip=true package´ in backend/
+ * Build the spring application (in backend/): `mvn -Dmaven.test.skip=true package`
  
- * Build the docker container: run run ´docker build -t mapledocs-app:latest .´
+ * Build the docker container: `docker build -t mapledocs-app:latest .` (might need to run as root)
  
- * Run the services with docker-compose: ´docker-compose up´
+ * Run the services with docker-compose: `docker-compose up` (might need to run as root)
 
-Alternatively, just use the script ´build_and_run.sh´
+Alternatively, just use the script `build_and_run.sh`
 
 ## Frontend
 
 In frontend/, run `npm install` and `npm start` to start the development server
+
+## Importing maDMPs from the Zenodo community
+
+The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tuw-dmps-ds-2020) can be downloaded using a simple [python script](https://github.com/lucasberent/mapleDocs/blob/master/backend/import_data.py), which fetches all DMPs using the Zenodo API, authenticates with mapleDocs and automatically uploads all of them. Warning: the Zenodo API is also unreliable, hence downloading might fail.
 
 # Examples and Screencasts
 

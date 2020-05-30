@@ -11,6 +11,8 @@ import com.mapledocs.dao.UserRepository;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ public class MaDmpService {
     private final UserRepository userRepository;
     private final DoiService doiService;
     private final DoiServiceAuthProperties doiServiceAuthProperties;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpService.class);
 
     @Transactional
     public String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException {
@@ -49,7 +52,8 @@ public class MaDmpService {
         try {
             doi = this.doiService.getNewDoi(buildDoiRequestDto());
         } catch (DoiServiceException e) {
-            throw new MaDmpServiceCreationException("Cannot create doi for maDmp, failed with exception: " + e.getMessage());
+            // alternatively the creation process can be failed here with an CreationException
+            LOGGER.error("Error getting new doi from doi service {}, continuing with doi set to null", e.getMessage());
         }
         Map<String, String> dmpId = new HashMap<>();
         dmpId.put("identifier", doi);

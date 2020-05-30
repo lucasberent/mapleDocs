@@ -31,20 +31,24 @@ Once an according file is created and the properties are set accordingly, the ap
 
 # Installation and Running the project 
 ## Backend (Application Server)
-First, make sure max_map_count is at least 262144, otherwise set it with: ´sudo sysctl -w vm.max_map_count=262144´. If it is
+First, make sure max_map_count is at least 262144, otherwise set it with: `sudo sysctl -w vm.max_map_count=262144`. If it is
 less, the elasticsearch service might fail.
  
- * Build the spring application: run ´mvn -Dmaven.test.skip=true package´ in backend/
+ * Build the spring application: run `mvn -Dmaven.test.skip=true package` in backend/
  
- * Build the docker container: run run ´docker build -t mapledocs-app:latest .´
+ * Build the docker container: run run `docker build -t mapledocs-app:latest .`
  
- * Run the services with docker-compose: ´docker-compose up´
+ * Run the services with docker-compose: `docker-compose up`
 
-Alternatively, just use the script ´build_and_run.sh´
+Alternatively, just use the script `build_and_run.sh`
 
 ## Frontend
 
 In frontend/, run `npm install` and `npm start` to start the development server
+
+## Importing all maDMPs from the Zenodo community
+
+The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tuw-dmps-ds-2020) can be downloaded using a simple [python script](https://github.com/lucasberent/mapleDocs/blob/master/backend/import_data.py), which fetches all DMPs using the Zenodo API, authenticates with mapleDocs and automatically uploads all of them.
 
 # Examples and Screencasts
 

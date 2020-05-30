@@ -13,13 +13,18 @@ interface Explanation {
   details: Explanation[];
 }
 
+interface Total {
+  value: number;
+  relation: string;
+}
+
 export interface SearchResponse<T> {
   took: number;
   timed_out: boolean;
   _scroll_id?: string;
   _shards: ShardsResponse;
   hits: {
-    total: number;
+    total: Total;
     max_score: number;
     hits: Array<{
       _index: string;

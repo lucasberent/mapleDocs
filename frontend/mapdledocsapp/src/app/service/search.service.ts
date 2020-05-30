@@ -20,7 +20,7 @@ export class SearchService {
 
   findMaDmps(searchString: string, page: number, size: number): Observable<SearchResponse<any>> {
     return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
-      from: page,
+      from: page * size,
       size: size,
       query: {
         multi_match : {
@@ -47,7 +47,7 @@ export class SearchService {
   findMaDmpsCustomField(field: string, searchString: string, page: number, size: number): Observable<SearchResponse<any>> {
     const searchField = "dmp_" + field.replace('.', '_');
     return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
-      from: page,
+      from: page * size,
       size: size,
       query: {
         multi_match : {
@@ -114,7 +114,7 @@ export class SearchService {
     }
 
     return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
-      from: page,
+      from: page * size,
       size: size,
       query: {
         bool: {

@@ -22,3 +22,34 @@ mat-radio-button {
 .mat-form-field {
   margin-left: 20px;
 }
+
+.search-input {
+  padding-top: 20px;
+}
+
+.mat-paginator {
+  background-color: rgba(0,0,0,0);
+}
+
+.dmp-list-item {
+  margin-top: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  background-color: rgb(255, 255, 255);
+
+  .dmp-title {
+    display: block;
+    font-size: 20px;
+    color: mat-color($mat-deep-purple, 800);
+  }
+
+  .dmp-details {
+    margin-top: 10px;
+
+    span {
+      display: block;
+    }
+  }
+
+}

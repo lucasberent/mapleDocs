@@ -32,9 +32,9 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatSelectModule} from "@angular/material/select";
 import { TreeviewModule } from 'ngx-treeview';
-
 import {MatRadioModule} from "@angular/material/radio";
 import {MatNativeDateModule} from "@angular/material/core";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -74,7 +74,8 @@ import {MatNativeDateModule} from "@angular/material/core";
     MatProgressSpinnerModule,
     MatGridListModule,
     MatSelectModule,
-    TreeviewModule.forRoot()
+    TreeviewModule.forRoot(),
+    MatPaginatorModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

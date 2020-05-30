@@ -1,29 +1,28 @@
 <mat-toolbar class="sub-toolbar">
   <span class="title">Search maDMPs</span>
 </mat-toolbar>
-<mat-tab-group (selectedTabChange)="onSelectedTabChange()">
+<mat-tab-group (selectedTabChange)="onSelectedTabChange()" #tabGroup>
   <mat-tab label="Full-Text Search">
-    <div>
-      <div>
-        <mat-form-field appearance="outline">
+    <div class="search-input">
+        <mat-form-field class="full-text-search-field" appearance="outline">
           <input
             type="text"
             placeholder="Enter search terms"
             matInput #searchBox
-            [ngModel]="searchBoxValue"
-            (keyup.enter)="onEnter(searchBox.value)"
-            (keyup)="doSearch(searchBox.value)"/>
+            [(ngModel)]="searchBoxValue"
+            (keyup.enter)="doSearch()"
+            (keyup)="doSearch()"/>
         </mat-form-field>
-      </div>
     </div>
   </mat-tab>
   <mat-tab label="Combine Search Conditions">
+    <div class="search-input">
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>Ethical Issues</mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-radio-group #ethicalIssues [(ngModel)]="ethicalIssuesValue" (change)="doSearchCombined()">
+        <mat-radio-group #ethicalIssues [(ngModel)]="ethicalIssuesValue" (change)="doSearch()">
           <mat-radio-button value="no">
             no
           </mat-radio-button>
@@ -43,13 +42,13 @@
       <div class="datepickers">
       <mat-form-field>
         <mat-label>From</mat-label>
-        <input matInput [matDatepicker]="creationFrom" [(ngModel)]="creationFromDate" (dateChange)="doSearchCombined()">
+        <input matInput [matDatepicker]="creationFrom" [(ngModel)]="creationFromDate" (dateChange)="doSearch()">
         <mat-datepicker-toggle matSuffix [for]="creationFrom"></mat-datepicker-toggle>
         <mat-datepicker #creationFrom></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
         <mat-label>To</mat-label>
-        <input matInput [matDatepicker]="creationTo" [(ngModel)]="creationToDate" (dateChange)="doSearchCombined()">
+        <input matInput [matDatepicker]="creationTo" [(ngModel)]="creationToDate" (dateChange)="doSearch()">
         <mat-datepicker-toggle matSuffix [for]="creationTo"></mat-datepicker-toggle>
         <mat-datepicker #creationTo></mat-datepicker>
       </mat-form-field>
@@ -63,44 +62,54 @@
       <div class="datepickers">
       <mat-form-field>
         <mat-label>From</mat-label>
-        <input matInput [matDatepicker]= "modificationFrom" [(ngModel)]="modificationFromDate" (dateChange)="doSearchCombined()">
+        <input matInput [matDatepicker]= "modificationFrom" [(ngModel)]="modificationFromDate" (dateChange)="doSearch()">
         <mat-datepicker-toggle matSuffix [for]="modificationFrom"></mat-datepicker-toggle>
         <mat-datepicker #modificationFrom></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
         <mat-label>To</mat-label>
-        <input matInput [matDatepicker]="modificationTo" [(ngModel)]="modificationToDate" (dateChange)="doSearchCombined()">
+        <input matInput [matDatepicker]="modificationTo" [(ngModel)]="modificationToDate" (dateChange)="doSearch()">
         <mat-datepicker-toggle matSuffix [for]="modificationTo"></mat-datepicker-toggle>
         <mat-datepicker #modificationTo></mat-datepicker>
       </mat-form-field>
       </div>
     </mat-expansion-panel>
+    </div>
   </mat-tab>
   <mat-tab label="Search specific JSON fields" class="custom-search">
+    <div class="search-input">
     <mat-form-field appearance="outline">
       <input
         type="text"
         placeholder="Field (e.g. contact.name)"
         matInput #fieldInput
-        [ngModel]="fieldInputValue"
-        (keyup.enter)="onEnterCustom(fieldInput.value, valueInput.value)"
-        (keyup)="doSearchCustom(fieldInput.value, valueInput.value)"/>
+        [(ngModel)]="fieldInputValue"
+        (keyup.enter)="doSearch()"
+        (keyup)="doSearch()"/>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <input
         type="text"
         placeholder="Enter search terms"
         matInput #valueInput
-        [ngModel]="valueInputValue"
-        (keyup.enter)="onEnterCustom(fieldInput.value, valueInput.value)"
-        (keyup)="doSearchCustom(fieldInput.value, valueInput.value)"/>
+        [(ngModel)]="valueInputValue"
+        (keyup.enter)="doSearch()"
+        (keyup)="doSearch()"/>
     </mat-form-field>
+    </div>
   </mat-tab>
 </mat-tab-group>
-<mat-action-list>
-  <mat-list-item *ngFor="let madmp of madmpDisplayList" routerLink="/details/{{madmp.docId}}" style="cursor:pointer">
-    Title: {{madmp.madmp['dmp_title']}}
-    Identifier: {{madmp.madmp['dmp_id_identifier']}}
-    Author: {{madmp.madmp['dmp_contact_name']}}
+<mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+               (page)="pageChanged($event)"></mat-paginator>
+<mat-action-list align="left">
+  <mat-divider></mat-divider>
+  <mat-list-item *ngFor="let madmp of madmpDisplayList" routerLink="/details/{{madmp.docId}}" style="cursor:pointer"
+                 class="dmp-list-item">
+    <span matLine class="dmp-title">{{madmp.madmp['dmp_title']}}</span>
+    <div matLine class="dmp-details">
+      <span class="dmp-identifier">Identifier: {{madmp.madmp['dmp_id_identifier']}}</span>
+      <span class="dmp-author">Author: {{madmp.madmp['dmp_contact_name']}}</span>
+    </div>
   </mat-list-item>
+  <mat-divider></mat-divider>
 </mat-action-list>

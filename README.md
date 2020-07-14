@@ -52,10 +52,10 @@ The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tu
 
 # Examples and Screencasts
 
-## Login
-## Upload
-## Search
-## View & Download
+## Login & Overview
+[screencast](https://youtu.be/LkV8qi128ws)
+## Upload, Download & Search
+[screencast](https://youtu.be/SuS9FClZrCI)
 
 # Resources
 ## Schema and maDMPs
@@ -67,4 +67,4 @@ The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tu
 
 # License
 - https://choosealicense.com/licenses/mit/
-- [MIT](https://github.com/lucasberent/mapleDocs/blob/master/backend/LICENSE)
+- [MIT](https://github.com/lucasberent/mapleDocs/blob/master/LICENSE)

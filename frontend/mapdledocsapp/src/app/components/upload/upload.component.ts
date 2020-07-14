@@ -5,9 +5,9 @@ import {UploadService} from '../../service/upload.service';
 import {HttpClient} from '@angular/common/http';
 import {CreateMaDmpDto} from '../../dto/create-madmp-dto';
 import {ToastrService} from 'ngx-toastr';
-import {FormControl} from "@angular/forms";
-import {getMatIconFailedToSanitizeLiteralError} from "@angular/material/icon";
-import {TreeviewItem} from "ngx-treeview";
+import {FormControl} from '@angular/forms';
+import {AssignNewDoiDialogComponentComponent} from '../assign-new-dio-dialog-component/assign-new-doi-dialog-component.component';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 
 // @ts-ignore
 const Ajv = require('ajv');
@@ -28,11 +28,13 @@ export class UploadComponent implements OnInit {
   uploading: boolean = false;
   madmpFields: any[];
   selectedFieldsToHide: string[] = [];
+  assignNewDoi: boolean = false;
 
   constructor(private uploadService: UploadService,
               private httpClient: HttpClient,
               private router: Router,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class UploadComponent implements OnInit {
   handleFileInput(files) {
     const fileToUpload = files.item(0);
     if (!fileToUpload || !files) {
-      console.log('no file selected')
+      console.log('no file selected');
       this.resetInputs();
     }
     if (!fileToUpload.name.endsWith('.json')) {
@@ -59,7 +61,7 @@ export class UploadComponent implements OnInit {
         this.resetInputs();
       } else {
         console.log('maDmp validated successfully against schema version 1.0');
-        this.madmpToCreate = new CreateMaDmpDto(contents, []);
+        this.madmpToCreate = new CreateMaDmpDto(contents, [], this.assignNewDoi);
         this.madmpShowJson = JSON.parse(this.madmpToCreate.json);
         this.madmpFields = Object.keys(this.madmpShowJson['dmp']);
       }
@@ -67,11 +69,35 @@ export class UploadComponent implements OnInit {
   }
 
   handleUpload() {
-    this.uploading = true;
-    this.madmpToCreate.fieldsToHide = this.selectedFieldsToHide;
-    this.upload(this.madmpToCreate);
-    this.uploading = false;
-    this.resetInputs();
+    if (!this.madmpShowJson) {
+      this.toastr.info('no maDMP selected');
+      this.resetInputs();
+      return;
+    }
+    if (!this.madmpShowJson['dmp'].hasOwnProperty('dmp_id')) {
+      this.openDialog().subscribe(data => {
+        console.log('Dialog decision:', data);
+        if (data == null) {
+          this.toastr.info('Upload cancelled');
+          return;
+        } else {
+          this.madmpToCreate.assignNewDoi = data;
+          this.uploadMaDmpToCreate();
+        }
+      });
+    } else {
+      this.uploadMaDmpToCreate();
+    }
+  }
+
+  openDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+
+    const dialogRef = this.dialog.open(AssignNewDoiDialogComponentComponent, dialogConfig);
+
+    return dialogRef.afterClosed();
   }
 
   resetInputs() {
@@ -84,7 +110,7 @@ export class UploadComponent implements OnInit {
 
   handleUpdateFieldsToHide(fieldNames: string[]) {
     if (fieldNames) {
-      this.selectedFieldsToHide = fieldNames
+      this.selectedFieldsToHide = fieldNames;
       fieldNames.forEach((field) => {
         delete this.madmpShowJson['dmp'][field];
       });
@@ -92,20 +118,28 @@ export class UploadComponent implements OnInit {
     }
   }
 
-  upload(createMaDmpDto: CreateMaDmpDto) {
-    if (!createMaDmpDto) {
+  uploadMaDmpToCreate() {
+    if (!this.madmpToCreate) {
       console.log('no file chosen');
       this.toastr.error('no file chosen, select .json to upload');
+      this.resetInputs();
       return;
     }
-    this.uploadService.uploadMaDmp(createMaDmpDto)
+    this.uploading = true;
+    this.madmpToCreate.fieldsToHide = this.selectedFieldsToHide;
+    console.log('uploading madmp:');
+    console.log(this.madmpToCreate);
+    this.uploadService.uploadMaDmp(this.madmpToCreate)
       .subscribe(dmpId => {
-        this.toastr.success('upload successful')
+        this.toastr.success('upload successful');
+        this.uploading = false;
       });
+    this.resetInputs();
   }
 
   onClearSelection() {
     this.resetInputs();
+    this.toastr.info('Cleared selection');
   }
 
   isUploading() {

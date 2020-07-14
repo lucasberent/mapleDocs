@@ -54,7 +54,7 @@ public class MaDmpService {
             throw new MaDmpServiceCreationException("JSON invalid");
         }
 
-        if (parsed.getDmp().get("dmp_id") == null) {
+        if (parsed.getDmp().get("dmp_id") == null && maDmpDTO.getAssignNewDoi()) {
             this.assignNewDoiToMaDmp(parsed);
         }
 

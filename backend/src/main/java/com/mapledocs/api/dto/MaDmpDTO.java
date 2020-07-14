@@ -23,6 +23,7 @@ public class MaDmpDTO {
     private String json;
     private Long userId;
     private String docId;
+    private Boolean assignNewDoi;
 
     private List<String> fieldsToHide;
 }

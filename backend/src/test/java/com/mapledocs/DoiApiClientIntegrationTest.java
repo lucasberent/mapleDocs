@@ -38,6 +38,6 @@ class DoiApiClientIntegrationTest {
 
         DoiResponseDTO response = doiApiClient.getNewDoi(doiRequestDTO);
         assertThat(response).isNotNull();
-        assertThat(response.getResponsePayload()).contains("id");
+        assertThat(response.getData().containsKey("id"));
     }
 }

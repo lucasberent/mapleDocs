@@ -1,6 +1,7 @@
 package com.mapledocs.service;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.mapledocs.api.dto.GetDoiRequestDTO;
 import com.mapledocs.api.dto.MaDmpDTO;
 import com.mapledocs.api.dto.MaDmpSearchDTO;
@@ -10,6 +11,7 @@ import com.mapledocs.dao.MaDmpRepository;
 import com.mapledocs.dao.UserRepository;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.SecurityUtils;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,23 +33,37 @@ public class MaDmpService {
     private final DoiServiceAuthProperties doiServiceAuthProperties;
     private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpService.class);
 
+    @Data
+    private class MaDMPJson {
+        private Map<String, Object> dmp;
+        private List<String> fieldsToHide;
+    }
+
     @Transactional
     public String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException {
         if (maDmpDTO == null || maDmpDTO.getJson() == null || maDmpDTO.getJson().isEmpty()) {
             throw new ValidationException("json empty");
         }
+
         AppUser currUser = this.getCurrentUserOrNotLoggedIn();
         maDmpDTO.setUserId(currUser.getId());
-        Map<String, Object> parsed = new GsonJsonParser().parseMap(maDmpDTO.getJson());
-        if (parsed.get("dmp_id") == null) {
+
+        MaDMPJson parsed = new Gson().fromJson(maDmpDTO.getJson(), MaDMPJson.class);
+
+        if (parsed.getDmp() == null) {
+            throw new MaDmpServiceCreationException("JSON invalid");
+        }
+
+        if (parsed.getDmp().get("dmp_id") == null) {
             this.assignNewDoiToMaDmp(parsed);
         }
-        parsed.put("fieldsToHide", maDmpDTO.getFieldsToHide());
+
+        parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
         maDmpDTO.setJson(new Gson().toJson(parsed));
         return this.maDmpRepository.saveMaDmp(maDmpDTO);
     }
 
-    private void assignNewDoiToMaDmp(Map<String, Object> maDmp) {
+    private void assignNewDoiToMaDmp(MaDMPJson maDmp) {
         String doi = null;
         try {
             doi = this.doiService.getNewDoi(buildDoiRequestDto());
@@ -58,7 +74,7 @@ public class MaDmpService {
         Map<String, String> dmpId = new HashMap<>();
         dmpId.put("identifier", doi);
         dmpId.put("type", "doi");
-        maDmp.put("dmp_id", dmpId);
+        maDmp.getDmp().put("dmp_id", dmpId);
     }
 
     private GetDoiRequestDTO buildDoiRequestDto() {

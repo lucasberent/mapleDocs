@@ -36,7 +36,7 @@ class ZenodoApiClientIntegrationTest {
         DoiServiceAuthenticateDTO authenticateDTO =
                 new DoiServiceAuthenticateDTO("testuser", "testpw", "10.0");
 
-        DoiResponseDTO response = zenodoApiClient.getNewDoi(doiRequestDTO, authenticateDTO);
+        DoiResponseDTO response = zenodoApiClient.getNewDoi(authenticateDTO);
         assertThat(response).isNotNull();
         assertThat(response.getData().containsKey("id"));
     }

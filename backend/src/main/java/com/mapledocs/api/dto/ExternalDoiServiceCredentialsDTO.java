@@ -7,13 +7,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class RegisterDTO {
+public class ExternalDoiServiceCredentialsDTO {
     @NotNull
     @NotEmpty
-    @Length(min = 5)
-    private String login;
+    private String username;
     @NotNull
     @NotEmpty
-    @Length(min = 8)
-    private String password;
+    private String doiPrefix;
 }

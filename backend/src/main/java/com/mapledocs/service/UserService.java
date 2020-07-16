@@ -1,8 +1,10 @@
 package com.mapledocs.service;
 
+import com.mapledocs.api.dto.ExternalDoiServiceCredentialsDTO;
 import com.mapledocs.api.dto.RegisterDTO;
 import com.mapledocs.dao.UserRepository;
 import com.mapledocs.domain.AppUser;
+import com.mapledocs.domain.ExternalDoiServiceCredentials;
 import com.mapledocs.domain.UserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -40,8 +41,17 @@ public class UserService {
     private void requireNotNullOrEmpty(final RegisterDTO registerDTO) {
         if (registerDTO == null || StringUtils.isEmpty(registerDTO.getLogin()) ||
                 StringUtils.isEmpty(registerDTO.getPassword()) ||
-                StringUtils.isAllBlank(registerDTO.getLogin()) || StringUtils.isBlank(registerDTO.getPassword())) {
+                StringUtils.isAllBlank(registerDTO.getLogin()) ||
+                StringUtils.isBlank(registerDTO.getPassword())) {
             throw new ValidationException("DTO fields missing");
+        }
+
+        ExternalDoiServiceCredentialsDTO doiServiceCredentialsDTO = registerDTO.getExternalDoiServiceCredentialsDTO();
+        if (doiServiceCredentialsDTO != null) {
+            if (StringUtils.isEmpty(doiServiceCredentialsDTO.getDoiPrefix()) ||
+                    StringUtils.isEmpty(doiServiceCredentialsDTO.getUsername())) {
+                throw new ValidationException("Doi Service Credentials are missing");
+            }
         }
     }
 
@@ -57,6 +67,13 @@ public class UserService {
         user.setLogin(registerDTO.getLogin());
         user.setRole(UserRole.ROLE_USER);
         user.setPassword(new BCryptPasswordEncoder().encode(registerDTO.getPassword()));
+        ExternalDoiServiceCredentialsDTO doiServiceCredentialsDTO = registerDTO.getExternalDoiServiceCredentialsDTO();
+        if (doiServiceCredentialsDTO != null) {
+            ExternalDoiServiceCredentials externalDoiServiceCredentials = new ExternalDoiServiceCredentials();
+            externalDoiServiceCredentials.setUsername(registerDTO.getExternalDoiServiceCredentialsDTO().getUsername());
+            externalDoiServiceCredentials.setDoiPrefix(registerDTO.getExternalDoiServiceCredentialsDTO().getDoiPrefix());
+            user.setExternalDoiServiceCredentials(externalDoiServiceCredentials);
+        }
         return user;
     }
 }

@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../service/auth.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoginDTO} from '../../dto/login-dto';
 import {first} from 'rxjs/operators';
 import {ToastrService} from "ngx-toastr";
+import {RegisterDto} from "../../dto/register-dto";
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,7 @@ export class RegisterComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthService,
-    private toastrService:ToastrService
+    private toastrService: ToastrService
   ) {
     if (this.authenticationService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
@@ -32,8 +33,10 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
+      password: ['', Validators.required],
+      doiServiceUsername: [],
+      doiServiceDoiPrefix: []
+    }, IfOneBothFilledOutValidator);
   }
 
   // convenience getter for easy access to form fields
@@ -48,8 +51,14 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+
     this.loading = true;
-    this.authenticationService.register(new LoginDTO(this.f.username.value, this.f.password.value))
+    this.authenticationService.register(
+      new RegisterDto(
+        this.f.username.value,
+        this.f.password.value,
+        this.f.doiServiceUsername.value,
+        this.f.doiServiceDoiPrefix.value))
       .pipe(first())
       .subscribe(
         data => {
@@ -62,3 +71,25 @@ export class RegisterComponent implements OnInit {
         });
   }
 }
+
+export const IfOneBothFilledOutValidator = (): ValidatorFn => {
+
+  return (group: FormGroup): { [key: string]: boolean } => {
+
+    let username;
+    let doiPrefix;
+
+    if (group.controls.hasOwnProperty('doiServiceUsername')) {
+      username = group.controls.doiServiceUsername;
+    }
+    if (group.controls.hasOwnProperty('doiServiceDoiPrefix')) {
+      doiPrefix = group.controls.doiServiceDoiPrefix;
+    }
+
+    if ((!!username && doiPrefix) || (!!doiPrefix && username)) {
+      return {ifOneBothFilledOut: false};
+    } else {
+      return {ifOneBothFilledOut: true};
+    }
+  };
+};

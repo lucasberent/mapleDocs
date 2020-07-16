@@ -20,4 +20,7 @@ public class AppUser {
     @NotNull
     @Column(name = "login")
     private String login;
+
+    @OneToOne
+    private ExternalDoiServiceCredentials externalDoiServiceCredentials;
 }

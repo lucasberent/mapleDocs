@@ -1,7 +1,7 @@
 package com.mapledocs.dao;
 
-import com.mapledocs.api.dto.MaDmpDTO;
-import com.mapledocs.api.dto.MaDmpSearchDTO;
+import com.mapledocs.api.dto.core.MaDmpDTO;
+import com.mapledocs.api.dto.core.MaDmpSearchDTO;
 import com.mapledocs.api.exception.NotFoundException;
 import com.mapledocs.util.Constants;
 import com.mongodb.client.MongoCollection;

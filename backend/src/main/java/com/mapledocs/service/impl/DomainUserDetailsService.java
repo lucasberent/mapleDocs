@@ -1,4 +1,4 @@
-package com.mapledocs.service;
+package com.mapledocs.service.impl;
 
 import com.mapledocs.dao.UserRepository;
 import com.mapledocs.domain.AppUser;

@@ -1,4 +1,4 @@
-package com.mapledocs.api.dto;
+package com.mapledocs.api.dto.external;
 
 import lombok.Data;
 

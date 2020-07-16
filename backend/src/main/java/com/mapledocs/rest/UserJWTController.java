@@ -1,13 +1,13 @@
 package com.mapledocs.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mapledocs.api.dto.LoginDTO;
+import com.mapledocs.api.dto.core.LoginDTO;
 import com.mapledocs.api.exception.NotFoundException;
 import com.mapledocs.api.exception.UnauthorizedException;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.jwt.JWTFilter;
 import com.mapledocs.security.jwt.TokenProvider;
-import com.mapledocs.service.UserService;
+import com.mapledocs.service.api.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

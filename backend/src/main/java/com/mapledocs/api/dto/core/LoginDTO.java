@@ -1,4 +1,4 @@
-package com.mapledocs.api.dto;
+package com.mapledocs.api.dto.core;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

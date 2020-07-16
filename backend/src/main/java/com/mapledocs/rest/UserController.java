@@ -1,7 +1,7 @@
 package com.mapledocs.rest;
 
-import com.mapledocs.api.dto.RegisterDTO;
-import com.mapledocs.service.UserService;
+import com.mapledocs.api.dto.core.RegisterDTO;
+import com.mapledocs.service.api.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

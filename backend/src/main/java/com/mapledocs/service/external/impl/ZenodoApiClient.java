@@ -1,9 +1,10 @@
-package com.mapledocs.service.doiApi;
+package com.mapledocs.service.external.impl;
 
-import com.mapledocs.api.dto.DoiResponseDTO;
-import com.mapledocs.api.dto.GetDoiRequestDTO;
-import com.mapledocs.api.dto.ZenodoCredentialsDTO;
-import com.mapledocs.config.DoiServiceAuthProperties;
+import com.mapledocs.api.dto.external.DoiResponseDTO;
+import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
+import com.mapledocs.api.dto.external.GetDoiRequestDTO;
+import com.mapledocs.service.external.api.DoiApiClient;
+import com.mapledocs.service.external.exception.DoiApiClientException;
 import com.mapledocs.util.Constants;
 import lombok.RequiredArgsConstructor;
 import org.bson.internal.Base64;
@@ -22,12 +23,12 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class DoiApiClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DoiApiClient.class);
+public class ZenodoApiClient implements DoiApiClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZenodoApiClient.class);
 
     public DoiResponseDTO getNewDoi(final GetDoiRequestDTO getDoiRequestDTO,
-                                    final ZenodoCredentialsDTO zenodoCredentialsDTO) throws DoiApiClientException {
-        HttpHeaders headers = this.buildBasicHeaders(zenodoCredentialsDTO);
+                                    final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) throws DoiApiClientException {
+        HttpHeaders headers = this.buildBasicHeaders(doiServiceAuthenticateDTO);
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(getDoiRequestDTO.getPayload(), headers);
         return this.doCreateDoiRequest(request);
     }
@@ -48,9 +49,9 @@ public class DoiApiClient {
         }
     }
 
-    private HttpHeaders buildBasicHeaders(final ZenodoCredentialsDTO zenodoCredentialsDTO) {
+    private HttpHeaders buildBasicHeaders(final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) {
         HttpHeaders headers = new HttpHeaders();
-        String authString = zenodoCredentialsDTO.getUsername() + ":" + zenodoCredentialsDTO.getPassword();
+        String authString = doiServiceAuthenticateDTO.getUsername() + ":" + doiServiceAuthenticateDTO.getPassword();
         String encoding = Base64.encode(authString.getBytes());
         headers.set("Authorization", "Basic " + encoding);
         headers.set("Content-Type", "application/vnd.api+json");

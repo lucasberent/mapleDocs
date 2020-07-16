@@ -1,22 +1,21 @@
-package com.mapledocs.service;
+package com.mapledocs.service.impl;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-import com.mapledocs.api.dto.GetDoiRequestDTO;
-import com.mapledocs.api.dto.MaDmpDTO;
-import com.mapledocs.api.dto.MaDmpSearchDTO;
-import com.mapledocs.api.dto.ZenodoCredentialsDTO;
+import com.mapledocs.api.dto.core.MaDmpDTO;
+import com.mapledocs.api.dto.core.MaDmpSearchDTO;
+import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
+import com.mapledocs.api.dto.external.GetDoiRequestDTO;
 import com.mapledocs.api.exception.*;
-import com.mapledocs.config.DoiServiceAuthProperties;
 import com.mapledocs.dao.MaDmpRepository;
 import com.mapledocs.dao.UserRepository;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.SecurityUtils;
+import com.mapledocs.service.api.DoiService;
+import com.mapledocs.service.api.MaDmpService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,15 +26,14 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class MaDmpService {
+public class MaDmpServiceImpl implements MaDmpService {
     private final MaDmpRepository maDmpRepository;
     private final UserRepository userRepository;
     private final DoiService doiService;
-    private final DoiServiceAuthProperties doiServiceAuthProperties;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpServiceImpl.class);
 
     @Data
-    private class MaDMPJson {
+    private static class MaDMPJson {
         private Map<String, Object> dmp;
         private List<String> fieldsToHide;
     }
@@ -56,12 +54,12 @@ public class MaDmpService {
         }
 
         if (parsed.getDmp().get("dmp_id") == null && maDmpDTO.getAssignNewDoi()) {
-            if (maDmpDTO.getDoiServicePassword() == null){
+            if (maDmpDTO.getDoiServicePassword() == null) {
                 throw new ValidationException("Password for doi service is empty");
             }
             this.assignNewDoiToMaDmp(parsed,
-                    new ZenodoCredentialsDTO(currUser.getExternalDoiServiceCredentials().getUsername(),
-                    maDmpDTO.getDoiServicePassword(), currUser.getExternalDoiServiceCredentials().getDoiPrefix()));
+                    new DoiServiceAuthenticateDTO(currUser.getExternalDoiServiceCredentials().getUsername(),
+                            maDmpDTO.getDoiServicePassword(), currUser.getExternalDoiServiceCredentials().getDoiPrefix()));
         }
 
         parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
@@ -69,10 +67,11 @@ public class MaDmpService {
         return this.maDmpRepository.saveMaDmp(maDmpDTO);
     }
 
-    private void assignNewDoiToMaDmp(MaDMPJson maDmp, final ZenodoCredentialsDTO zenodoCredentialsDTO) {
+    private void assignNewDoiToMaDmp(MaDMPJson maDmp, final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) {
         String doi = null;
         try {
-            doi = this.doiService.getNewDoi(buildDoiRequestDto(), zenodoCredentialsDTO);
+            doi = this.doiService.getNewDoi(buildDoiRequestDto(doiServiceAuthenticateDTO.getDoiPrefix()),
+                    doiServiceAuthenticateDTO);
         } catch (DoiServiceException e) {
             // alternatively the creation process can be failed here with an CreationException
             LOGGER.error("Error getting new doi from doi service {}, continuing with doi set to null", e.getMessage());
@@ -83,12 +82,12 @@ public class MaDmpService {
         maDmp.getDmp().put("dmp_id", dmpId);
     }
 
-    private GetDoiRequestDTO buildDoiRequestDto() {
+    private GetDoiRequestDTO buildDoiRequestDto(final String doiPrefix) {
         GetDoiRequestDTO result = new GetDoiRequestDTO();
         Map<String, Object> payload = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("prefix", doiServiceAuthProperties.getDoiPrefix());
+        attributes.put("prefix", doiPrefix);
         data.put("type", "dois");
         data.put("attributes", attributes);
         payload.put("data", data);

@@ -1,11 +1,12 @@
-package com.mapledocs.service;
+package com.mapledocs.service.impl;
 
-import com.mapledocs.api.dto.ExternalDoiServiceCredentialsDTO;
-import com.mapledocs.api.dto.RegisterDTO;
+import com.mapledocs.api.dto.core.ExternalDoiServiceCredentialsDTO;
+import com.mapledocs.api.dto.core.RegisterDTO;
 import com.mapledocs.dao.UserRepository;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.domain.ExternalDoiServiceCredentials;
 import com.mapledocs.domain.UserRole;
+import com.mapledocs.service.api.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -17,11 +18,11 @@ import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

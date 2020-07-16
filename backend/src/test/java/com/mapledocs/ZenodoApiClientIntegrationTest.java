@@ -1,10 +1,10 @@
 package com.mapledocs;
 
-import com.mapledocs.api.dto.DoiResponseDTO;
-import com.mapledocs.api.dto.GetDoiRequestDTO;
-import com.mapledocs.config.DoiServiceAuthProperties;
-import com.mapledocs.service.doiApi.DoiApiClient;
-import com.mapledocs.service.doiApi.DoiApiClientException;
+import com.mapledocs.api.dto.external.DoiResponseDTO;
+import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
+import com.mapledocs.api.dto.external.GetDoiRequestDTO;
+import com.mapledocs.service.external.exception.DoiApiClientException;
+import com.mapledocs.service.external.impl.ZenodoApiClient;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-class DoiApiClientIntegrationTest {
+class ZenodoApiClientIntegrationTest {
     @Autowired
-    private DoiApiClient doiApiClient;
-    @Autowired
-    private DoiServiceAuthProperties doiServiceAuthProperties;
+    private ZenodoApiClient zenodoApiClient;
 
     @Test
     public void testCreateDoiWithValidParams_shouldCreateDoi() throws DoiApiClientException {
@@ -30,13 +28,15 @@ class DoiApiClientIntegrationTest {
         Map<String, Object> payload = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("prefix", doiServiceAuthProperties.getDoiPrefix());
+        attributes.put("prefix", "10.0");
         data.put("type", "dois");
         data.put("attributes", attributes);
         payload.put("data", data);
         doiRequestDTO.setPayload(payload);
+        DoiServiceAuthenticateDTO authenticateDTO =
+                new DoiServiceAuthenticateDTO("testuser", "testpw", "10.0");
 
-        DoiResponseDTO response = doiApiClient.getNewDoi(doiRequestDTO);
+        DoiResponseDTO response = zenodoApiClient.getNewDoi(doiRequestDTO, authenticateDTO);
         assertThat(response).isNotNull();
         assertThat(response.getData().containsKey("id"));
     }

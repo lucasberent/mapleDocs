@@ -1,8 +1,8 @@
 package com.mapledocs.rest;
 
-import com.mapledocs.api.dto.MaDmpDTO;
-import com.mapledocs.api.dto.MaDmpSearchDTO;
-import com.mapledocs.service.MaDmpService;
+import com.mapledocs.api.dto.core.MaDmpDTO;
+import com.mapledocs.api.dto.core.MaDmpSearchDTO;
+import com.mapledocs.service.api.MaDmpService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 import java.util.List;
 
@@ -46,15 +45,13 @@ public class MaDmpController {
 
     @GetMapping("/details/{docId}")
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
-    public ResponseEntity<MaDmpDTO> findOneDmap(@PathVariable String docId) {
-        LOGGER.info("Finding one madmp");
-        return new ResponseEntity<>(this.maDmpService.findOne(docId), HttpStatus.OK);
+    public ResponseEntity<MaDmpDTO> findOneDmap(@PathVariable String docId) throws NoSuchMethodException {
+        throw new NoSuchMethodException();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
-    public ResponseEntity<MaDmpDTO> deleteMaDmp(@PathParam("id") String id) {
-        this.maDmpService.deleteMaDmp(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<MaDmpDTO> deleteMaDmp(@PathParam("id") String id) throws NoSuchMethodException {
+        throw new NoSuchMethodException();
     }
 }

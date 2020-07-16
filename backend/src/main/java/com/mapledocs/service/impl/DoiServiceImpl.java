@@ -1,12 +1,12 @@
-package com.mapledocs.service;
+package com.mapledocs.service.impl;
 
-import com.mapledocs.api.dto.DoiResponseDTO;
-import com.mapledocs.api.dto.GetDoiRequestDTO;
-import com.mapledocs.api.dto.ZenodoCredentialsDTO;
+import com.mapledocs.api.dto.external.DoiResponseDTO;
+import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
+import com.mapledocs.api.dto.external.GetDoiRequestDTO;
 import com.mapledocs.api.exception.DoiServiceException;
-import com.mapledocs.domain.ExternalDoiServiceCredentials;
-import com.mapledocs.service.doiApi.DoiApiClient;
-import com.mapledocs.service.doiApi.DoiApiClientException;
+import com.mapledocs.service.api.DoiService;
+import com.mapledocs.service.external.api.DoiApiClient;
+import com.mapledocs.service.external.exception.DoiApiClientException;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -14,27 +14,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Service
 @Getter
 @Setter
-public class DoiService {
-    private static final Logger LOG = LoggerFactory.getLogger(DoiService.class);
+public class DoiServiceImpl implements DoiService {
+    private static final Logger LOG = LoggerFactory.getLogger(DoiServiceImpl.class);
 
     private final DoiApiClient doiApiClient;
     private final GsonJsonParser parser;
 
-    public DoiService(final DoiApiClient doiApiClient) {
+    public DoiServiceImpl(final DoiApiClient doiApiClient) {
         this.parser = new GsonJsonParser();
         this.doiApiClient = doiApiClient;
     }
 
-    public String getNewDoi(final GetDoiRequestDTO getDoiRequestDTO, final ZenodoCredentialsDTO zenodoCredentialsDTO) throws DoiServiceException {
+    public String getNewDoi(final GetDoiRequestDTO getDoiRequestDTO,
+                            final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) throws DoiServiceException {
         String result = null;
-        DoiResponseDTO doiResponse = null;
+        DoiResponseDTO doiResponse;
         try {
-            doiResponse = this.doiApiClient.getNewDoi(getDoiRequestDTO, zenodoCredentialsDTO);
+            doiResponse = this.doiApiClient.getNewDoi(getDoiRequestDTO, doiServiceAuthenticateDTO);
             return this.getDoiStringFromJSONResponse(doiResponse);
         } catch (DoiApiClientException e) {
             throw new DoiServiceException(e.getMessage());
@@ -46,12 +45,10 @@ public class DoiService {
             Object id = doiResponse.getData().get("id");
             if (id instanceof String) {
                 return (String) doiResponse.getData().get("id");
-            }
-            else {
+            } else {
                 throw new DoiServiceException("Received payload does not contain doi");
             }
-        }
-        else {
+        } else {
             throw new DoiServiceException("Received Empty payload instead of created doi response");
         }
     }

@@ -1,4 +1,4 @@
-package com.mapledocs.api.dto;
+package com.mapledocs.api.dto.core;
 
 import com.mapledocs.domain.UserRole;
 import lombok.Data;

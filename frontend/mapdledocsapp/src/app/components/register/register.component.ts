@@ -86,7 +86,7 @@ export const IfOneBothFilledOutValidator = (): ValidatorFn => {
       doiPrefix = group.controls.doiServiceDoiPrefix;
     }
 
-    if ((!!username && doiPrefix) || (!!doiPrefix && username)) {
+    if ((!username && doiPrefix) || (!doiPrefix && username)) {
       return {ifOneBothFilledOut: false};
     } else {
       return {ifOneBothFilledOut: true};

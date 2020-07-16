@@ -1,9 +1,18 @@
 <h2 mat-dialog-title>No doi detected</h2>
 
-<mat-dialog-content>The maDMP you are about to upload does not have a doi assignend.
-  Do you want mapleDocs to assign a new doi automatically?</mat-dialog-content>
+<mat-dialog-content [formGroup]="form">
+  <div>The maDMP you are about to upload does not have a doi assignend.
+    If you want to assign a new DOI enter your Zenodo password and click yes
+  </div>
+  <mat-form-field>
+    <input matInput
+           placeholder="Zenodo Password"
+           formControlName="doiServicePassword">
+  </mat-form-field>
+</mat-dialog-content>
 
 <mat-dialog-actions>
+
   <button class="mat-raised-button" (click)="no()">No</button>
   <button class="mat-raised-button mat-primary" (click)="yes()">Yes</button>
   <button class="mat-raised-button" (click)="cancel()">Cancel upload</button>

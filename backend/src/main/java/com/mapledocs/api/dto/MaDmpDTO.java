@@ -24,6 +24,7 @@ public class MaDmpDTO {
     private Long userId;
     private String docId;
     private Boolean assignNewDoi;
+    private String doiServicePassword;
 
     private List<String> fieldsToHide;
 }

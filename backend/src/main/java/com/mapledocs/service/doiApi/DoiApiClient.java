@@ -2,6 +2,7 @@ package com.mapledocs.service.doiApi;
 
 import com.mapledocs.api.dto.DoiResponseDTO;
 import com.mapledocs.api.dto.GetDoiRequestDTO;
+import com.mapledocs.api.dto.ZenodoCredentialsDTO;
 import com.mapledocs.config.DoiServiceAuthProperties;
 import com.mapledocs.util.Constants;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DoiApiClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(DoiApiClient.class);
-    private final DoiServiceAuthProperties doiServiceAuthProperties;
 
-    public DoiResponseDTO getNewDoi(final GetDoiRequestDTO getDoiRequestDTO) throws DoiApiClientException {
-        HttpHeaders headers = this.buildBasicHeaders();
+    public DoiResponseDTO getNewDoi(final GetDoiRequestDTO getDoiRequestDTO,
+                                    final ZenodoCredentialsDTO zenodoCredentialsDTO) throws DoiApiClientException {
+        HttpHeaders headers = this.buildBasicHeaders(zenodoCredentialsDTO);
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(getDoiRequestDTO.getPayload(), headers);
         return this.doCreateDoiRequest(request);
     }
@@ -47,9 +48,9 @@ public class DoiApiClient {
         }
     }
 
-    private HttpHeaders buildBasicHeaders() {
+    private HttpHeaders buildBasicHeaders(final ZenodoCredentialsDTO zenodoCredentialsDTO) {
         HttpHeaders headers = new HttpHeaders();
-        String authString = doiServiceAuthProperties.getUsername() + ":" + doiServiceAuthProperties.getPassword();
+        String authString = zenodoCredentialsDTO.getUsername() + ":" + zenodoCredentialsDTO.getPassword();
         String encoding = Base64.encode(authString.getBytes());
         headers.set("Authorization", "Basic " + encoding);
         headers.set("Content-Type", "application/vnd.api+json");

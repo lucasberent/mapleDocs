@@ -2,7 +2,9 @@ package com.mapledocs.service;
 
 import com.mapledocs.api.dto.DoiResponseDTO;
 import com.mapledocs.api.dto.GetDoiRequestDTO;
+import com.mapledocs.api.dto.ZenodoCredentialsDTO;
 import com.mapledocs.api.exception.DoiServiceException;
+import com.mapledocs.domain.ExternalDoiServiceCredentials;
 import com.mapledocs.service.doiApi.DoiApiClient;
 import com.mapledocs.service.doiApi.DoiApiClientException;
 import lombok.Getter;
@@ -28,11 +30,11 @@ public class DoiService {
         this.doiApiClient = doiApiClient;
     }
 
-    public String getNewDoi(final GetDoiRequestDTO getDoiRequestDTO) throws DoiServiceException {
+    public String getNewDoi(final GetDoiRequestDTO getDoiRequestDTO, final ZenodoCredentialsDTO zenodoCredentialsDTO) throws DoiServiceException {
         String result = null;
         DoiResponseDTO doiResponse = null;
         try {
-            doiResponse = this.doiApiClient.getNewDoi(getDoiRequestDTO);
+            doiResponse = this.doiApiClient.getNewDoi(getDoiRequestDTO, zenodoCredentialsDTO);
             return this.getDoiStringFromJSONResponse(doiResponse);
         } catch (DoiApiClientException e) {
             throw new DoiServiceException(e.getMessage());

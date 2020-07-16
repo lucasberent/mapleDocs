@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.mapledocs.api.dto.GetDoiRequestDTO;
 import com.mapledocs.api.dto.MaDmpDTO;
 import com.mapledocs.api.dto.MaDmpSearchDTO;
+import com.mapledocs.api.dto.ZenodoCredentialsDTO;
 import com.mapledocs.api.exception.*;
 import com.mapledocs.config.DoiServiceAuthProperties;
 import com.mapledocs.dao.MaDmpRepository;
@@ -55,7 +56,12 @@ public class MaDmpService {
         }
 
         if (parsed.getDmp().get("dmp_id") == null && maDmpDTO.getAssignNewDoi()) {
-            this.assignNewDoiToMaDmp(parsed);
+            if (maDmpDTO.getDoiServicePassword() == null){
+                throw new ValidationException("Password for doi service is empty");
+            }
+            this.assignNewDoiToMaDmp(parsed,
+                    new ZenodoCredentialsDTO(currUser.getExternalDoiServiceCredentials().getUsername(),
+                    maDmpDTO.getDoiServicePassword(), currUser.getExternalDoiServiceCredentials().getDoiPrefix()));
         }
 
         parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
@@ -63,10 +69,10 @@ public class MaDmpService {
         return this.maDmpRepository.saveMaDmp(maDmpDTO);
     }
 
-    private void assignNewDoiToMaDmp(MaDMPJson maDmp) {
+    private void assignNewDoiToMaDmp(MaDMPJson maDmp, final ZenodoCredentialsDTO zenodoCredentialsDTO) {
         String doi = null;
         try {
-            doi = this.doiService.getNewDoi(buildDoiRequestDto());
+            doi = this.doiService.getNewDoi(buildDoiRequestDto(), zenodoCredentialsDTO);
         } catch (DoiServiceException e) {
             // alternatively the creation process can be failed here with an CreationException
             LOGGER.error("Error getting new doi from doi service {}, continuing with doi set to null", e.getMessage());

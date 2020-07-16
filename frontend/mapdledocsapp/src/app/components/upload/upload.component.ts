@@ -29,6 +29,7 @@ export class UploadComponent implements OnInit {
   madmpFields: any[];
   selectedFieldsToHide: string[] = [];
   assignNewDoi: boolean = false;
+  doiServicePassword: string;
 
   constructor(private uploadService: UploadService,
               private httpClient: HttpClient,
@@ -61,7 +62,7 @@ export class UploadComponent implements OnInit {
         this.resetInputs();
       } else {
         console.log('maDmp validated successfully against schema version 1.0');
-        this.madmpToCreate = new CreateMaDmpDto(contents, [], this.assignNewDoi);
+        this.madmpToCreate = new CreateMaDmpDto(contents, [], this.assignNewDoi, this.doiServicePassword);
         this.madmpShowJson = JSON.parse(this.madmpToCreate.json);
         this.madmpFields = Object.keys(this.madmpShowJson['dmp']);
       }
@@ -81,7 +82,8 @@ export class UploadComponent implements OnInit {
           this.toastr.info('Upload cancelled');
           return;
         } else {
-          this.madmpToCreate.assignNewDoi = data;
+          this.madmpToCreate.assignNewDoi = true;
+          this.madmpToCreate.doiServicePassword = data;
           this.uploadMaDmpToCreate();
         }
       });

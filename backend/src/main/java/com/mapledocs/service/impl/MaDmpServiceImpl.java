@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.mapledocs.api.dto.core.MaDmpDTO;
 import com.mapledocs.api.dto.core.MaDmpSearchDTO;
 import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
-import com.mapledocs.api.dto.external.GetDoiRequestDTO;
 import com.mapledocs.api.exception.*;
 import com.mapledocs.dao.MaDmpRepository;
 import com.mapledocs.dao.UserRepository;
@@ -70,8 +69,7 @@ public class MaDmpServiceImpl implements MaDmpService {
     private void assignNewDoiToMaDmp(MaDMPJson maDmp, final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) {
         String doi = null;
         try {
-            doi = this.doiService.getNewDoi(buildDoiRequestDto(doiServiceAuthenticateDTO.getDoiPrefix()),
-                    doiServiceAuthenticateDTO);
+            doi = this.doiService.getNewDoi(doiServiceAuthenticateDTO);
         } catch (DoiServiceException e) {
             // alternatively the creation process can be failed here with an CreationException
             LOGGER.error("Error getting new doi from doi service {}, continuing with doi set to null", e.getMessage());
@@ -80,19 +78,6 @@ public class MaDmpServiceImpl implements MaDmpService {
         dmpId.put("identifier", doi);
         dmpId.put("type", "doi");
         maDmp.getDmp().put("dmp_id", dmpId);
-    }
-
-    private GetDoiRequestDTO buildDoiRequestDto(final String doiPrefix) {
-        GetDoiRequestDTO result = new GetDoiRequestDTO();
-        Map<String, Object> payload = new HashMap<>();
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("prefix", doiPrefix);
-        data.put("type", "dois");
-        data.put("attributes", attributes);
-        payload.put("data", data);
-        result.setPayload(payload);
-        return result;
     }
 
     @Transactional

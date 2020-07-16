@@ -2,7 +2,6 @@ package com.mapledocs.service.impl;
 
 import com.mapledocs.api.dto.external.DoiResponseDTO;
 import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
-import com.mapledocs.api.dto.external.GetDoiRequestDTO;
 import com.mapledocs.api.exception.DoiServiceException;
 import com.mapledocs.service.api.DoiService;
 import com.mapledocs.service.external.api.DoiApiClient;
@@ -28,12 +27,11 @@ public class DoiServiceImpl implements DoiService {
         this.doiApiClient = doiApiClient;
     }
 
-    public String getNewDoi(final GetDoiRequestDTO getDoiRequestDTO,
-                            final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) throws DoiServiceException {
+    public String getNewDoi(final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) throws DoiServiceException {
         String result = null;
         DoiResponseDTO doiResponse;
         try {
-            doiResponse = this.doiApiClient.getNewDoi(getDoiRequestDTO, doiServiceAuthenticateDTO);
+            doiResponse = this.doiApiClient.getNewDoi(doiServiceAuthenticateDTO);
             return this.getDoiStringFromJSONResponse(doiResponse);
         } catch (DoiApiClientException e) {
             throw new DoiServiceException(e.getMessage());

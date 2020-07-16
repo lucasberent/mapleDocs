@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 // https://support.datacite.org/docs/api-create-dois dto structure and api doc
 
@@ -26,10 +27,10 @@ import java.util.Map;
 public class ZenodoApiClient implements DoiApiClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZenodoApiClient.class);
 
-    public DoiResponseDTO getNewDoi(final GetDoiRequestDTO getDoiRequestDTO,
-                                    final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) throws DoiApiClientException {
+    public DoiResponseDTO getNewDoi(final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) throws DoiApiClientException {
         HttpHeaders headers = this.buildBasicHeaders(doiServiceAuthenticateDTO);
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(getDoiRequestDTO.getPayload(), headers);
+        HttpEntity<Map<String, Object>> request =
+                new HttpEntity<>(buildDoiRequestDto(doiServiceAuthenticateDTO.getDoiPrefix()).getPayload(), headers);
         return this.doCreateDoiRequest(request);
     }
 
@@ -56,5 +57,18 @@ public class ZenodoApiClient implements DoiApiClient {
         headers.set("Authorization", "Basic " + encoding);
         headers.set("Content-Type", "application/vnd.api+json");
         return headers;
+    }
+
+    private GetDoiRequestDTO buildDoiRequestDto(final String doiPrefix) {
+        GetDoiRequestDTO result = new GetDoiRequestDTO();
+        Map<String, Object> payload = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("prefix", doiPrefix);
+        data.put("type", "dois");
+        data.put("attributes", attributes);
+        payload.put("data", data);
+        result.setPayload(payload);
+        return result;
     }
 }

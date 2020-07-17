@@ -51,7 +51,7 @@ In frontend/, run `npm install` and `npm start` to start the development server
 
 ## Importing maDMPs from the Zenodo community
 
-The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tuw-dmps-ds-2020) can be downloaded using a simple [python script](https://github.com/lucasberent/mapleDocs/blob/master/backend/import_data.py), which fetches all DMPs using the Zenodo API, authenticates with mapleDocs and automatically uploads all of them. Warning: the Zenodo API is also unreliable, hence downloading might fail.
+The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tuw-dmps-ds-2020) can be downloaded using a simple [python script](https://github.com/lucasberent/mapleDocs/blob/master/backend/import_data.py), which fetches all DMPs using the Zenodo API, authenticates with mapleDocs and automatically uploads all of them. Of course this script can easily be configured to fetch maDMPs from another api and upload them to mapleDocs.
 
 # Examples and Screencasts
 Follow the links below to get a short preview of the look and some first features of the application:

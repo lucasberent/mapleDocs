@@ -49,6 +49,11 @@ Alternatively, just use the script `build_and_run.sh`
 
 In frontend/, run `npm install` and `npm start` to start the development server
 
+## Usage
+After following the steps above for both backend and frontend, the application is reachable on localhost port 4200. The standard test user created is: 
+- username: admin
+- password: password
+
 ## Importing maDMPs from the Zenodo community
 
 The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tuw-dmps-ds-2020) can be downloaded using a simple [python script](https://github.com/lucasberent/mapleDocs/blob/master/backend/import_data.py), which fetches all DMPs using the Zenodo API, authenticates with mapleDocs and automatically uploads all of them. Of course this script can easily be configured to fetch maDMPs from another api and upload them to mapleDocs.

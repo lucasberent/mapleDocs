@@ -1,35 +1,38 @@
 # Introduction
-This project was made in the course of the course Data Stewardship, summer term 2020 at TU Vienna. The goal of this opensource project is to provide a system that allows users to manage and expose machine readible data management plans to achieve FAIR data [TU Vienna FAIR](https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), [Exposing maDMPs](https://www.rd-alliance.org/groups/exposing-data-management-plans-wg).
+This project was created for the course Data Stewardship, summer term 2020 at TU Vienna. The goal of this opensource project is to provide a system that allows users to manage and expose machine readible data management plans (maDMPs) to achieve FAIR data [TU Vienna FAIR](https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), [Exposing maDMPs](https://www.rd-alliance.org/groups/exposing-data-management-plans-wg).
 
-## Key features
-We have built a highly scalable and modern system that allows users to:
-- Upload maDMPs which are validated according to the standard defined in [RDA DMP Common Standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
-- Control which fields are visible to other users of the system i.e. specifically hide fields of the maDMP
-- View and Download maDMPs
-- Search for maDMPs
+## Feautres
+- Upload maDMPs as Json files (stored in MongoDB for scalability and flexibility)
+- Hide fields of maDMPs s.t. they become invisible to other users
+- Schema validation against the maDMP schema provided by the [RDA-DMP common standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard) in frontend and backend on upload
+- Optional, automatized assignment of dois to maDMPs from [Datacite](https://datacite.org/) if no doi is present on upload
+- Interactive maDMP viewer for a clear view over maDMPs 
+- Fast, powerful and extendable search of maDMPs with Elasticsearch:
+    - field-wise search on maDMPs
+    - combined search over multiple maDMP fields at once
+- Download and save maDMPs as Json files
+- Security: Registration and Login with JWT. Secured with Spring Security
+- Easy to use and simple UI written in Angular
+- Extendable and easy to maintain layered architecture
+- Built as Spring Boot application, written in Java
+- All components (MongoDB, Elasticsearch and the Spring Boot application) are deployed with Docker for a highly portable, scalable and easy way of deployment. To that end we provide a docker-compose containing the backend components. The fronend can be deployed as Angular application on a webserver
+- Moreover, we provide an automatized import mechanism to import maDMPs from an external provider e.g. from zenodo, written in Python.
 
 ## Key technologies 
 ### Backend:
 - [MongoDB](https://www.mongodb.com/) for efficient data access and flexible storage
 - [ElasticSearch](https://www.elastic.co/de/) and [Logstash](https://www.elastic.co/de/logstash) for full-text and highly efficient and scalable searching
-- [Spring Boot](https://spring.io/projects/spring-boot) for a secures,scalable and highly maintainable application
+- [Spring Boot](https://spring.io/projects/spring-boot) for a secure, scalable and highly maintainable backend application
 - [Docker](https://www.docker.com/) for containerization for easy and portable deployment 
 
 ### Front end:
 - [Angular](https://angular.io/) and material design for a modern and flexible UX
 
-# Prerequisites
-- In order to assign dois to maDMPs at upload, we have integrated the DataCite API, hence if one wants to use this feature a Datacite account is necessary. In order to configure the account refer to Chapter *Configuration*. Warning: the datacite API proved to be unreliable, often returing 503 and timing out for hours.
-
-# Configuration
-The application assigns new dois to maDMPs that do not have one yet at upload time. In order to do that we have integrated the datacite API. The respective configuration has to be done in a .properties file: "auth.properties" in the same directory as the application.properties file. The needed properties are: 
-- application.rest.doiservice.username
-- application.rest.doiservice.password
-- application.rest.doiservice.prefix
-
-Once an according file is created and the properties are set accordingly, the application can start and assign new dois to maDMPs on upload.
-
 # Installation and Running the project 
+## Prerequisites
+- Docker
+- Tested in Chrome only
+
 ## Backend (Application Server)
 First, make sure max_map_count is at least 262144, otherwise set it with: `sudo sysctl -w vm.max_map_count=262144`. If it is
 less, the elasticsearch service might fail.
@@ -51,7 +54,7 @@ In frontend/, run `npm install` and `npm start` to start the development server
 The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tuw-dmps-ds-2020) can be downloaded using a simple [python script](https://github.com/lucasberent/mapleDocs/blob/master/backend/import_data.py), which fetches all DMPs using the Zenodo API, authenticates with mapleDocs and automatically uploads all of them. Warning: the Zenodo API is also unreliable, hence downloading might fail.
 
 # Examples and Screencasts
-
+Follow the links below to get a short preview of the look and some first features of the application:
 ## Login & Overview
 [screencast](https://youtu.be/LkV8qi128ws)
 ## Upload, Download & Search

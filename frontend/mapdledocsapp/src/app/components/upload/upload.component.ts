@@ -49,6 +49,7 @@ export class UploadComponent implements OnInit {
     if (!fileToUpload || !files) {
       console.log('no file selected');
       this.resetInputs();
+      return;
     }
     if (!fileToUpload.name.endsWith('.json')) {
       this.toastr.error('only json files accepted');
@@ -76,20 +77,29 @@ export class UploadComponent implements OnInit {
       return;
     }
     if (!this.madmpShowJson['dmp'].hasOwnProperty('dmp_id')) {
-      this.openDialog().subscribe(data => {
-        console.log('Dialog decision:', data);
-        if (data == null) {
-          this.toastr.info('Upload cancelled');
-          return;
-        } else {
-          this.madmpToCreate.assignNewDoi = true;
-          this.madmpToCreate.doiServicePassword = data;
-          this.uploadMaDmpToCreate();
-        }
-      });
+      this.handleDialogInput();
     } else {
       this.uploadMaDmpToCreate();
     }
+  }
+
+  handleDialogInput() {
+    this.openDialog().subscribe(data => {
+      console.log('Dialog decision:', data);
+      if (data == null) {
+        this.toastr.info('Upload cancelled');
+        return;
+      } else {
+        if (data === true) {
+          this.madmpToCreate.assignNewDoi = true;
+        } else {
+          this.madmpToCreate.assignNewDoi = false;
+        }
+
+        this.madmpToCreate.doiServicePassword = data;
+        this.uploadMaDmpToCreate();
+      }
+    });
   }
 
   openDialog() {

@@ -132,11 +132,14 @@ export class UploadComponent implements OnInit {
     console.log('uploading madmp:');
     console.log(this.madmpToCreate);
     this.uploadService.uploadMaDmp(this.madmpToCreate)
-      .subscribe(dmpId => {
-        this.toastr.success('upload successful');
+      .subscribe(result => {
         this.uploading = false;
+        this.toastr.success('upload successful');
+        this.resetInputs();
+      }, error => {
+        this.toastr.error('error uploading maDMP (maybe a problem with assigning a new doi at the doi service');
+        console.log(error);
       });
-    this.resetInputs();
   }
 
   onClearSelection() {

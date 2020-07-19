@@ -23,7 +23,7 @@ export class SearchService {
       from: page * size,
       size: size,
       query: {
-        multi_match : {
+        multi_match: {
           query: searchString,
           // fields: ['dmp_contact_contact_id_identifier', 'dmp_contact_contact_id_type',
           //   'dmp_contact_mbox', 'dmp_contact_name', 'dmp_description', 'dmp_id_identifier',
@@ -50,7 +50,7 @@ export class SearchService {
       from: page * size,
       size: size,
       query: {
-        multi_match : {
+        multi_match: {
           query: searchString,
           // fields: ['dmp_contact_contact_id_identifier', 'dmp_contact_contact_id_type',
           //   'dmp_contact_mbox', 'dmp_contact_name', 'dmp_description', 'dmp_id_identifier',
@@ -145,7 +145,9 @@ export class SearchService {
     {
       return this.httpClient.get<MaDmpDto>(this.searchBaseUrl + '/details/' + id)
         .pipe(
-          tap(_ => {console.log('fetched madmp')}),
+          tap(_ => {
+            console.log('fetched madmp');
+          }),
           catchError(err => this.handleError<any>('fetching madmps', err))
         );
     }

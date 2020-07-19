@@ -28,6 +28,7 @@ public class DoiServiceImpl implements DoiService {
     }
 
     public String getNewDoi(final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) throws DoiServiceException {
+        LOG.info("Getting new doi from doi api");
         String result = null;
         DoiResponseDTO doiResponse;
         try {

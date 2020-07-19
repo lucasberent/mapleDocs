@@ -1,4 +1,4 @@
-package com.mapledocs.dao;
+package com.mapledocs.config;
 
 import com.mapledocs.util.Constants;
 import com.mongodb.MongoClient;

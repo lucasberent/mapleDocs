@@ -2,8 +2,8 @@ package com.mapledocs.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mapledocs.api.dto.core.LoginDTO;
-import com.mapledocs.api.exception.NotFoundException;
-import com.mapledocs.api.exception.UnauthorizedException;
+import com.mapledocs.api.exception.rest.NotFoundException;
+import com.mapledocs.api.exception.rest.UnauthorizedException;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.jwt.JWTFilter;
 import com.mapledocs.security.jwt.TokenProvider;

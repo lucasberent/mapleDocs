@@ -2,7 +2,7 @@ package com.mapledocs.service.impl;
 
 import com.mapledocs.api.dto.core.ExternalDoiServiceCredentialsDTO;
 import com.mapledocs.api.dto.core.RegisterDTO;
-import com.mapledocs.dao.UserRepository;
+import com.mapledocs.dao.api.UserRepository;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.domain.ExternalDoiServiceCredentials;
 import com.mapledocs.domain.UserRole;

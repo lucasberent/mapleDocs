@@ -1,7 +1,6 @@
 package com.mapledocs.rest;
 
 import com.mapledocs.api.dto.core.MaDmpDTO;
-import com.mapledocs.api.dto.core.MaDmpSearchDTO;
 import com.mapledocs.service.api.MaDmpService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -36,13 +34,6 @@ public class MaDmpController {
         return new ResponseEntity<>(this.maDmpService.findAllPaged(page, size), HttpStatus.OK);
     }
 
-    @GetMapping("/searchList")
-    @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
-    public ResponseEntity<List<MaDmpDTO>> findAllMaDmpsByDocId(@RequestParam("ids") MaDmpSearchDTO docIds) {
-        LOGGER.info("Finding all madmps");
-        return new ResponseEntity<>(this.maDmpService.findAllPagedByDocId(docIds), HttpStatus.OK);
-    }
-
     @GetMapping("/details/{docId}")
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
     public ResponseEntity<MaDmpDTO> findOneDmap(@PathVariable String docId) throws NoSuchMethodException {
@@ -51,7 +42,7 @@ public class MaDmpController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
-    public ResponseEntity<MaDmpDTO> deleteMaDmp(@PathParam("id") String id) throws NoSuchMethodException {
+    public ResponseEntity<MaDmpDTO> deleteMaDmp(@PathVariable("id") String id) throws NoSuchMethodException {
         throw new NoSuchMethodException();
     }
 }

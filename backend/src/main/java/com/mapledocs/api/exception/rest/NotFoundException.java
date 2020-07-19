@@ -1,4 +1,4 @@
-package com.mapledocs.api.exception;
+package com.mapledocs.api.exception.rest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

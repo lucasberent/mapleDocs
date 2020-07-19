@@ -1,4 +1,4 @@
-package com.mapledocs.dao;
+package com.mapledocs.dao.api;
 
 import com.mapledocs.domain.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package com.mapledocs.service.impl;
 
-import com.mapledocs.dao.UserRepository;
+import com.mapledocs.dao.api.UserRepository;
 import com.mapledocs.domain.AppUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

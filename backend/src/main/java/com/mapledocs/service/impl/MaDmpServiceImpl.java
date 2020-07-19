@@ -2,11 +2,12 @@ package com.mapledocs.service.impl;
 
 import com.google.gson.Gson;
 import com.mapledocs.api.dto.core.MaDmpDTO;
-import com.mapledocs.api.dto.core.MaDmpSearchDTO;
 import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
-import com.mapledocs.api.exception.*;
-import com.mapledocs.dao.MaDmpRepository;
-import com.mapledocs.dao.UserRepository;
+import com.mapledocs.api.exception.DoiServiceException;
+import com.mapledocs.api.exception.MaDmpRepositoryException;
+import com.mapledocs.api.exception.rest.*;
+import com.mapledocs.dao.api.UserRepository;
+import com.mapledocs.dao.impl.MongoMaDmpRepository;
 import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.SecurityUtils;
 import com.mapledocs.service.api.DoiService;
@@ -26,7 +27,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MaDmpServiceImpl implements MaDmpService {
-    private final MaDmpRepository maDmpRepository;
+    private final MongoMaDmpRepository mongoMaDmpRepository;
     private final UserRepository userRepository;
     private final DoiService doiService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpServiceImpl.class);
@@ -38,10 +39,9 @@ public class MaDmpServiceImpl implements MaDmpService {
     }
 
     @Transactional
-    public String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException {
-        if (maDmpDTO == null || maDmpDTO.getJson() == null || maDmpDTO.getJson().isEmpty()) {
-            throw new ValidationException("json empty");
-        }
+    public String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException,
+            MaDmpServiceDoiAssignmentException {
+        this.requireMaDmpDTONotNull(maDmpDTO);
 
         AppUser currUser = this.getCurrentUserOrNotLoggedIn();
         maDmpDTO.setUserId(currUser.getId());
@@ -49,30 +49,57 @@ public class MaDmpServiceImpl implements MaDmpService {
         MaDMPJson parsed = new Gson().fromJson(maDmpDTO.getJson(), MaDMPJson.class);
 
         if (parsed.getDmp() == null) {
+            LOGGER.error("Parsed dmp is null");
             throw new MaDmpServiceCreationException("JSON invalid");
         }
 
         if (parsed.getDmp().get("dmp_id") == null && maDmpDTO.getAssignNewDoi()) {
-            if (maDmpDTO.getDoiServicePassword() == null) {
-                throw new ValidationException("Password for doi service is empty");
-            }
-            this.assignNewDoiToMaDmp(parsed,
-                    new DoiServiceAuthenticateDTO(currUser.getExternalDoiServiceCredentials().getUsername(),
-                            maDmpDTO.getDoiServicePassword(), currUser.getExternalDoiServiceCredentials().getDoiPrefix()));
+            this.requireExternalDoiCredentialsNotNull(currUser, maDmpDTO);
+            this.assignNewDoiToMaDmp(parsed, getDoiServiceAuthenticationDTO(currUser, maDmpDTO));
         }
 
         parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
         maDmpDTO.setJson(new Gson().toJson(parsed));
-        return this.maDmpRepository.saveMaDmp(maDmpDTO);
+        try {
+            return this.mongoMaDmpRepository.saveMaDmp(maDmpDTO);
+        } catch (MaDmpRepositoryException e) {
+            throw new MaDmpServiceCreationException("Error saving maDmp: " + e.getMessage());
+        }
     }
 
-    private void assignNewDoiToMaDmp(MaDMPJson maDmp, final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO) {
-        String doi = null;
+    private void requireMaDmpDTONotNull(final MaDmpDTO maDmpDTO) {
+        if (maDmpDTO == null || maDmpDTO.getJson() == null || maDmpDTO.getJson().isEmpty()) {
+            LOGGER.error("Madmp json or dto null");
+            throw new ValidationException("json empty");
+        }
+    }
+
+    private DoiServiceAuthenticateDTO getDoiServiceAuthenticationDTO(final AppUser user, final MaDmpDTO maDmpDTO) {
+        return new DoiServiceAuthenticateDTO(user.getExternalDoiServiceCredentials().getUsername(),
+                maDmpDTO.getDoiServicePassword(),
+                user.getExternalDoiServiceCredentials().getDoiPrefix());
+    }
+
+    private void requireExternalDoiCredentialsNotNull(final AppUser currUser, final MaDmpDTO maDmpDTO) {
+        if (maDmpDTO.getDoiServicePassword() == null ||
+                currUser.getExternalDoiServiceCredentials() == null ||
+                currUser.getExternalDoiServiceCredentials().getUsername() == null ||
+                currUser.getExternalDoiServiceCredentials().getDoiPrefix() == null) {
+            LOGGER.error("Missing fields for doi service authentication");
+            throw new MaDmpServiceValidationException("Missing fields for doi service authentication");
+        }
+    }
+
+    private void assignNewDoiToMaDmp(MaDMPJson maDmp, final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO)
+            throws MaDmpServiceDoiAssignmentException {
+        LOGGER.info("Trying to assign new doi to maDMP");
+        String doi;
         try {
             doi = this.doiService.getNewDoi(doiServiceAuthenticateDTO);
         } catch (DoiServiceException e) {
             // alternatively the creation process can be failed here with an CreationException
             LOGGER.error("Error getting new doi from doi service {}, continuing with doi set to null", e.getMessage());
+            throw new MaDmpServiceDoiAssignmentException("Error creating DOI: " + e.getMessage() + "retry or do not assign a new doi");
         }
         Map<String, String> dmpId = new HashMap<>();
         dmpId.put("identifier", doi);
@@ -82,18 +109,7 @@ public class MaDmpServiceImpl implements MaDmpService {
 
     @Transactional
     public List<MaDmpDTO> findAllPaged(int page, int size) {
-        return maDmpRepository.findAllPaged(page, size, this.getCurrentUserOrNotLoggedIn().getId());
-    }
-
-
-    @Transactional
-    public void deleteMaDmp(final String docId) {
-        MaDmpDTO maDmpDTO = this.maDmpRepository.findOneById(docId, this.getCurrentUserOrNotLoggedIn().getId());
-        Long userId = this.getCurrentUserOrNotLoggedIn().getId();
-        if (!userId.equals(maDmpDTO.getUserId())) {
-            throw new ForbiddenException("User cannot delete documents of another user");
-        }
-        this.maDmpRepository.removeMaDmp(docId);
+        return mongoMaDmpRepository.findAllPaged(page, size, this.getCurrentUserOrNotLoggedIn().getId());
     }
 
     private AppUser getCurrentUserOrNotLoggedIn() {
@@ -105,10 +121,6 @@ public class MaDmpServiceImpl implements MaDmpService {
         if (docId == null) {
             throw new NotFoundException("MaDMP with not found for id " + docId);
         }
-        return this.maDmpRepository.findOneById(docId, this.getCurrentUserOrNotLoggedIn().getId());
-    }
-
-    public List<MaDmpDTO> findAllPagedByDocId(final MaDmpSearchDTO maDmpSearchDto) {
-        return this.maDmpRepository.findAllByDocIds(maDmpSearchDto, this.getCurrentUserOrNotLoggedIn().getId());
+        return this.mongoMaDmpRepository.findOneById(docId, this.getCurrentUserOrNotLoggedIn().getId());
     }
 }

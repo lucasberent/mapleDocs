@@ -1,9 +1,13 @@
-package com.mapledocs.dao;
+package com.mapledocs.dao.impl;
 
 import com.mapledocs.api.dto.core.MaDmpDTO;
-import com.mapledocs.api.dto.core.MaDmpSearchDTO;
-import com.mapledocs.api.exception.NotFoundException;
+import com.mapledocs.api.exception.ElasticsearchDaoIndexingException;
+import com.mapledocs.api.exception.MaDmpRepositoryException;
+import com.mapledocs.api.exception.rest.NotFoundException;
+import com.mapledocs.dao.api.ElasticsearchDao;
+import com.mapledocs.dao.api.MaDmpRepository;
 import com.mapledocs.util.Constants;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -17,42 +21,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MaDmpRepository {
+public class MongoMaDmpRepository implements MaDmpRepository {
     private final MongoCollection<Document> mongoCollection;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoMaDmpRepository.class);
+    private final ElasticsearchDao elasticsearchDao;
 
     @Autowired
-    public MaDmpRepository(MongoDbFactory mongoDbFactory) {
-        mongoCollection = mongoDbFactory.getDb(Constants.MONGO_DB).getCollection(Constants.COLLECTION);
+    public MongoMaDmpRepository(MongoDbFactory mongoDbFactory, ElasticsearchDao elasticsearchDao) {
+        this.mongoCollection = mongoDbFactory.getDb(Constants.MONGO_DB).getCollection(Constants.COLLECTION);
+        this.elasticsearchDao = elasticsearchDao;
     }
 
-    public String saveMaDmp(final MaDmpDTO maDmpDTO) {
+    public String saveMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpRepositoryException {
         LOGGER.info("Saving maDmp {}", maDmpDTO);
         Document document = Document.parse(maDmpDTO.getJson());
         document.append(Constants.USER_ID_FIELD, maDmpDTO.getUserId());
-        mongoCollection.insertOne(document);
+        this.saveAndIndexOrUndo(document);
         return document.getObjectId("_id").toString();
     }
 
-    public void removeMaDmp(final String docId) {
-        LOGGER.info("Deleting maDmp with id{}", docId);
-        mongoCollection.deleteOne(new Document("_id", docId));
+    private void saveAndIndexOrUndo(final Document document) throws MaDmpRepositoryException {
+        try {
+            mongoCollection.insertOne(document);
+        } catch (MongoException e) {
+            throw new MaDmpRepositoryException("Error saving maDmp: " + e.getMessage());
+        }
+        try {
+            elasticsearchDao.indexMaDmp(document.toJson());
+        } catch (ElasticsearchDaoIndexingException e) {
+            // "rollback"
+            mongoCollection.deleteOne(document);
+            throw new MaDmpRepositoryException("Error saving maDmp: " + e.getMessage());
+        }
     }
 
+    // Currently not used in frontend
     public List<MaDmpDTO> findAllByUserId(final Long userId) {
         LOGGER.info("Retreiving maDmps for user {}", userId);
         List<MaDmpDTO> result = new ArrayList<>();
         Document searchDoc = new Document(Constants.USER_ID_FIELD, userId);
         mongoCollection.find(searchDoc).cursor().forEachRemaining(document ->
-                result.add(parseDocumentToMaDmpDTO(document, userId)));
+                result.add(parseEntityToMaDmpDTO(document, userId)));
         return result;
     }
 
     public MaDmpDTO findOneById(final String docId, long currUserId) {
-        return parseDocumentToMaDmpDTO(this.mongoCollection.find(new Document("_id", new ObjectId(docId))).first(), currUserId);
+        return parseEntityToMaDmpDTO(this.mongoCollection
+                .find(new Document("_id", new ObjectId(docId))).first(), currUserId);
     }
 
-    public MaDmpDTO parseDocumentToMaDmpDTO(final Document document, final Long currUserId) {
+    public MaDmpDTO parseEntityToMaDmpDTO(final Object entity, final Long currUserId) {
+        Document document = (Document) entity;
         if (document == null) {
             throw new NotFoundException("Document not found");
         }
@@ -76,21 +95,12 @@ public class MaDmpRepository {
         return result;
     }
 
+
     public List<MaDmpDTO> findAllPaged(final int page, final int size, final long currUserId) {
         List<MaDmpDTO> result = new ArrayList<>();
         int skipElems = size * (page - 1);
         mongoCollection.find().skip(skipElems).limit(size).cursor().forEachRemaining(document ->
-                result.add(parseDocumentToMaDmpDTO(document, currUserId)));
-        return result;
-    }
-
-    public List<MaDmpDTO> findAllByDocIds(MaDmpSearchDTO maDmpSearchDto, final long currUserId) {
-        List<MaDmpDTO> result = new ArrayList<>();
-
-        maDmpSearchDto.getDocIds().forEach(docId ->
-                result.add(
-                        parseDocumentToMaDmpDTO(
-                                this.mongoCollection.find(new Document("_id", docId)).first(), currUserId)));
+                result.add(parseEntityToMaDmpDTO(document, currUserId)));
         return result;
     }
 }

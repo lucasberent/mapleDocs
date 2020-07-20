@@ -1,6 +1,7 @@
 package com.mapledocs.service.impl;
 
 import com.google.gson.Gson;
+import com.mapledocs.api.dto.core.MaDMPJson;
 import com.mapledocs.api.dto.core.MaDmpDTO;
 import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
 import com.mapledocs.api.exception.DoiServiceException;
@@ -12,7 +13,6 @@ import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.SecurityUtils;
 import com.mapledocs.service.api.DoiService;
 import com.mapledocs.service.api.MaDmpService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +31,6 @@ public class MaDmpServiceImpl implements MaDmpService {
     private final UserRepository userRepository;
     private final DoiService doiService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpServiceImpl.class);
-
-    @Data
-    private static class MaDMPJson {
-        private Map<String, Object> dmp;
-        private List<String> fieldsToHide;
-    }
 
     @Transactional
     public String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException,

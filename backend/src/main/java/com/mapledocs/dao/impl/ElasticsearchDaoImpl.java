@@ -7,12 +7,16 @@ import com.mapledocs.api.dto.core.SearchIndexIndexingResponseDTO;
 import com.mapledocs.api.exception.ElasticSeachDaoDeletionException;
 import com.mapledocs.api.exception.ElasticsearchDaoIndexingException;
 import com.mapledocs.dao.api.ElasticsearchDao;
+import org.apache.coyote.Request;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -29,7 +33,7 @@ import static com.mapledocs.util.Constants.ELASTICSEARCH_CONN_URL;
 @Service
 public class ElasticsearchDaoImpl implements ElasticsearchDao {
     private final RestHighLevelClient client;
-    private final static String INDEX_NAME = "madmps";
+    private final static String INDEX_NAME = "madmps_nested";
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchDao.class);
 
     public ElasticsearchDaoImpl() {
@@ -38,38 +42,76 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
                         new HttpHost(ELASTICSEARCH_CONN_URL, ELASTICSEARCH_CONN_PORT, "http")));
     }
 
+    private void setupSearchIndex() throws ElasticsearchDaoIndexingException {
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX_NAME);
+
+        try {
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            builder.startObject();
+            {
+                builder.startObject("properties");
+                {
+                    builder.startObject("dmp");
+                    {
+                        builder.startObject("properties");
+                        {
+                            builder.startObject("dataset");
+                            {
+                                builder.field("type", "nested");
+                                // Implicitly, adding fields dynamically to the nested array is possible
+                            }
+                            builder.endObject();
+                            builder.startObject("contributor");
+                            {
+                                builder.field("type", "nested");
+                            }
+                            builder.endObject();
+                            builder.startObject("project");
+                            {
+                                builder.field("type", "nested");
+                            }
+                            builder.endObject();
+                        }
+                        builder.endObject();
+                    }
+                    builder.endObject();
+                }
+                builder.endObject();
+            }
+            builder.endObject();
+
+            createIndexRequest.mapping(builder);
+
+            client.indices().create(createIndexRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new ElasticsearchDaoIndexingException("Failed to create search index", e);
+        }
+    }
+
     @Override
     public SearchIndexIndexingResponseDTO indexMaDmp(final String maDmpJson) throws ElasticsearchDaoIndexingException {
-        // TODO
-        IndexRequest indexRequest = new IndexRequest();
-        indexRequest.source(maDmpJson, XContentType.JSON);
-        MaDMPJson maDMPJson = new Gson().fromJson(maDmpJson, MaDMPJson.class);
         try {
-            XContentBuilder xContentBuilder = XContentFactory.jsonBuilder();
-            for (String s : maDMPJson.getDmp().keySet()) {
-                if (maDMPJson.getFieldsToHide().contains(s)) {
-                    xContentBuilder
-                            .startObject()
-                            .startObject("properties")
-                            .startObject(s)
-                            .field("index", false);
-                } else {
-                    if (maDMPJson.getDmp().get(s) instanceof String) {
-                        xContentBuilder.field(s, maDMPJson.getDmp().get(s));
-                    } else {
-                        xContentBuilder.startObject().map((Map<String, ?>) maDMPJson.getDmp().get(s));
-                    }
-                }
+            boolean exists = client.indices().exists(new GetIndexRequest(INDEX_NAME), RequestOptions.DEFAULT);
+            if (!exists) {
+                setupSearchIndex();
             }
         } catch (IOException e) {
-            LOGGER.error("Error building index request object");
-            throw new ElasticsearchDaoIndexingException("Error indexing madmp while building context object");
+            throw new ElasticsearchDaoIndexingException("Error checking if index exists", e);
         }
+
+        MaDMPJson maDMPJson = new Gson().fromJson(maDmpJson, MaDMPJson.class);
+
+        for (String field: maDMPJson.getFieldsToHide()) {
+            maDMPJson.getDmp().remove(field);
+        }
+
+        IndexRequest indexRequest = new IndexRequest(INDEX_NAME);
+        indexRequest.source(new Gson().toJson(maDMPJson), XContentType.JSON);
 
         try {
             return new SearchIndexIndexingResponseDTO(this.client.index(indexRequest, RequestOptions.DEFAULT));
         } catch (IOException e) {
-            throw new ElasticsearchDaoIndexingException("Error indexing document " + e.getMessage());
+            throw new ElasticsearchDaoIndexingException("Error indexing document", e);
         }
     }
 

@@ -85,20 +85,48 @@ export class SearchService {
       });
     }
 
+    let conditions = {};
+    if (creationFromDate !== null) {
+      conditions['gte'] = creationFromDate;
+    }
+    if (creationToDate !== null) {
+      conditions['lte'] = creationToDate;
+    }
+
     if (embargo === 'yes' || embargo === 'no') {
-      andQueries.push({
+      const embargoExistsQuery: any = {
         nested: {
           path: "dmp.dataset",
           query: {
             nested: {
-              path: "distribution",
+              path: "dmp.dataset.distribution",
               query: {
-
+                nested: {
+                  path: "dmp.dataset.distribution.license",
+                  query: {
+                    range: {
+                      "dmp.dataset.distribution.license.start_date": {
+                        gt: new Date()
+                      }
+                    }
+                  }
+                }
               }
             }
           }
         }
-      });
+      };
+
+      if (embargo === 'yes') {
+        andQueries.push(embargoExistsQuery);
+      }
+      else {
+        andQueries.push({
+            bool: {
+              must_not: embargoExistsQuery
+            }
+        });
+      }
     }
 
     if (creationFromDate !== null || creationToDate !== null) {

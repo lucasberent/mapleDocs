@@ -59,6 +59,25 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
                             {
                                 builder.field("type", "nested");
                                 // Implicitly, adding fields dynamically to the nested array is possible
+
+                                builder.startObject("properties");
+                                {
+                                    builder.startObject("distribution");
+                                    {
+                                        builder.field("type", "nested");
+                                        builder.startObject("properties");
+                                        {
+                                            builder.startObject("license");
+                                            {
+                                                builder.field("type", "nested");
+                                            }
+                                            builder.endObject();
+                                        }
+                                        builder.endObject();
+                                    }
+                                    builder.endObject();
+                                }
+                                builder.endObject();
                             }
                             builder.endObject();
                             builder.startObject("contributor");
@@ -69,6 +88,16 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
                             builder.startObject("project");
                             {
                                 builder.field("type", "nested");
+
+                                builder.startObject("properties");
+                                {
+                                    builder.startObject("funding");
+                                    {
+                                        builder.field("type", "nested");
+                                    }
+                                    builder.endObject();
+                                }
+                                builder.endObject();
                             }
                             builder.endObject();
                         }

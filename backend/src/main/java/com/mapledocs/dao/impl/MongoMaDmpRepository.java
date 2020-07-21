@@ -41,13 +41,16 @@ public class MongoMaDmpRepository implements MaDmpRepository {
     }
 
     private void saveAndIndexOrUndo(final Document document) throws MaDmpRepositoryException {
+        String mongoId;
         try {
             mongoCollection.insertOne(document);
+
+            mongoId = document.getObjectId("_id").toString();
         } catch (MongoException e) {
             throw new MaDmpRepositoryException("Error saving maDmp: " + e.getMessage());
         }
         try {
-            elasticsearchDao.indexMaDmp(document.toJson());
+            elasticsearchDao.indexMaDmp(document.toJson(), mongoId);
         } catch (ElasticsearchDaoIndexingException e) {
             // "rollback"
             mongoCollection.deleteOne(document);

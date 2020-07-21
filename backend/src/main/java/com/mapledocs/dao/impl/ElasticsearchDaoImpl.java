@@ -89,7 +89,7 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
     }
 
     @Override
-    public SearchIndexIndexingResponseDTO indexMaDmp(final String maDmpJson) throws ElasticsearchDaoIndexingException {
+    public SearchIndexIndexingResponseDTO indexMaDmp(final String maDmpJson, String mongoId) throws ElasticsearchDaoIndexingException {
         try {
             boolean exists = client.indices().exists(new GetIndexRequest(INDEX_NAME), RequestOptions.DEFAULT);
             if (!exists) {
@@ -100,6 +100,7 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
         }
 
         MaDMPJson maDMPJson = new Gson().fromJson(maDmpJson, MaDMPJson.class);
+        maDMPJson.setMongoId(mongoId);
 
         for (String field: maDMPJson.getFieldsToHide()) {
             maDMPJson.getDmp().remove(field);

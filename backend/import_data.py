@@ -64,37 +64,40 @@ for zip_url in zips:
 if not os.path.exists("dmp_files"):
     os.mkdir("dmp_files")
 for zip_file in os.listdir("zip_files"):
-    with zipfile.ZipFile("zip_files/" + zip_file, "r") as zip:
-        for contained_file_name in zip.namelist():
-            print("zip contains file: " + contained_file_name)
+    try:
+        with zipfile.ZipFile("zip_files/" + zip_file, "r") as zip:
+            for contained_file_name in zip.namelist():
+                print("zip contains file: " + contained_file_name)
 
-            contained_file = zip.open(contained_file_name)
+                contained_file = zip.open(contained_file_name)
 
-            if (contained_file_name.lower().endswith(".json")):
-                file_contents = contained_file.read()
+                if (contained_file_name.lower().endswith(".json")):
+                    file_contents = contained_file.read()
 
-                try:
-                    dmp_body = {
-                        "json": file_contents.decode("utf-8").replace("\n", ""),
-                        "userId": 0,
-                        "docId": None,
-                        "fieldToHide": []
-                    }
-                    json_body = json.dumps(dmp_body).encode("utf-8")
-                    print(json_body)
-                    dmp_req = urllib.request.Request(server_base + "/madmps")
-                    dmp_req.add_header('Content-Type', 'application/json; charset=utf-8')
-                    dmp_req.add_header('Authorization', 'Bearer ' + token)
-                    dmp_req.add_header('Content-Length', len(json_body))
                     try:
-                        dmp_response = urllib.request.urlopen(dmp_req, json_body)
+                        dmp_body = {
+                            "json": file_contents.decode("utf-8").replace("\n", ""),
+                            "userId": 0,
+                            "docId": None,
+                            "fieldToHide": []
+                        }
+                        json_body = json.dumps(dmp_body).encode("utf-8")
+                        print(json_body)
+                        dmp_req = urllib.request.Request(server_base + "/madmps")
+                        dmp_req.add_header('Content-Type', 'application/json; charset=utf-8')
+                        dmp_req.add_header('Authorization', 'Bearer ' + token)
+                        dmp_req.add_header('Content-Length', len(json_body))
+                        try:
+                            dmp_response = urllib.request.urlopen(dmp_req, json_body)
 
-                        if (dmp_response.getcode() == 201):
-                            print("upload successful")
-                        else:
-                            print("error uploading DMP: " + dmp_response.getcode())
-                    except HTTPError as e:
-                        print("error: " + str(e))
-                except Exception as e:
-                    print("error " + str(e))
+                            if (dmp_response.getcode() == 201):
+                                print("upload successful")
+                            else:
+                                print("error uploading DMP: " + dmp_response.getcode())
+                        except HTTPError as e:
+                            print("error: " + str(e))
+                    except Exception as e:
+                        print("error " + str(e))
 
+    except Exception as e:
+        print("error: " + str(e))

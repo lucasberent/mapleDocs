@@ -9,4 +9,5 @@ import java.util.Map;
 public class MaDMPJson {
     private Map<String, Object> dmp;
     private List<String> fieldsToHide;
+    private String mongoId;
 }

@@ -12,8 +12,10 @@ import {SearchResponse} from '../dto/search-response';
 })
 export class SearchService {
 
+  // MongoDB
   private searchBaseUrl: string = this.globals.backendUri + '/madmps';
-  private searchUrl: string = this.globals.elasticsearchUri + '/madmps_private';
+  // Elasticsearch
+  private searchUrl: string = this.globals.elasticsearchUri + '/madmps_nested';
 
   constructor(private httpClient: HttpClient, private globals: Globals, private toastrService: ToastrService) {
   }
@@ -45,7 +47,7 @@ export class SearchService {
   }
 
   findMaDmpsCustomField(field: string, searchString: string, page: number, size: number): Observable<SearchResponse<any>> {
-    const searchField = "dmp_" + field.replace('.', '_');
+    const searchField = 'dmp.' + field;
     return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
       from: page * size,
       size: size,
@@ -70,7 +72,7 @@ export class SearchService {
       );
   }
 
-  findMaDmpsCombined(ethicalIssues: string, creationFromDate: Date, creationToDate: Date,
+  findMaDmpsCombined(ethicalIssues: string, embargo: string, creationFromDate: Date, creationToDate: Date,
                      modificationFromDate: Date, modificationToDate: Date, page: number, size: number): Observable<SearchResponse<any>> {
     let andQueries = [];
 
@@ -78,7 +80,23 @@ export class SearchService {
     if (ethicalIssues === 'yes' || ethicalIssues === 'no') {
       andQueries.push({
         term: {
-          dmp_ethical_issues_exist: ethicalIssues
+          "dmp.ethical_issues_exist": ethicalIssues
+        }
+      });
+    }
+
+    if (embargo === 'yes' || embargo === 'no') {
+      andQueries.push({
+        nested: {
+          path: "dmp.dataset",
+          query: {
+            nested: {
+              path: "distribution",
+              query: {
+
+              }
+            }
+          }
         }
       });
     }
@@ -93,7 +111,7 @@ export class SearchService {
       }
       andQueries.push({
         range: {
-          dmp_created: conditions
+          "dmp.created": conditions
         }
       });
     }
@@ -108,7 +126,7 @@ export class SearchService {
       }
       andQueries.push({
         range: {
-          dmp_modified: conditions
+          "dmp.modified": conditions
         }
       });
     }

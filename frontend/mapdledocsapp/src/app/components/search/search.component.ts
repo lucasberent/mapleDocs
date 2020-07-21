@@ -21,7 +21,9 @@ export class SearchComponent implements OnInit {
   fieldInputValue: string;
   valueInputValue: string;
 
-  ethicalIssuesValue;
+  ethicalIssuesValue: string;
+  embargoValue: string;
+
   creationFromDate: Date;
   creationToDate: Date;
   modificationFromDate: Date;
@@ -47,7 +49,7 @@ export class SearchComponent implements OnInit {
   private setDisplayMadmps(madmps: SearchResponse<any>) {
     this.madmpDisplayList = [];
     madmps.hits.hits.forEach(searchResult => {
-      const docId = searchResult._source['mongo_id'];
+      const docId = searchResult._source['mongoId'];
       const madmpDisplay = new MaDmpDisplayObject(searchResult._source, docId);
       console.log(madmpDisplay);
       this.madmpDisplayList.push(madmpDisplay);
@@ -98,7 +100,7 @@ export class SearchComponent implements OnInit {
   }
 
   doSearchCombined() {
-    this.searchService.findMaDmpsCombined(this.ethicalIssuesValue, this.creationFromDate, this.creationToDate,
+    this.searchService.findMaDmpsCombined(this.ethicalIssuesValue, this.embargoValue, this.creationFromDate, this.creationToDate,
       this.modificationFromDate, this.modificationToDate, this.currentPage, this.currentPageSize)
       .subscribe(madmps => {
         this.setDisplayMadmps(madmps);

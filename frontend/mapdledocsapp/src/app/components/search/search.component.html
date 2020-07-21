@@ -34,6 +34,23 @@
           </mat-radio-button>
         </mat-radio-group>
       </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Embargo</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-radio-group #embargo [(ngModel)]="embargoValue" (change)="doSearch()">
+          <mat-radio-button value="no">
+            no
+          </mat-radio-button>
+          <mat-radio-button value="yes">
+            yes
+          </mat-radio-button>
+          <mat-radio-button value="any">
+            any
+          </mat-radio-button>
+        </mat-radio-group>
+      </mat-expansion-panel>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>Creation Date</mat-panel-title>
@@ -105,10 +122,10 @@
   <mat-divider></mat-divider>
   <mat-list-item *ngFor="let madmp of madmpDisplayList" routerLink="/details/{{madmp.docId}}" style="cursor:pointer"
                  class="dmp-list-item">
-    <span matLine class="dmp-title">{{madmp.madmp['dmp_title']}}</span>
+    <span matLine class="dmp-title">{{madmp.madmp.dmp.title}}</span>
     <div matLine class="dmp-details">
-      <span class="dmp-identifier">Identifier: {{madmp.madmp['dmp_dmp_id_identifier']}}</span>
-      <span class="dmp-author">Author: {{madmp.madmp['dmp_contact_name']}}</span>
+      <span class="dmp-identifier">Identifier: {{madmp.madmp.dmp['dmp_id'].identifier}}</span>
+      <span class="dmp-author">Author: {{madmp.madmp.dmp.contact.name}}</span>
     </div>
   </mat-list-item>
   <mat-divider></mat-divider>

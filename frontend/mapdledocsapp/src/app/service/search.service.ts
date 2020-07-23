@@ -170,30 +170,30 @@ export class SearchService {
     if (contactPersonName) {
       console.log('adding name' + contactPersonName);
       andQueries.push({
-        term: {
+        match_phrase: {
           "dmp.contact.name": contactPersonName
         }
       });
     }
     if (contactPersonEmail) {
       andQueries.push({
-        term: {
+        match: {
           "dmp.contact.mbox": contactPersonEmail
         }
       });
     }
     if (contactPersonIdentifier) {
       andQueries.push({
-        term: {
-          "dmp.contact.identifier": contactPersonIdentifier
+        match: {
+          "dmp.contact.contact_id.identifier": contactPersonIdentifier
         }
       });
     }
     if (contactPersonIdentifierType) {
       console.log('add type' + contactPersonIdentifierType);
       andQueries.push({
-        term: {
-          "dmp.contact.type": contactPersonIdentifierType
+        match: {
+          "dmp.contact.contact_id.type": contactPersonIdentifierType
         }
       });
     }

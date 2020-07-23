@@ -145,12 +145,12 @@ export class SearchComponent implements OnInit {
     this.doSearch();
   }
 
-  onContactIdTypeSelectionChange(event){
-    if(event.value === 'none'){
+  onContactIdTypeSelectionChange(event) {
+    if (event.value === 'none') {
       this.contactPersonIdentifierType = null;
-    }else {
+    } else {
       this.contactPersonIdentifierType = event.value;
-      this.doSearch();
     }
+    this.doSearch();
   }
 }

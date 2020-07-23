@@ -6,6 +6,7 @@ import {ToastrService} from "ngx-toastr";
 import {SearchResponse} from "../../dto/search-response";
 import {PageEvent} from "@angular/material/paginator";
 import {MatTabGroup} from "@angular/material/tabs";
+import {SearchDTO} from "../../dto/search-dto";
 
 @Component({
   selector: 'app-search',
@@ -42,6 +43,9 @@ export class SearchComponent implements OnInit {
   contactPersonIdentifierType: string = this.noSelectionString;
 
   @ViewChild('tabGroup') tabGroup: MatTabGroup;
+  datasetIdentifier: string;
+  datasetIdentifierType: string;
+  datasetIdTypes: string[] = [this.noSelectionString, 'handle', 'doi', 'ark', 'url', 'other'];
 
   constructor(private searchService: SearchService, private router: Router, private toastrService: ToastrService) {
   }
@@ -106,28 +110,9 @@ export class SearchComponent implements OnInit {
   }
 
   doSearchCombined() {
-    console.log('searching combined: ');
-    console.log('contact name ' + this.contactPersonName);
-    console.log('contact email ' + this.contactPersonEmail);
-    console.log('contact id ' + this.contactPersonIdentifier);
-    console.log('contact id type ' + this.contactPersonIdentifierType);
-    if (this.contactPersonIdentifierType === 'none') {
-      this.contactPersonIdentifierType = null;
-    }
+    const searchDTO = this.buildSearchDTO();
     this.searchService
-      .findMaDmpsCombined(
-        this.contactPersonName,
-        this.contactPersonEmail,
-        this.contactPersonIdentifier,
-        this.contactPersonIdentifierType,
-        this.ethicalIssuesValue,
-        this.embargoValue,
-        this.creationFromDate,
-        this.creationToDate,
-        this.modificationFromDate,
-        this.modificationToDate,
-        this.currentPage,
-        this.currentPageSize)
+      .findMaDmpsCombined(searchDTO)
       .subscribe(madmps => {
         this.setDisplayMadmps(madmps);
         this.length = madmps.hits.total.value;
@@ -152,5 +137,38 @@ export class SearchComponent implements OnInit {
       this.contactPersonIdentifierType = event.value;
     }
     this.doSearch();
+  }
+
+  onDatasetIdTypeSelectionChange(event) {
+    if (event.value === this.noSelectionString) {
+      this.datasetIdentifierType = null;
+    } else {
+      this.datasetIdentifierType = event.value;
+    }
+    this.doSearch();
+  }
+
+  private buildSearchDTO(): SearchDTO {
+    if (this.contactPersonIdentifierType === this.noSelectionString) {
+      this.contactPersonIdentifierType = null;
+    }
+    if (this.datasetIdentifierType === this.noSelectionString) {
+      this.datasetIdentifierType = null;
+    }
+    return new SearchDTO(
+      this.datasetIdentifier,
+      this.datasetIdentifierType,
+      this.contactPersonName,
+      this.contactPersonEmail,
+      this.contactPersonIdentifier,
+      this.contactPersonIdentifierType,
+      this.ethicalIssuesValue,
+      this.embargoValue,
+      this.creationFromDate,
+      this.creationToDate,
+      this.modificationFromDate,
+      this.modificationToDate,
+      this.currentPage,
+      this.currentPageSize);
   }
 }

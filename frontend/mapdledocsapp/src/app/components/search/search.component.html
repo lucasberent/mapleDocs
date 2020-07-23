@@ -103,7 +103,7 @@
         </mat-expansion-panel-header>
 
         <div class="search-input" #contact>
-          <mat-form-field class="contact-person-name-search-field" appearance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Contact name</mat-label>
             <input
               type="text"
@@ -115,7 +115,7 @@
               (keyup)="doSearch()"
             />
           </mat-form-field>
-          <mat-form-field class="contact-person-email-search-field" appearance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Contact email</mat-label>
             <input
               type="text"
@@ -127,7 +127,7 @@
               (keyup)="doSearch()"
             />
           </mat-form-field>
-          <mat-form-field class="contact-person-identifier-search-field" appearance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Contact identifier</mat-label>
             <input
               type="text"
@@ -139,7 +139,7 @@
               (keyup)="doSearch()"
             />
           </mat-form-field>
-          <mat-form-field class="contact-person-email-search-field" appearance="outline">
+          <mat-form-field appearance="outline">
             <mat-select placeholder="Identifier type" (selectionChange)="onContactIdTypeSelectionChange($event)">
               <mat-option
                 [(ngModel)]="contactPersonIdentifierType"
@@ -149,6 +149,30 @@
             </mat-select>
           </mat-form-field>
         </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header> Data Set</mat-expansion-panel-header>
+        <mat-form-field appearance="outline">
+          <mat-label>Dataset Identifier</mat-label>
+          <input
+            type="text"
+            placeholder="Dataset identifier"
+            matInput
+            [(ngModel)]="datasetIdentifier"
+            ngDefaultControl
+            (keyup.enter)="doSearch()"
+            (keyup)="doSearch()"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-select placeholder="Identifier type" (selectionChange)="onDatasetIdTypeSelectionChange($event)">
+            <mat-option
+              [(ngModel)]="datasetIdentifierType"
+              ngDefaultControl
+              *ngFor="let datasetIdType of datasetIdTypes"
+              [value]="datasetIdType">{{datasetIdType}}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </mat-expansion-panel>
     </div>
   </mat-tab>

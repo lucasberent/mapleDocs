@@ -6,6 +6,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {MaDmpDto} from '../dto/madmp-dto';
 import {ToastrService} from 'ngx-toastr';
 import {SearchResponse} from '../dto/search-response';
+import {SearchDTO} from "../dto/search-dto";
 
 @Injectable({
   providedIn: 'root'
@@ -72,50 +73,40 @@ export class SearchService {
       );
   }
 
-  findMaDmpsCombined(contactPersonName: string,
-                     contactPersonEmail: string,
-                     contactPersonIdentifier: string,
-                     contactPersonIdentifierType: string,
-                     ethicalIssues: string,
-                     embargo: string,
-                     creationFromDate: Date,
-                     creationToDate: Date,
-                     modificationFromDate: Date,
-                     modificationToDate: Date,
-                     page: number,
-                     size: number): Observable<SearchResponse<any>> {
+  findMaDmpsCombined(searchDTO: SearchDTO): Observable<SearchResponse<any>> {
     let andQueries = [];
+    console.log('combined search: ');
+    console.log(searchDTO);
 
-    console.log(ethicalIssues);
-    if (ethicalIssues === 'yes' || ethicalIssues === 'no') {
+    if (searchDTO.ethicalIssues === 'yes' || searchDTO.ethicalIssues === 'no') {
       andQueries.push({
         term: {
-          "dmp.ethical_issues_exist": ethicalIssues
+          'dmp.ethical_issues_exist': searchDTO.ethicalIssues
         }
       });
     }
 
     let conditions = {};
-    if (creationFromDate !== null) {
-      conditions['gte'] = creationFromDate;
+    if (searchDTO.creationFromDate !== null) {
+      conditions['gte'] = searchDTO.creationFromDate;
     }
-    if (creationToDate !== null) {
-      conditions['lte'] = creationToDate;
+    if (searchDTO.creationToDate !== null) {
+      conditions['lte'] = searchDTO.creationToDate;
     }
 
-    if (embargo === 'yes' || embargo === 'no') {
+    if (searchDTO.embargo === 'yes' || searchDTO.embargo === 'no') {
       const embargoExistsQuery: any = {
         nested: {
-          path: "dmp.dataset",
+          path: 'dmp.dataset',
           query: {
             nested: {
-              path: "dmp.dataset.distribution",
+              path: 'dmp.dataset.distribution',
               query: {
                 nested: {
-                  path: "dmp.dataset.distribution.license",
+                  path: 'dmp.dataset.distribution.license',
                   query: {
                     range: {
-                      "dmp.dataset.distribution.license.start_date": {
+                      'dmp.dataset.distribution.license.start_date': {
                         gt: new Date()
                       }
                     }
@@ -127,7 +118,7 @@ export class SearchService {
         }
       };
 
-      if (embargo === 'yes') {
+      if (searchDTO.embargo === 'yes') {
         andQueries.push(embargoExistsQuery);
       } else {
         andQueries.push({
@@ -138,69 +129,105 @@ export class SearchService {
       }
     }
 
-    if (creationFromDate !== null || creationToDate !== null) {
+    if (searchDTO.creationFromDate !== null || searchDTO.creationToDate !== null) {
       let conditions = {};
-      if (creationFromDate !== null) {
-        conditions['gte'] = creationFromDate;
+      if (searchDTO.creationFromDate !== null) {
+        conditions['gte'] = searchDTO.creationFromDate;
       }
-      if (creationToDate !== null) {
-        conditions['lte'] = creationToDate;
+      if (searchDTO.creationToDate !== null) {
+        conditions['lte'] = searchDTO.creationToDate;
       }
       andQueries.push({
         range: {
-          "dmp.created": conditions
+          'dmp.created': conditions
         }
       });
     }
 
-    if (modificationFromDate !== null || modificationToDate !== null) {
+    if (searchDTO.modificationFromDate !== null || searchDTO.modificationToDate !== null) {
       let conditions = {};
-      if (modificationFromDate !== null) {
-        conditions['gte'] = modificationFromDate;
+      if (searchDTO.modificationFromDate !== null) {
+        conditions['gte'] = searchDTO.modificationFromDate;
       }
-      if (modificationToDate !== null) {
-        conditions['lte'] = modificationToDate;
+      if (searchDTO.modificationToDate !== null) {
+        conditions['lte'] = searchDTO.modificationToDate;
       }
       andQueries.push({
         range: {
-          "dmp.modified": conditions
+          'dmp.modified': conditions
         }
       });
     }
-    if (contactPersonName) {
-      console.log('adding name' + contactPersonName);
+
+    if (searchDTO.contactPersonName) {
+      console.log('adding name' + searchDTO.contactPersonName);
       andQueries.push({
         match_phrase: {
-          "dmp.contact.name": contactPersonName
+          'dmp.contact.name': searchDTO.contactPersonName
         }
       });
     }
-    if (contactPersonEmail) {
+    if (searchDTO.contactPersonEmail) {
       andQueries.push({
         match: {
-          "dmp.contact.mbox": contactPersonEmail
+          'dmp.contact.mbox': searchDTO.contactPersonEmail
         }
       });
     }
-    if (contactPersonIdentifier) {
+    if (searchDTO.contactPersonIdentifier) {
       andQueries.push({
         match: {
-          "dmp.contact.contact_id.identifier": contactPersonIdentifier
+          'dmp.contact.contact_id.identifier': searchDTO.contactPersonIdentifier
         }
       });
     }
-    if (contactPersonIdentifierType) {
-      console.log('add type' + contactPersonIdentifierType);
+    if (searchDTO.contactPersonIdentifierType) {
       andQueries.push({
         match: {
-          "dmp.contact.contact_id.type": contactPersonIdentifierType
+          'dmp.contact.contact_id.type': searchDTO.contactPersonIdentifierType
+        }
+      });
+    }
+    if (searchDTO.datasetIdentifier) {
+      andQueries.push({
+        nested: {
+          path: 'dmp.dataset',
+          query: {
+            bool: {
+              must: [
+                {
+                  match: {
+                    'dmp.dataset.dataset_id.identifier': searchDTO.datasetIdentifier
+                  }
+                }
+              ]
+            }
+          }
+        }
+      });
+    }
+    if (searchDTO.datasetIdentifierType) {
+      andQueries.push({
+        nested: {
+          path: 'dmp.dataset',
+          query: {
+            bool: {
+              must: [
+                {
+                  match: {
+                    'dmp.dataset.dataset_id.type': searchDTO.datasetIdentifierType
+                  }
+                }
+              ]
+            }
+          }
         }
       });
     }
 
     return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
-      from: page * size,
-      size: size,
+      from: searchDTO.page * searchDTO.size,
+      size: searchDTO.size,
       query: {
         bool: {
           must: andQueries

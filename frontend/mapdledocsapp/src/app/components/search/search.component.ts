@@ -1,9 +1,7 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {SearchService} from '../../service/search.service';
 import {Router} from "@angular/router";
-import {MaDmpDto} from "../../dto/madmp-dto";
 import {MaDmpDisplayObject} from "../../dto/madmp-display-object";
-import {newArray} from "@angular/compiler/src/util";
 import {ToastrService} from "ngx-toastr";
 import {SearchResponse} from "../../dto/search-response";
 import {PageEvent} from "@angular/material/paginator";
@@ -16,7 +14,6 @@ import {MatTabGroup} from "@angular/material/tabs";
 })
 export class SearchComponent implements OnInit {
   madmpDisplayList: MaDmpDisplayObject[] = [];
-
   searchBoxValue: string;
   fieldInputValue: string;
   valueInputValue: string;
@@ -38,9 +35,15 @@ export class SearchComponent implements OnInit {
   currentPage: number = 0;
   currentPageSize: number = this.pageSize;
 
+  contactIdTypes: string[] = ['none', 'orcid', 'insi', 'openid', 'other'];
+  contactPersonName: string;
+  contactPersonEmail: string;
+  contactPersonIdentifier: string;
+  contactPersonIdentifierType: string = 'none';
+
   @ViewChild('tabGroup') tabGroup: MatTabGroup;
 
-  constructor(private searchService: SearchService, private router: Router, private toastrService:ToastrService) {
+  constructor(private searchService: SearchService, private router: Router, private toastrService: ToastrService) {
   }
 
   ngOnInit(): void {
@@ -48,6 +51,9 @@ export class SearchComponent implements OnInit {
 
   private setDisplayMadmps(madmps: SearchResponse<any>) {
     this.madmpDisplayList = [];
+    if (!madmps.hits || !madmps.hits.hits) {
+      return;
+    }
     madmps.hits.hits.forEach(searchResult => {
       const docId = searchResult._source['mongoId'];
       const madmpDisplay = new MaDmpDisplayObject(searchResult._source, docId);
@@ -100,8 +106,28 @@ export class SearchComponent implements OnInit {
   }
 
   doSearchCombined() {
-    this.searchService.findMaDmpsCombined(this.ethicalIssuesValue, this.embargoValue, this.creationFromDate, this.creationToDate,
-      this.modificationFromDate, this.modificationToDate, this.currentPage, this.currentPageSize)
+    console.log('searching combined: ');
+    console.log('contact name ' + this.contactPersonName);
+    console.log('contact email ' + this.contactPersonEmail);
+    console.log('contact id ' + this.contactPersonIdentifier);
+    console.log('contact id type ' + this.contactPersonIdentifierType);
+    if (this.contactPersonIdentifierType === 'none') {
+      this.contactPersonIdentifierType = null;
+    }
+    this.searchService
+      .findMaDmpsCombined(
+        this.contactPersonName,
+        this.contactPersonEmail,
+        this.contactPersonIdentifier,
+        this.contactPersonIdentifierType,
+        this.ethicalIssuesValue,
+        this.embargoValue,
+        this.creationFromDate,
+        this.creationToDate,
+        this.modificationFromDate,
+        this.modificationToDate,
+        this.currentPage,
+        this.currentPageSize)
       .subscribe(madmps => {
         this.setDisplayMadmps(madmps);
         this.length = madmps.hits.total.value;
@@ -117,5 +143,14 @@ export class SearchComponent implements OnInit {
     this.currentPage = event.pageIndex;
     this.currentPageSize = event.pageSize;
     this.doSearch();
+  }
+
+  onContactIdTypeSelectionChange(event){
+    if(event.value === 'none'){
+      this.contactPersonIdentifierType = null;
+    }else {
+      this.contactPersonIdentifierType = event.value;
+      this.doSearch();
+    }
   }
 }

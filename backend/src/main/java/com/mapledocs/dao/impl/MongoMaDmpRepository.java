@@ -50,6 +50,7 @@ public class MongoMaDmpRepository implements MaDmpRepository {
             throw new MaDmpRepositoryException("Error saving maDmp: " + e.getMessage());
         }
         try {
+            LOGGER.info("Starting indexing ...");
             elasticsearchDao.indexMaDmp(document.toJson(), mongoId);
         } catch (ElasticsearchDaoIndexingException e) {
             // "rollback"

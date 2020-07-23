@@ -10,4 +10,6 @@ public interface MaDmpService {
     String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException, MaDmpServiceDoiAssignmentException;
 
     List<MaDmpDTO> findAllPaged(int page, int size);
+
+    MaDmpDTO findOne(final String docId);
 }

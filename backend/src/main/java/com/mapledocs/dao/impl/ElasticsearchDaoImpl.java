@@ -7,11 +7,9 @@ import com.mapledocs.api.dto.core.SearchIndexIndexingResponseDTO;
 import com.mapledocs.api.exception.ElasticSeachDaoDeletionException;
 import com.mapledocs.api.exception.ElasticsearchDaoIndexingException;
 import com.mapledocs.dao.api.ElasticsearchDao;
-import org.apache.coyote.Request;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -25,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static com.mapledocs.util.Constants.ELASTICSEARCH_CONN_PORT;
 import static com.mapledocs.util.Constants.ELASTICSEARCH_CONN_URL;
@@ -43,6 +40,7 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
     }
 
     private void setupSearchIndex() throws ElasticsearchDaoIndexingException {
+        LOGGER.info("Setting up index {}", INDEX_NAME);
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX_NAME);
 
         try {
@@ -119,6 +117,7 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
 
     @Override
     public SearchIndexIndexingResponseDTO indexMaDmp(final String maDmpJson, String mongoId) throws ElasticsearchDaoIndexingException {
+        LOGGER.info("Indexing maDMP");
         try {
             boolean exists = client.indices().exists(new GetIndexRequest(INDEX_NAME), RequestOptions.DEFAULT);
             if (!exists) {

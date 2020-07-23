@@ -36,8 +36,9 @@ public class MaDmpController {
 
     @GetMapping("/details/{docId}")
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
-    public ResponseEntity<MaDmpDTO> findOneDmap(@PathVariable String docId) throws NoSuchMethodException {
-        throw new NoSuchMethodException();
+    public ResponseEntity<MaDmpDTO> findOneDmap(@PathVariable String docId)  {
+        LOGGER.info("Finding one madmp");
+        return new ResponseEntity<>(this.maDmpService.findOne(docId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

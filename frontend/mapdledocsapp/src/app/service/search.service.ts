@@ -15,13 +15,13 @@ export class SearchService {
   // MongoDB
   private searchBaseUrl: string = this.globals.backendUri + '/madmps';
   // Elasticsearch
-  private searchUrl: string = this.globals.elasticsearchUri + '/madmps_nested';
+  private searchUrl: string = this.globals.elasticsearchUri + '/madmps_nested/_search';
 
   constructor(private httpClient: HttpClient, private globals: Globals, private toastrService: ToastrService) {
   }
 
   findMaDmps(searchString: string, page: number, size: number): Observable<SearchResponse<any>> {
-    return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
+    return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
       from: page * size,
       size: size,
       query: {
@@ -48,7 +48,7 @@ export class SearchService {
 
   findMaDmpsCustomField(field: string, searchString: string, page: number, size: number): Observable<SearchResponse<any>> {
     const searchField = 'dmp.' + field;
-    return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
+    return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
       from: page * size,
       size: size,
       query: {
@@ -72,8 +72,18 @@ export class SearchService {
       );
   }
 
-  findMaDmpsCombined(ethicalIssues: string, embargo: string, creationFromDate: Date, creationToDate: Date,
-                     modificationFromDate: Date, modificationToDate: Date, page: number, size: number): Observable<SearchResponse<any>> {
+  findMaDmpsCombined(contactPersonName: string,
+                     contactPersonEmail: string,
+                     contactPersonIdentifier: string,
+                     contactPersonIdentifierType: string,
+                     ethicalIssues: string,
+                     embargo: string,
+                     creationFromDate: Date,
+                     creationToDate: Date,
+                     modificationFromDate: Date,
+                     modificationToDate: Date,
+                     page: number,
+                     size: number): Observable<SearchResponse<any>> {
     let andQueries = [];
 
     console.log(ethicalIssues);
@@ -119,12 +129,11 @@ export class SearchService {
 
       if (embargo === 'yes') {
         andQueries.push(embargoExistsQuery);
-      }
-      else {
+      } else {
         andQueries.push({
-            bool: {
-              must_not: embargoExistsQuery
-            }
+          bool: {
+            must_not: embargoExistsQuery
+          }
         });
       }
     }
@@ -158,8 +167,38 @@ export class SearchService {
         }
       });
     }
+    if (contactPersonName) {
+      console.log('adding name' + contactPersonName);
+      andQueries.push({
+        term: {
+          "dmp.contact.name": contactPersonName
+        }
+      });
+    }
+    if (contactPersonEmail) {
+      andQueries.push({
+        term: {
+          "dmp.contact.mbox": contactPersonEmail
+        }
+      });
+    }
+    if (contactPersonIdentifier) {
+      andQueries.push({
+        term: {
+          "dmp.contact.identifier": contactPersonIdentifier
+        }
+      });
+    }
+    if (contactPersonIdentifierType) {
+      console.log('add type' + contactPersonIdentifierType);
+      andQueries.push({
+        term: {
+          "dmp.contact.type": contactPersonIdentifierType
+        }
+      });
+    }
 
-    return this.httpClient.post<SearchResponse<any>>(this.searchUrl + '/_search', {
+    return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
       from: page * size,
       size: size,
       query: {

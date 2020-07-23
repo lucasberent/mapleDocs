@@ -30,16 +30,6 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
-  mapledocs-logstash:
-    image: docker.elastic.co/logstash/logstash-oss:7.7.0
-    container_name: logstash
-    volumes:
-      - ./logstash-pipeline:/usr/share/logstash/pipeline:ro
-    command: bash -c "logstash-plugin install logstash-input-mongodb && logstash"
-    ports:
-      - 5000:5000
-    depends_on:
-      - mapledocs-elasticsearch
   mapledocs-app:
     image: mapledocs-app
     container_name: app
@@ -48,7 +38,5 @@ services:
     depends_on:
       - mapledocs-postgresql
       - mapledocs-mongodb
-      - mapledocs-logstash
-
 volumes:
   mongodb_data_container:

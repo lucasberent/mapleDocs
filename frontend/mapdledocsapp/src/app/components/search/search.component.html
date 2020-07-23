@@ -4,15 +4,16 @@
 <mat-tab-group (selectedTabChange)="onSelectedTabChange()" #tabGroup>
   <mat-tab label="Full-Text Search">
     <div class="search-input">
-        <mat-form-field class="full-text-search-field" appearance="outline">
-          <input
-            type="text"
-            placeholder="Enter search terms"
-            matInput #searchBox
-            [(ngModel)]="searchBoxValue"
-            (keyup.enter)="doSearch()"
-            (keyup)="doSearch()"/>
-        </mat-form-field>
+      <mat-form-field class="full-text-search-field" appearance="outline">
+        <input
+          type="text"
+          placeholder="Enter search terms"
+          matInput #searchBox
+          [(ngModel)]="searchBoxValue"
+          name="searchBoxValue"
+          (keyup.enter)="doSearch()"
+          (keyup)="doSearch()"/>
+      </mat-form-field>
     </div>
   </mat-tab>
   <mat-tab label="Combine Search Conditions">
@@ -22,7 +23,8 @@
           <mat-panel-title>Ethical Issues</mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-radio-group #ethicalIssues [(ngModel)]="ethicalIssuesValue" (change)="doSearch()">
+        <mat-radio-group #ethicalIssues [(ngModel)]="ethicalIssuesValue" name="ethicalIssuesValue"
+                         (change)="doSearch()">
           <mat-radio-button value="no">
             no
           </mat-radio-button>
@@ -39,7 +41,7 @@
           <mat-panel-title>Embargo</mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-radio-group #embargo [(ngModel)]="embargoValue" (change)="doSearch()">
+        <mat-radio-group #embargo [(ngModel)]="embargoValue" name="embargoValue" (change)="doSearch()">
           <mat-radio-button value="no">
             no
           </mat-radio-button>
@@ -51,68 +53,125 @@
           </mat-radio-button>
         </mat-radio-group>
       </mat-expansion-panel>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Creation Date</mat-panel-title>
-      </mat-expansion-panel-header>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Creation Date</mat-panel-title>
+        </mat-expansion-panel-header>
 
-      <div class="datepickers">
-      <mat-form-field>
-        <mat-label>From</mat-label>
-        <input matInput [matDatepicker]="creationFrom" [(ngModel)]="creationFromDate" (dateChange)="doSearch()">
-        <mat-datepicker-toggle matSuffix [for]="creationFrom"></mat-datepicker-toggle>
-        <mat-datepicker #creationFrom></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>To</mat-label>
-        <input matInput [matDatepicker]="creationTo" [(ngModel)]="creationToDate" (dateChange)="doSearch()">
-        <mat-datepicker-toggle matSuffix [for]="creationTo"></mat-datepicker-toggle>
-        <mat-datepicker #creationTo></mat-datepicker>
-      </mat-form-field>
-      </div>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Modification Date</mat-panel-title>
-      </mat-expansion-panel-header>
+        <div class="datepickers">
+          <mat-form-field>
+            <mat-label>From</mat-label>
+            <input matInput [matDatepicker]="creationFrom" [(ngModel)]="creationFromDate" ngDefaultControl
+                   (dateChange)="doSearch()">
+            <mat-datepicker-toggle matSuffix [for]="creationFrom"></mat-datepicker-toggle>
+            <mat-datepicker #creationFrom></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>To</mat-label>
+            <input matInput [matDatepicker]="creationTo" [(ngModel)]="creationToDate" ngDefaultControl
+                   (dateChange)="doSearch()">
+            <mat-datepicker-toggle matSuffix [for]="creationTo"></mat-datepicker-toggle>
+            <mat-datepicker #creationTo></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Modification Date</mat-panel-title>
+        </mat-expansion-panel-header>
 
-      <div class="datepickers">
-      <mat-form-field>
-        <mat-label>From</mat-label>
-        <input matInput [matDatepicker]= "modificationFrom" [(ngModel)]="modificationFromDate" (dateChange)="doSearch()">
-        <mat-datepicker-toggle matSuffix [for]="modificationFrom"></mat-datepicker-toggle>
-        <mat-datepicker #modificationFrom></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>To</mat-label>
-        <input matInput [matDatepicker]="modificationTo" [(ngModel)]="modificationToDate" (dateChange)="doSearch()">
-        <mat-datepicker-toggle matSuffix [for]="modificationTo"></mat-datepicker-toggle>
-        <mat-datepicker #modificationTo></mat-datepicker>
-      </mat-form-field>
-      </div>
-    </mat-expansion-panel>
+        <div class="datepickers">
+          <mat-form-field>
+            <mat-label>From</mat-label>
+            <input matInput [matDatepicker]="modificationFrom" [(ngModel)]="modificationFromDate"
+                   (dateChange)="doSearch()" name="modificationFromDate">
+            <mat-datepicker-toggle matSuffix [for]="modificationFrom"></mat-datepicker-toggle>
+            <mat-datepicker #modificationFrom></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>To</mat-label>
+            <input matInput [matDatepicker]="modificationTo" [(ngModel)]="modificationToDate"
+                   name="modificationToDate" (dateChange)="doSearch()">
+            <mat-datepicker-toggle matSuffix [for]="modificationTo"></mat-datepicker-toggle>
+            <mat-datepicker #modificationTo></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Contact Person</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="search-input" #contact>
+          <mat-form-field class="contact-person-name-search-field" appearance="outline">
+            <mat-label>Contact name</mat-label>
+            <input
+              type="text"
+              placeholder="Contact person name"
+              matInput
+              [(ngModel)]="contactPersonName"
+              ngDefaultControl
+              (keyup.enter)="doSearch()"
+              (keyup)="doSearch()"
+            />
+          </mat-form-field>
+          <mat-form-field class="contact-person-email-search-field" appearance="outline">
+            <mat-label>Contact email</mat-label>
+            <input
+              type="text"
+              placeholder="Contact person email"
+              matInput
+              [(ngModel)]="contactPersonEmail"
+              ngDefaultControl
+              (keyup.enter)="doSearch()"
+              (keyup)="doSearch()"
+            />
+          </mat-form-field>
+          <mat-form-field class="contact-person-identifier-search-field" appearance="outline">
+            <mat-label>Contact identifier</mat-label>
+            <input
+              type="text"
+              placeholder="Contact person identifier"
+              matInput
+              [(ngModel)]="contactPersonIdentifier"
+              ngDefaultControl
+              (keyup.enter)="doSearch()"
+              (keyup)="doSearch()"
+            />
+          </mat-form-field>
+          <mat-form-field class="contact-person-email-search-field" appearance="outline">
+            <mat-select placeholder="Identifier type" (selectionChange)="onContactIdTypeSelectionChange($event)">
+              <mat-option
+                [(ngModel)]="contactPersonIdentifierType"
+                ngDefaultControl
+                *ngFor="let contactIdType of contactIdTypes"
+                [value]="contactIdType">{{contactIdType}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
     </div>
   </mat-tab>
   <mat-tab label="Search specific JSON fields" class="custom-search">
     <div class="search-input">
-    <mat-form-field appearance="outline">
-      <input
-        type="text"
-        placeholder="Field (e.g. contact.name)"
-        matInput #fieldInput
-        [(ngModel)]="fieldInputValue"
-        (keyup.enter)="doSearch()"
-        (keyup)="doSearch()"/>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <input
-        type="text"
-        placeholder="Enter search terms"
-        matInput #valueInput
-        [(ngModel)]="valueInputValue"
-        (keyup.enter)="doSearch()"
-        (keyup)="doSearch()"/>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <input
+          type="text"
+          placeholder="Field (e.g. contact.name)"
+          matInput #fieldInput
+          [(ngModel)]="fieldInputValue"
+          (keyup.enter)="doSearch()"
+          (keyup)="doSearch()"/>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <input
+          type="text"
+          placeholder="Enter search terms"
+          matInput #valueInput
+          [(ngModel)]="valueInputValue"
+          (keyup.enter)="doSearch()"
+          (keyup)="doSearch()"/>
+      </mat-form-field>
     </div>
   </mat-tab>
 </mat-tab-group>

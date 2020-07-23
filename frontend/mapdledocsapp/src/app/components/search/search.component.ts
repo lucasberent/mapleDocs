@@ -34,12 +34,12 @@ export class SearchComponent implements OnInit {
 
   currentPage: number = 0;
   currentPageSize: number = this.pageSize;
-
-  contactIdTypes: string[] = ['none', 'orcid', 'insi', 'openid', 'other'];
+  noSelectionString: string = 'no-selection';
+  contactIdTypes: string[] = [this.noSelectionString, 'orcid', 'insi', 'openid', 'other'];
   contactPersonName: string;
   contactPersonEmail: string;
   contactPersonIdentifier: string;
-  contactPersonIdentifierType: string = 'none';
+  contactPersonIdentifierType: string = this.noSelectionString;
 
   @ViewChild('tabGroup') tabGroup: MatTabGroup;
 
@@ -146,7 +146,7 @@ export class SearchComponent implements OnInit {
   }
 
   onContactIdTypeSelectionChange(event) {
-    if (event.value === 'none') {
+    if (event.value === this.noSelectionString) {
       this.contactPersonIdentifierType = null;
     } else {
       this.contactPersonIdentifierType = event.value;

@@ -12,13 +12,75 @@ import {SearchDTO} from "../dto/search-dto";
   providedIn: 'root'
 })
 export class SearchService {
-
   // MongoDB
   private searchBaseUrl: string = this.globals.backendUri + '/madmps';
   // Elasticsearch
   private searchUrl: string = this.globals.elasticsearchUri + '/madmps_nested/_search';
 
   constructor(private httpClient: HttpClient, private globals: Globals, private toastrService: ToastrService) {
+  }
+
+  buildAllFieldsCombinedQuery(searchDTO: SearchDTO, queries: any[]): void {
+    this.addEthicalIssuesQuery(searchDTO, queries);
+    this.addEmbargoQuery(searchDTO, queries);
+    this.addCreationDateQuery(searchDTO, queries);
+    this.addModificationDateQuery(searchDTO, queries);
+    this.addContactPersonNameQuery(searchDTO, queries);
+    this.addContactPersonEmailQuery(searchDTO, queries);
+    this.addContactPersonIdentifier(searchDTO, queries);
+    this.addContactPersonIdentifierTypeQuery(searchDTO, queries);
+    this.addDatasetIdentifierQuery(searchDTO, queries);
+    this.addDatasetIdentifierTypeQuery(searchDTO, queries);
+    this.addDatasetDistributionHostUrl(searchDTO, queries);
+    this.addMetadataStandardIdQuery(searchDTO, queries);
+    this.addMetadataStandardIdTypeQuery(searchDTO, queries);
+  }
+
+  findMaDmpsCombined(searchDTO: SearchDTO): Observable<SearchResponse<any>> {
+    let andQueries = [];
+    console.log('combined search: ');
+    console.log(searchDTO);
+
+    this.buildAllFieldsCombinedQuery(searchDTO, andQueries);
+
+    return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
+      from: searchDTO.page * searchDTO.size,
+      size: searchDTO.size,
+      query: {
+        bool: {
+          must: andQueries
+        }
+      }
+    })
+      .pipe(
+        tap(list => {
+          console.log('fetched madmps');
+          console.log(list);
+        }),
+        catchError(this.handleError<any>('fetching madmps'))
+      );
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      this.toastrService.error('error while' + operation + ': ' + error.message);
+      console.error(error); // log to console instead
+      console.log(`${operation} failed: ${error.message}`);
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
+
+  getMaDmp(id: string): Observable<MaDmpDto> {
+    {
+      return this.httpClient.get<MaDmpDto>(this.searchBaseUrl + '/details/' + id)
+        .pipe(
+          tap(_ => {
+            console.log('fetched madmp');
+          }),
+          catchError(err => this.handleError<any>('fetching madmps', err))
+        );
+    }
   }
 
   findMaDmps(searchString: string, page: number, size: number): Observable<SearchResponse<any>> {
@@ -73,27 +135,17 @@ export class SearchService {
       );
   }
 
-  findMaDmpsCombined(searchDTO: SearchDTO): Observable<SearchResponse<any>> {
-    let andQueries = [];
-    console.log('combined search: ');
-    console.log(searchDTO);
-
+  addEthicalIssuesQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.ethicalIssues === 'yes' || searchDTO.ethicalIssues === 'no') {
-      andQueries.push({
+      queries.push({
         term: {
           'dmp.ethical_issues_exist': searchDTO.ethicalIssues
         }
       });
     }
+  }
 
-    let conditions = {};
-    if (searchDTO.creationFromDate !== null) {
-      conditions['gte'] = searchDTO.creationFromDate;
-    }
-    if (searchDTO.creationToDate !== null) {
-      conditions['lte'] = searchDTO.creationToDate;
-    }
-
+  addEmbargoQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.embargo === 'yes' || searchDTO.embargo === 'no') {
       const embargoExistsQuery: any = {
         nested: {
@@ -119,16 +171,18 @@ export class SearchService {
       };
 
       if (searchDTO.embargo === 'yes') {
-        andQueries.push(embargoExistsQuery);
+        queries.push(embargoExistsQuery);
       } else {
-        andQueries.push({
+        queries.push({
           bool: {
             must_not: embargoExistsQuery
           }
         });
       }
     }
+  }
 
+  addCreationDateQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.creationFromDate !== null || searchDTO.creationToDate !== null) {
       let conditions = {};
       if (searchDTO.creationFromDate !== null) {
@@ -137,13 +191,15 @@ export class SearchService {
       if (searchDTO.creationToDate !== null) {
         conditions['lte'] = searchDTO.creationToDate;
       }
-      andQueries.push({
+      queries.push({
         range: {
           'dmp.created': conditions
         }
       });
     }
+  }
 
+  addModificationDateQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.modificationFromDate !== null || searchDTO.modificationToDate !== null) {
       let conditions = {};
       if (searchDTO.modificationFromDate !== null) {
@@ -152,44 +208,58 @@ export class SearchService {
       if (searchDTO.modificationToDate !== null) {
         conditions['lte'] = searchDTO.modificationToDate;
       }
-      andQueries.push({
+      queries.push({
         range: {
           'dmp.modified': conditions
         }
       });
     }
+  }
 
+  addContactPersonNameQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.contactPersonName) {
       console.log('adding name' + searchDTO.contactPersonName);
-      andQueries.push({
+      queries.push({
         match_phrase: {
           'dmp.contact.name': searchDTO.contactPersonName
         }
       });
     }
+  }
+
+  addContactPersonEmailQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.contactPersonEmail) {
-      andQueries.push({
+      queries.push({
         match: {
           'dmp.contact.mbox': searchDTO.contactPersonEmail
         }
       });
     }
+  }
+
+  addContactPersonIdentifier(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.contactPersonIdentifier) {
-      andQueries.push({
+      queries.push({
         match: {
           'dmp.contact.contact_id.identifier': searchDTO.contactPersonIdentifier
         }
       });
     }
+  }
+
+  addContactPersonIdentifierTypeQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.contactPersonIdentifierType) {
-      andQueries.push({
+      queries.push({
         match: {
           'dmp.contact.contact_id.type': searchDTO.contactPersonIdentifierType
         }
       });
     }
+  }
+
+  addDatasetIdentifierQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.datasetIdentifier) {
-      andQueries.push({
+      queries.push({
         nested: {
           path: 'dmp.dataset',
           query: {
@@ -206,8 +276,11 @@ export class SearchService {
         }
       });
     }
+  }
+
+  addDatasetIdentifierTypeQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.datasetIdentifierType) {
-      andQueries.push({
+      queries.push({
         nested: {
           path: 'dmp.dataset',
           query: {
@@ -224,7 +297,9 @@ export class SearchService {
         }
       });
     }
+  }
 
+  addDatasetDistributionHostUrl(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.datasetDistributionHostUrl) {
       const matchDatasetHostUrl: any = {
         nested: {
@@ -241,9 +316,11 @@ export class SearchService {
           }
         }
       };
-      andQueries.push(matchDatasetHostUrl);
+      queries.push(matchDatasetHostUrl);
     }
+  }
 
+  addMetadataStandardIdQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.metadataStandardId) {
       const matchMetadataStandardIdQ: any = {
         nested: {
@@ -255,9 +332,11 @@ export class SearchService {
           }
         }
       };
-      andQueries.push(matchMetadataStandardIdQ);
+      queries.push(matchMetadataStandardIdQ);
     }
+  }
 
+  addMetadataStandardIdTypeQuery(searchDTO: SearchDTO, queries: any[]): void {
     if (searchDTO.metadataStandardIdType) {
       const matchMetadataStandardIdTQ: any = {
         nested: {
@@ -269,47 +348,8 @@ export class SearchService {
           }
         }
       };
-      andQueries.push(matchMetadataStandardIdTQ);
+      queries.push(matchMetadataStandardIdTQ);
     }
 
-
-    return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
-      from: searchDTO.page * searchDTO.size,
-      size: searchDTO.size,
-      query: {
-        bool: {
-          must: andQueries
-        }
-      }
-    })
-      .pipe(
-        tap(list => {
-          console.log('fetched madmps');
-          console.log(list);
-        }),
-        catchError(this.handleError<any>('fetching madmps'))
-      );
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      this.toastrService.error('error while' + operation + ': ' + error.message);
-      console.error(error); // log to console instead
-      console.log(`${operation} failed: ${error.message}`);
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
-  getMaDmp(id: string): Observable<MaDmpDto> {
-    {
-      return this.httpClient.get<MaDmpDto>(this.searchBaseUrl + '/details/' + id)
-        .pipe(
-          tap(_ => {
-            console.log('fetched madmp');
-          }),
-          catchError(err => this.handleError<any>('fetching madmps', err))
-        );
-    }
   }
 }

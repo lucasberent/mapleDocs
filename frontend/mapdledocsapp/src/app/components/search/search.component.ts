@@ -57,7 +57,6 @@ export class SearchComponent implements OnInit {
   private subscription: Subscription;
   debounceTime = 500; // 500 ms
 
-
   constructor(private searchService: SearchService, private router: Router, private toastrService: ToastrService) {
   }
 

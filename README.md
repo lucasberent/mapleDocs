@@ -67,7 +67,7 @@ Follow the links below to get a short preview of the look and some first feature
 
 # Resources
 ## Schema and maDMPs
-- https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard
+- [RDA-DMP Common Standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
 
 # Contributors
 - [Alexander Selzer](https://github.com/arselzer)

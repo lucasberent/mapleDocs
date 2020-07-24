@@ -44,70 +44,79 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX_NAME);
 
         try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.startObject();
+            XContentBuilder mappingBuilder = XContentFactory.jsonBuilder();
+            mappingBuilder.startObject();
             {
-                builder.startObject("properties");
+                mappingBuilder.startObject("properties");
                 {
-                    builder.startObject("dmp");
+                    mappingBuilder.startObject("dmp");
                     {
-                        builder.startObject("properties");
+                        mappingBuilder.startObject("properties");
                         {
-                            builder.startObject("dataset");
+                            mappingBuilder.startObject("dataset");
                             {
-                                builder.field("type", "nested");
+                                mappingBuilder.field("type", "nested");
                                 // Implicitly, adding fields dynamically to the nested array is possible
 
-                                builder.startObject("properties");
+                                mappingBuilder.startObject("properties");
                                 {
-                                    builder.startObject("distribution");
+                                    mappingBuilder.startObject("distribution");
                                     {
-                                        builder.field("type", "nested");
-                                        builder.startObject("properties");
+                                        mappingBuilder.field("type", "nested");
+                                        mappingBuilder.startObject("properties");
                                         {
-                                            builder.startObject("license");
+                                            mappingBuilder.startObject("license");
                                             {
-                                                builder.field("type", "nested");
+                                                mappingBuilder.field("type", "nested");
                                             }
-                                            builder.endObject();
+                                            mappingBuilder.endObject();
                                         }
-                                        builder.endObject();
+                                        mappingBuilder.endObject();
                                     }
-                                    builder.endObject();
+                                    mappingBuilder.endObject();
                                 }
-                                builder.endObject();
+                                mappingBuilder.endObject();
                             }
-                            builder.endObject();
-                            builder.startObject("contributor");
+                            mappingBuilder.endObject();
+                            mappingBuilder.startObject("contributor");
                             {
-                                builder.field("type", "nested");
+                                mappingBuilder.field("type", "nested");
                             }
-                            builder.endObject();
-                            builder.startObject("project");
+                            mappingBuilder.endObject();
+                            mappingBuilder.startObject("project");
                             {
-                                builder.field("type", "nested");
+                                mappingBuilder.field("type", "nested");
 
-                                builder.startObject("properties");
+                                mappingBuilder.startObject("properties");
                                 {
-                                    builder.startObject("funding");
+                                    mappingBuilder.startObject("funding");
                                     {
-                                        builder.field("type", "nested");
+                                        mappingBuilder.field("type", "nested");
                                     }
-                                    builder.endObject();
+                                    mappingBuilder.endObject();
                                 }
-                                builder.endObject();
+                                mappingBuilder.endObject();
                             }
-                            builder.endObject();
+                            mappingBuilder.endObject();
                         }
-                        builder.endObject();
+                        mappingBuilder.endObject();
                     }
-                    builder.endObject();
+                    mappingBuilder.endObject();
                 }
-                builder.endObject();
+                mappingBuilder.endObject();
             }
-            builder.endObject();
+            mappingBuilder.endObject();
 
-            createIndexRequest.mapping(builder);
+            createIndexRequest.mapping(mappingBuilder);
+
+            XContentBuilder settingsBuilder = XContentFactory.jsonBuilder();
+            settingsBuilder.startObject();
+            {
+                settingsBuilder.field("index.mapping.ignore_malformed", true);
+            }
+            settingsBuilder.endObject();
+
+            createIndexRequest.settings(settingsBuilder);
 
             client.indices().create(createIndexRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
@@ -130,8 +139,10 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
         MaDMPJson maDMPJson = new Gson().fromJson(maDmpJson, MaDMPJson.class);
         maDMPJson.setMongoId(mongoId);
 
-        for (String field: maDMPJson.getFieldsToHide()) {
-            maDMPJson.getDmp().remove(field);
+        if (maDMPJson.getFieldsToHide() != null) {
+            for (String field : maDMPJson.getFieldsToHide()) {
+                maDMPJson.getDmp().remove(field);
+            }
         }
 
         IndexRequest indexRequest = new IndexRequest(INDEX_NAME);

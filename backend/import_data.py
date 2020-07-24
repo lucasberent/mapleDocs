@@ -79,7 +79,7 @@ for zip_file in os.listdir("zip_files"):
                             "json": file_contents.decode("utf-8").replace("\n", ""),
                             "userId": 0,
                             "docId": None,
-                            "fieldToHide": []
+                            "fieldsToHide": []
                         }
                         json_body = json.dumps(dmp_body).encode("utf-8")
                         print(json_body)

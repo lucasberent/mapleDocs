@@ -13,24 +13,46 @@ import com.mapledocs.domain.AppUser;
 import com.mapledocs.security.SecurityUtils;
 import com.mapledocs.service.api.DoiService;
 import com.mapledocs.service.api.MaDmpService;
-import lombok.RequiredArgsConstructor;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.ValidationException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class MaDmpServiceImpl implements MaDmpService {
     private final MongoMaDmpRepository mongoMaDmpRepository;
     private final UserRepository userRepository;
     private final DoiService doiService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpServiceImpl.class);
+    private final static String MADMP_SCHEMA = "maDMP-schema-1.0.json";
+    private final JSONObject jsonSchema;
+
+    @Autowired
+    public MaDmpServiceImpl(final MongoMaDmpRepository mongoMaDmpRepository,
+                            final UserRepository userRepository,
+                            final DoiService doiService) {
+        this.mongoMaDmpRepository = mongoMaDmpRepository;
+        this.userRepository = userRepository;
+        this.doiService = doiService;
+        try {
+            this.jsonSchema = new JSONObject(
+                    new JSONTokener(new ClassPathResource(MADMP_SCHEMA).getInputStream()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Transactional
     public String createMaDmp(final MaDmpDTO maDmpDTO) throws MaDmpServiceCreationException,
@@ -39,17 +61,23 @@ public class MaDmpServiceImpl implements MaDmpService {
 
         AppUser currUser = this.getCurrentUserOrNotLoggedIn();
         maDmpDTO.setUserId(currUser.getId());
+        Gson gson = new Gson();
 
-        MaDMPJson parsed = new Gson().fromJson(maDmpDTO.getJson(), MaDMPJson.class);
+        MaDMPJson parsed = gson.fromJson(maDmpDTO.getJson(), MaDMPJson.class);
 
         if (parsed.getDmp() == null) {
             LOGGER.error("Parsed dmp is null");
-            throw new MaDmpServiceCreationException("JSON invalid");
+            throw new MaDmpServiceCreationException("JSON invalid, is null");
         }
 
         if (parsed.getDmp().get("dmp_id") == null && maDmpDTO.getAssignNewDoi()) {
             this.requireExternalDoiCredentialsNotNull(currUser, maDmpDTO);
             this.assignNewDoiToMaDmp(parsed, getDoiServiceAuthenticationDTO(currUser, maDmpDTO));
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("dmp", parsed.getDmp()); // top level dmp element is parsed out at this point
+        if (!this.validatesAgainstRDAmaDMPSchema(gson.toJson(map))) {
+            throw new MaDmpServiceValidationException("maDMP does not validate against the schema " + MADMP_SCHEMA);
         }
 
         parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
@@ -59,6 +87,18 @@ public class MaDmpServiceImpl implements MaDmpService {
         } catch (MaDmpRepositoryException e) {
             throw new MaDmpServiceCreationException("Error saving maDmp: " + e.getMessage());
         }
+    }
+
+    public Boolean validatesAgainstRDAmaDMPSchema(final String json) {
+        Schema schema = SchemaLoader.load(this.jsonSchema);
+        try {
+            schema.validate(new JSONObject(
+                    new JSONTokener(json)));
+        } catch (org.everit.json.schema.ValidationException e) {
+            LOGGER.debug("Schema validation failed: {}", e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     private void requireMaDmpDTONotNull(final MaDmpDTO maDmpDTO) {

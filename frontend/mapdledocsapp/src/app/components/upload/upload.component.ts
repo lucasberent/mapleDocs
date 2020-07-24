@@ -86,16 +86,11 @@ export class UploadComponent implements OnInit {
   handleDialogInput() {
     this.openDialog().subscribe(data => {
       console.log('Dialog decision:', data);
-      if (data == null) {
+      if (!data) {
         this.toastr.info('Upload cancelled');
         return;
       } else {
-        if (data === true) {
-          this.madmpToCreate.assignNewDoi = true;
-        } else {
-          this.madmpToCreate.assignNewDoi = false;
-        }
-
+        this.madmpToCreate.assignNewDoi = true;
         this.madmpToCreate.doiServicePassword = data;
         this.uploadMaDmpToCreate();
       }

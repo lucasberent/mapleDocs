@@ -27,10 +27,6 @@ export class AssignNewDoiDialogComponentComponent implements OnInit {
     this.dialogRef.close(this.form.value.doiServicePassword);
   }
 
-  no() {
-    this.dialogRef.close(false);
-  }
-
   cancel() {
     this.dialogRef.close(null);
   }

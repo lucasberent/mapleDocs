@@ -244,6 +244,35 @@ export class SearchService {
       andQueries.push(matchDatasetHostUrl);
     }
 
+    if (searchDTO.metadataStandardId) {
+      const matchMetadataStandardIdQ: any = {
+        nested: {
+          path: 'dmp.dataset',
+          query: {
+            match: {
+              'dmp.dataset.metadata.metadata_standard_id.identifier': searchDTO.metadataStandardId
+            }
+          }
+        }
+      };
+      andQueries.push(matchMetadataStandardIdQ);
+    }
+
+    if (searchDTO.metadataStandardIdType) {
+      const matchMetadataStandardIdTQ: any = {
+        nested: {
+          path: 'dmp.dataset',
+          query: {
+            match: {
+              'dmp.dataset.metadata.metadata_standard_id.type': searchDTO.metadataStandardIdType
+            }
+          }
+        }
+      };
+      andQueries.push(matchMetadataStandardIdTQ);
+    }
+
+
     return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
       from: searchDTO.page * searchDTO.size,
       size: searchDTO.size,

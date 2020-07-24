@@ -165,6 +165,7 @@
           />
         </mat-form-field>
         <mat-form-field appearance="outline">
+          <mat-label>Dataset Id Type</mat-label>
           <mat-select placeholder="Identifier type" (selectionChange)="onDatasetIdTypeSelectionChange($event)">
             <mat-option
               [(ngModel)]="datasetIdentifierType"
@@ -184,6 +185,28 @@
             (keyup.enter)="doSearch()"
             (keyup)="doSearch()"
           />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Metadata Standard Id</mat-label>
+          <input
+            type="text"
+            placeholder="Metadata Standard Id"
+            matInput
+            [(ngModel)]="metadataStandardId"
+            ngDefaultControl
+            (keyup.enter)="doSearch()"
+            (keyup)="doSearch()"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Metadata Standard Id Type</mat-label>
+          <mat-select placeholder="Metadata identifier type" (selectionChange)="onMetadataStandardIdTypeChange($event)">
+            <mat-option
+              [(ngModel)]="metadataStandardIdType"
+              ngDefaultControl
+              *ngFor="let metadataStdIdType of metadataStandardIdTypes"
+              [value]="metadataStdIdType">{{metadataStdIdType}}</mat-option>
+          </mat-select>
         </mat-form-field>
       </mat-expansion-panel>
     </div>

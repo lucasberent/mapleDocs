@@ -47,6 +47,9 @@ export class SearchComponent implements OnInit {
   datasetIdentifierType: string;
   datasetIdTypes: string[] = [this.noSelectionString, 'handle', 'doi', 'ark', 'url', 'other'];
   datasetDistributionHostUrl: string;
+  metadataStandardId: string;
+  metadataStandardIdTypes: string[] = [this.noSelectionString, 'url', 'other'];
+  metadataStandardIdType: string;
 
   constructor(private searchService: SearchService, private router: Router, private toastrService: ToastrService) {
   }
@@ -150,12 +153,7 @@ export class SearchComponent implements OnInit {
   }
 
   private buildSearchDTO(): SearchDTO {
-    if (this.contactPersonIdentifierType === this.noSelectionString) {
-      this.contactPersonIdentifierType = null;
-    }
-    if (this.datasetIdentifierType === this.noSelectionString) {
-      this.datasetIdentifierType = null;
-    }
+    this.prepareSelectionboxFields();
     return new SearchDTO(
       this.datasetIdentifier,
       this.datasetIdentifierType,
@@ -171,6 +169,29 @@ export class SearchComponent implements OnInit {
       this.modificationToDate,
       this.currentPage,
       this.currentPageSize,
-      this.datasetDistributionHostUrl);
+      this.datasetDistributionHostUrl,
+      this.metadataStandardId,
+      this.metadataStandardIdType);
+  }
+
+  prepareSelectionboxFields() {
+    if (this.contactPersonIdentifierType === this.noSelectionString) {
+      this.contactPersonIdentifierType = null;
+    }
+    if (this.datasetIdentifierType === this.noSelectionString) {
+      this.datasetIdentifierType = null;
+    }
+    if (this.metadataStandardIdType === this.noSelectionString) {
+      this.metadataStandardIdType = null;
+    }
+  }
+
+  onMetadataStandardIdTypeChange(event) {
+    if (event.value === this.noSelectionString) {
+      this.metadataStandardIdType = null;
+    } else {
+      this.metadataStandardIdType = event.value;
+    }
+    this.doSearch();
   }
 }

@@ -21,7 +21,7 @@ This project was created for the course Data Stewardship, summer term 2020 at TU
 ## Key technologies 
 ### Backend:
 - [MongoDB](https://www.mongodb.com/) for efficient data access and flexible storage
-- [ElasticSearch](https://www.elastic.co/de/) and [Logstash](https://www.elastic.co/de/logstash) for full-text and highly efficient and scalable searching
+- [ElasticSearch](https://www.elastic.co/de/) for full-text and highly efficient and scalable searching
 - [Spring Boot](https://spring.io/projects/spring-boot) for a secure, scalable and highly maintainable backend application
 - [Docker](https://www.docker.com/) for containerization for easy and portable deployment 
 

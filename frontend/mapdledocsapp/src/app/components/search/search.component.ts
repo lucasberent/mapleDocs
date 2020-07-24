@@ -7,6 +7,8 @@ import {SearchResponse} from "../../dto/search-response";
 import {PageEvent} from "@angular/material/paginator";
 import {MatTabGroup} from "@angular/material/tabs";
 import {SearchDTO} from "../../dto/search-dto";
+import {Subject, Subscription} from "rxjs";
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-search',
@@ -51,10 +53,27 @@ export class SearchComponent implements OnInit {
   metadataStandardIdTypes: string[] = [this.noSelectionString, 'url', 'other'];
   metadataStandardIdType: string;
 
+  private modelChanged: Subject<string> = new Subject<string>();
+  private subscription: Subscription;
+  debounceTime = 500; // 500 ms
+
+
   constructor(private searchService: SearchService, private router: Router, private toastrService: ToastrService) {
   }
 
   ngOnInit(): void {
+    // setup debounced search for fulltext search
+    this.subscription = this.modelChanged
+      .pipe(
+        debounceTime(this.debounceTime),
+      )
+      .subscribe(() => {
+        this.doSearchFullText();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   private setDisplayMadmps(madmps: SearchResponse<any>) {
@@ -78,7 +97,7 @@ export class SearchComponent implements OnInit {
   doSearch() {
     switch (this.tabGroup.selectedIndex) {
       case 0:
-        this.doSearchFullText();
+        this.debouncedFullTextSearch();
         break;
       case 1:
         this.doSearchCombined();
@@ -89,15 +108,17 @@ export class SearchComponent implements OnInit {
     }
   }
 
+  debouncedFullTextSearch() {
+    this.modelChanged.next('next search');
+  }
+
   doSearchFullText() {
     const value = this.searchBoxValue;
-    if (value.length >= 4 || value.length === 0) {
-      console.log('searching for: ' + value);
-      this.searchService.findMaDmps(value, this.currentPage, this.currentPageSize).subscribe(madmps => {
-        this.setDisplayMadmps(madmps);
-        this.length = madmps.hits.total.value;
-      });
-    }
+    console.log('searching for: ' + value);
+    this.searchService.findMaDmps(value, this.currentPage, this.currentPageSize).subscribe(madmps => {
+      this.setDisplayMadmps(madmps);
+      this.length = madmps.hits.total.value;
+    });
   }
 
   doSearchCustom() {

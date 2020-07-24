@@ -4,6 +4,7 @@
 <mat-tab-group (selectedTabChange)="onSelectedTabChange()" #tabGroup>
   <mat-tab label="Full-Text Search">
     <div class="search-input">
+      <mat-label>Press Ente to search</mat-label>
       <mat-form-field class="full-text-search-field" appearance="outline">
         <input
           type="text"
@@ -12,7 +13,7 @@
           [(ngModel)]="searchBoxValue"
           name="searchBoxValue"
           (keyup.enter)="doSearch()"
-          (keyup)="doSearch()"/>
+        />
       </mat-form-field>
     </div>
   </mat-tab>

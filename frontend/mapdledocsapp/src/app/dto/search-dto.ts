@@ -13,7 +13,8 @@ export class SearchDTO {
     public modificationFromDate: Date,
     public modificationToDate: Date,
     public page: number,
-    public size: number
+    public size: number,
+    public datasetDistributionHostUrl: string
   ) {
   }
 }

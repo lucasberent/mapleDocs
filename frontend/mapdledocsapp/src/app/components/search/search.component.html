@@ -173,6 +173,18 @@
               [value]="datasetIdType">{{datasetIdType}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Distribution Host Url</mat-label>
+          <input
+            type="text"
+            placeholder="Distribution Host Url"
+            matInput
+            [(ngModel)]="datasetDistributionHostUrl"
+            ngDefaultControl
+            (keyup.enter)="doSearch()"
+            (keyup)="doSearch()"
+          />
+        </mat-form-field>
       </mat-expansion-panel>
     </div>
   </mat-tab>

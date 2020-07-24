@@ -225,6 +225,25 @@ export class SearchService {
       });
     }
 
+    if (searchDTO.datasetDistributionHostUrl) {
+      const matchDatasetHostUrl: any = {
+        nested: {
+          path: 'dmp.dataset',
+          query: {
+            nested: {
+              path: 'dmp.dataset.distribution',
+              query: {
+                match: {
+                  'dmp.dataset.distribution.host.url': searchDTO.datasetDistributionHostUrl
+                }
+              }
+            }
+          }
+        }
+      };
+      andQueries.push(matchDatasetHostUrl);
+    }
+
     return this.httpClient.post<SearchResponse<any>>(this.searchUrl, {
       from: searchDTO.page * searchDTO.size,
       size: searchDTO.size,

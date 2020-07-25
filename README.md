@@ -53,21 +53,28 @@ In frontend/, run `npm install` and `npm start` to start the development server
 After following the steps above for both backend and frontend, the application is reachable on localhost port 4200. The standard test user created is: 
 - username: admin
 - password: password
+- You have to adapt the Datacite credentials in the import.sql file. 
 
 ## Importing maDMPs from the Zenodo community
 
 The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tuw-dmps-ds-2020) can be downloaded using a simple [python script](https://github.com/lucasberent/mapleDocs/blob/master/backend/import_data.py), which fetches all DMPs using the Zenodo API, authenticates with mapleDocs and automatically uploads all of them. Of course this script can easily be configured to fetch maDMPs from another api and upload them to mapleDocs.
 
+# Local Development
+Some tips for local development and setup: 
+- If you start the application in an IDE, adapt the links in the Constants and properties files to point to localhost instead of the docker container names
 # Examples and Screencasts
 Follow the links below to get a short preview of the look and some first features of the application:
 ## Login & Overview
 [screencast](https://youtu.be/LkV8qi128ws)
 ## Upload, Download & Search
 [screencast](https://youtu.be/SuS9FClZrCI)
+## Architectural Diagram
+[Diagram](https://github.com/lucasberent/mapleDocs/blob/master/architecture-diagram.png)
 
 # Resources
 ## Schema and maDMPs
 - [RDA-DMP Common Standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
+- The schema is saved in the resources folder of the backend project and under src/assets/schemas in the frontend project. If the schema is changed both of those files have to be updated. As schemas are only checked on upload backward compatibility is not a problem for already uploaded maDMPs.
 
 # Contributors
 - [Alexander Selzer](https://github.com/arselzer)

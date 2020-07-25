@@ -1,7 +1,8 @@
 package com.mapledocs.service.impl;
 
-import com.google.gson.Gson;
-import com.mapledocs.api.dto.core.MaDMPJson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mapledocs.api.dto.core.MaDMPMap;
 import com.mapledocs.api.dto.core.MaDmpDTO;
 import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
 import com.mapledocs.api.exception.DoiServiceException;
@@ -38,6 +39,7 @@ public class MaDmpServiceImpl implements MaDmpService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpServiceImpl.class);
     private final static String MADMP_SCHEMA = "maDMP-schema-1.0.json";
     private final JSONObject jsonSchema;
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public MaDmpServiceImpl(final MongoMaDmpRepository mongoMaDmpRepository,
@@ -61,13 +63,11 @@ public class MaDmpServiceImpl implements MaDmpService {
 
         AppUser currUser = this.getCurrentUserOrNotLoggedIn();
         maDmpDTO.setUserId(currUser.getId());
-        Gson gson = new Gson();
-
-        MaDMPJson parsed = gson.fromJson(maDmpDTO.getJson(), MaDMPJson.class);
+        MaDMPMap parsed = MaDMPMap.fromJsonString(maDmpDTO.getJson());
 
         if (parsed.getDmp() == null) {
-            LOGGER.error("Parsed dmp is null");
-            throw new MaDmpServiceCreationException("JSON invalid, is null");
+            LOGGER.error("Parsed maDMP is null");
+            throw new MaDmpServiceCreationException("parsed JSON invalid, is null");
         }
 
         if (parsed.getDmp().get("dmp_id") == null && maDmpDTO.getAssignNewDoi()) {
@@ -76,12 +76,14 @@ public class MaDmpServiceImpl implements MaDmpService {
         }
         HashMap<String, Object> map = new HashMap<>();
         map.put("dmp", parsed.getDmp()); // top level dmp element is parsed out at this point
-        if (!this.validatesAgainstRDAmaDMPSchema(gson.toJson(map))) {
+        System.out.println("Gson parsed: " + map);
+
+        if (!this.validatesAgainstRDAmaDMPSchema(this.parseToStringOrElseServiceException(map))) {
             throw new MaDmpServiceValidationException("maDMP does not validate against the schema " + MADMP_SCHEMA);
         }
 
         parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
-        maDmpDTO.setJson(new Gson().toJson(parsed));
+        maDmpDTO.setJson(MaDMPMap.toJsonString(parsed));
         try {
             return this.mongoMaDmpRepository.saveMaDmp(maDmpDTO);
         } catch (MaDmpRepositoryException e) {
@@ -99,6 +101,15 @@ public class MaDmpServiceImpl implements MaDmpService {
             return false;
         }
         return true;
+    }
+
+    private String parseToStringOrElseServiceException(final Map<String, Object> map) {
+        try {
+            return objectMapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error parsing maDMP for validation {}", map);
+            throw new MaDmpServiceCreationException("Error parsing maDMP for validation: " + e.getMessage());
+        }
     }
 
     private void requireMaDmpDTONotNull(final MaDmpDTO maDmpDTO) {
@@ -124,7 +135,7 @@ public class MaDmpServiceImpl implements MaDmpService {
         }
     }
 
-    private void assignNewDoiToMaDmp(MaDMPJson maDmp, final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO)
+    private void assignNewDoiToMaDmp(MaDMPMap maDmp, final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO)
             throws MaDmpServiceDoiAssignmentException {
         LOGGER.info("Trying to assign new doi to maDMP");
         String doi;

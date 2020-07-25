@@ -10,6 +10,7 @@ import com.mapledocs.util.Constants;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,10 @@ public class MongoMaDmpRepository implements MaDmpRepository {
         }
         try {
             LOGGER.info("Starting indexing ...");
-            elasticsearchDao.indexMaDmp(document.toJson(), mongoId);
+            JsonWriterSettings jsonWriterSettings = JsonWriterSettings.builder() // otherwise datatypes are included in serialization
+                    .int64Converter((value, writer) -> writer.writeNumber(value.toString()))
+                    .build();
+            elasticsearchDao.indexMaDmp(document.toJson(jsonWriterSettings), mongoId);
         } catch (ElasticsearchDaoIndexingException e) {
             // "rollback"
             mongoCollection.deleteOne(document);

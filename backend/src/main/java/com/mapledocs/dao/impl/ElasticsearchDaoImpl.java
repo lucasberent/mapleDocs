@@ -1,7 +1,6 @@
 package com.mapledocs.dao.impl;
 
-import com.google.gson.Gson;
-import com.mapledocs.api.dto.core.MaDMPJson;
+import com.mapledocs.api.dto.core.MaDMPMap;
 import com.mapledocs.api.dto.core.SearchIndexDeleteResponseDTO;
 import com.mapledocs.api.dto.core.SearchIndexIndexingResponseDTO;
 import com.mapledocs.api.exception.ElasticSeachDaoDeletionException;
@@ -136,17 +135,18 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
             throw new ElasticsearchDaoIndexingException("Error checking if index exists", e);
         }
 
-        MaDMPJson maDMPJson = new Gson().fromJson(maDmpJson, MaDMPJson.class);
-        maDMPJson.setMongoId(mongoId);
+        MaDMPMap maDMPMap = MaDMPMap.fromJsonString(maDmpJson);
+        maDMPMap.setMongoId(mongoId);
 
-        if (maDMPJson.getFieldsToHide() != null) {
-            for (String field : maDMPJson.getFieldsToHide()) {
-                maDMPJson.getDmp().remove(field);
+        if (maDMPMap.getFieldsToHide() != null) {
+            for (String field : maDMPMap.getFieldsToHide()) {
+                maDMPMap.getDmp().remove(field);
             }
         }
 
         IndexRequest indexRequest = new IndexRequest(INDEX_NAME);
-        indexRequest.source(new Gson().toJson(maDMPJson), XContentType.JSON);
+        System.out.println("indexing : " + MaDMPMap.toJsonString(maDMPMap));
+        indexRequest.source(MaDMPMap.toJsonString(maDMPMap), XContentType.JSON);
 
         try {
             return new SearchIndexIndexingResponseDTO(this.client.index(indexRequest, RequestOptions.DEFAULT));

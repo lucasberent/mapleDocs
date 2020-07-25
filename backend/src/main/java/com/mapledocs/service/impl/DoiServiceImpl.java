@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,10 +19,8 @@ public class DoiServiceImpl implements DoiService {
     private static final Logger LOG = LoggerFactory.getLogger(DoiServiceImpl.class);
 
     private final DoiApiClient doiApiClient;
-    private final GsonJsonParser parser;
 
     public DoiServiceImpl(final DoiApiClient doiApiClient) {
-        this.parser = new GsonJsonParser();
         this.doiApiClient = doiApiClient;
     }
 

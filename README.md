@@ -62,12 +62,16 @@ The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tu
 # Local Development
 Some tips for local development and setup: 
 - If you start the application in an IDE, adapt the links in the Constants and properties files to point to localhost instead of the docker container names
+
 # Examples and Screencasts
 Follow the links below to get a short preview of the look and some first features of the application:
+
 ## Login & Overview
 [screencast](https://youtu.be/LkV8qi128ws)
+
 ## Upload, Download & Search
 [screencast](https://youtu.be/SuS9FClZrCI)
+
 ## Architectural Diagram
 [Diagram](https://github.com/lucasberent/mapleDocs/blob/master/architecture-diagram.png)
 

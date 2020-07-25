@@ -63,6 +63,7 @@ The DMPs from the [Data Stewardship Community](https://zenodo.org/communities/tu
 Some tips for local development and setup: 
 - If you start the application in an IDE, adapt the links in the Constants and properties files to point to localhost instead of the docker container names
 
+
 # Examples and Screencasts
 Follow the links below to get a short preview of the look and some first features of the application:
 

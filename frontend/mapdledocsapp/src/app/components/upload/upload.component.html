@@ -18,16 +18,30 @@
   </div>
 </div>
 <div *ngIf="madmpShowJson" align="left">
-  <mat-form-field>
-    <mat-label>Select fields so hide</mat-label>
-    <mat-select [formControl]="fieldsToHideFormControl" multiple
-                (selectionChange)="handleUpdateFieldsToHide($event.value)">
-      <mat-option *ngFor="let field of madmpFields" [value]="field">
-        {{field}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <mat-chip-list #chipList>
+    <mat-chip *ngFor="let field of selectedFieldsToHide"
+              removable="true"
+              (removed)="removeHiddenField(field)">
+      {{field}}
+    </mat-chip>
+
+    <input placeholder="Add fields to hide (any valid jsonpath expression excluding the implicit prefix $.dmp.)"
+           #hiddenFieldInput
+           [formControl]="formCtrl"
+           [matChipInputFor]="chipList"
+           [matAutocomplete]="auto"
+           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+           matChipInputAddOnBlur="true"
+           (matChipInputTokenEnd)="addHiddenField($event)">
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="autocompleteSelected($event)">
+    <mat-option *ngFor="let field of madmpFields" [value]="field">
+      {{field}}
+    </mat-option>
+  </mat-autocomplete>
+  <mat-divider></mat-divider>
   <button mat-stroked-button (click)="onClearHideFieldsSelection()">clear selection</button>
+  <mat-divider></mat-divider>
   <div>
     <div >
       <mat-label>Preview</mat-label>

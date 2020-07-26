@@ -98,6 +98,11 @@ public class MaDmpServiceImpl implements MaDmpService {
                     new JSONTokener(json)));
         } catch (org.everit.json.schema.ValidationException e) {
             LOGGER.debug("Schema validation failed: {}", e.getMessage());
+            System.out.println(json);
+            System.out.println(e);
+            System.out.println(e.getCausingExceptions());
+            System.out.println(e.getPointerToViolation());
+            e.printStackTrace();
             return false;
         }
         return true;

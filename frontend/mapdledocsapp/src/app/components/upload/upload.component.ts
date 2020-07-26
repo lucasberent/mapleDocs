@@ -8,6 +8,9 @@ import {ToastrService} from 'ngx-toastr';
 import {FormControl} from '@angular/forms';
 import {AssignNewDoiDialogComponentComponent} from '../assign-new-dio-dialog-component/assign-new-doi-dialog-component.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {MatChipInputEvent, MatChipsModule} from "@angular/material/chips";
+import {COMMA, ENTER, SPACE} from '@angular/cdk/keycodes';
+import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 
 // @ts-ignore
 const Ajv = require('ajv');
@@ -18,7 +21,6 @@ const Ajv = require('ajv');
   styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent implements OnInit {
-  fieldsToHideFormControl = new FormControl();
   maDmpJsonSchema: any;
   ajv: Ajv = null;
   madmpToCreate: CreateMaDmpDto;
@@ -30,6 +32,10 @@ export class UploadComponent implements OnInit {
   selectedFieldsToHide: string[] = [];
   assignNewDoi: boolean = false;
   doiServicePassword: string;
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
+  formCtrl = new FormControl();
+
+  @ViewChild('hiddenFieldInput') hiddenFieldInput: ElementRef<HTMLInputElement>;
 
   constructor(private uploadService: UploadService,
               private httpClient: HttpClient,
@@ -121,7 +127,7 @@ export class UploadComponent implements OnInit {
       fieldNames.forEach((field) => {
         delete this.madmpShowJson['dmp'][field];
       });
-      console.log('added ' + fieldNames + ' to fields to hide')
+      console.log('added ' + fieldNames + ' to fields to hide');
     }
   }
 
@@ -157,8 +163,30 @@ export class UploadComponent implements OnInit {
   }
 
   resetFieldsToHide() {
-    this.fieldsToHideFormControl = new FormControl();
     this.selectedFieldsToHide = [];
+  }
+
+  removeHiddenField(field: string) {
+    this.selectedFieldsToHide.splice(this.selectedFieldsToHide.indexOf(field), 1);
+  }
+
+  addHiddenField(event: MatChipInputEvent) {
+    const input = event.input;
+    const value = event.value;
+
+    if ((value || '').trim()) {
+      this.selectedFieldsToHide.push(event.value);
+    }
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  autocompleteSelected(event: MatAutocompleteSelectedEvent): void {
+    this.selectedFieldsToHide.push(event.option.viewValue);
+    this.hiddenFieldInput.nativeElement.value = '';
+    this.formCtrl.setValue(null);
   }
 
   onClearHideFieldsSelection() {

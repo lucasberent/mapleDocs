@@ -37,6 +37,8 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {AssignNewDoiDialogComponentComponent} from './components/assign-new-dio-dialog-component/assign-new-doi-dialog-component.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatChipsModule} from "@angular/material/chips";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @NgModule({
   declarations: [
@@ -79,7 +81,9 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatSelectModule,
     TreeviewModule.forRoot(),
     MatPaginatorModule,
-    MatDialogModule
+    MatDialogModule,
+    MatChipsModule,
+    MatAutocompleteModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

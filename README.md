@@ -1,8 +1,9 @@
 # Introduction
-This project was created for the course Data Stewardship, summer term 2020 at TU Vienna. The goal of this opensource project is to provide a system that allows users to manage and expose machine readible data management plans (maDMPs) to achieve FAIR data [TU Vienna FAIR](https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), [Exposing maDMPs](https://www.rd-alliance.org/groups/exposing-data-management-plans-wg).
+This project was created for the course Data Stewardship, summer term 2020 at TU Vienna.
+The goal of this open source project is to provide a system that allows users to manage and expose machine readible data management plans (maDMPs) to achieve FAIR data (see [TU Vienna FAIR](https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), [Exposing maDMPs](https://www.rd-alliance.org/groups/exposing-data-management-plans-wg)).
 
-## Feautres
-- Upload maDMPs as Json files (stored in MongoDB for scalability and flexibility)
+## Features
+- Upload maDMPs as JSON files (stored in MongoDB for scalability and flexibility)
 - Hide fields of maDMPs s.t. they become invisible to other users
 - Schema validation against the maDMP schema provided by the [RDA-DMP common standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard) in frontend and backend on upload
 - Optional, automatized assignment of dois to maDMPs from [Datacite](https://datacite.org/) if no doi is present on upload
@@ -10,13 +11,13 @@ This project was created for the course Data Stewardship, summer term 2020 at TU
 - Fast, powerful and extendable search of maDMPs with Elasticsearch:
     - field-wise search on maDMPs
     - combined search over multiple maDMP fields at once
-- Download and save maDMPs as Json files
+- Download and save maDMPs as JSON files
 - Security: Registration and Login with JWT. Secured with Spring Security
 - Easy to use and simple UI written in Angular
 - Extendable and easy to maintain layered architecture
 - Built as Spring Boot application, written in Java
 - All components (MongoDB, Elasticsearch and the Spring Boot application) are deployed with Docker for a highly portable, scalable and easy way of deployment. To that end we provide a docker-compose containing the backend components. The fronend can be deployed as Angular application on a webserver
-- Moreover, we provide an automatized import mechanism to import maDMPs from an external provider e.g. from zenodo, written in Python.
+- Moreover, we provide an automated import mechanism to import maDMPs from an external provider e.g. from zenodo, written in Python.
 
 ## Key technologies 
 ### Backend:
@@ -43,7 +44,7 @@ less, the elasticsearch service might fail.
  
  * Run the services with docker-compose: `docker-compose up` (might need to run as root)
 
-Alternatively, just use the script `build_and_run.sh`
+Alternatively, just use the script `build_and_start.sh`
 
 ## Frontend
 

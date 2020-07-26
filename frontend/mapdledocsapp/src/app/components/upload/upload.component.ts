@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {Ajv} from 'ajv';
-import {UploadService} from '../../service/upload.service';
+import {MadmpService} from '../../service/madmp.service';
 import {HttpClient} from '@angular/common/http';
 import {CreateMaDmpDto} from '../../dto/create-madmp-dto';
 import {ToastrService} from 'ngx-toastr';
@@ -31,7 +31,7 @@ export class UploadComponent implements OnInit {
   assignNewDoi: boolean = false;
   doiServicePassword: string;
 
-  constructor(private uploadService: UploadService,
+  constructor(private madmpService: MadmpService,
               private httpClient: HttpClient,
               private router: Router,
               private toastr: ToastrService,
@@ -136,7 +136,7 @@ export class UploadComponent implements OnInit {
     this.madmpToCreate.fieldsToHide = this.selectedFieldsToHide;
     console.log('uploading madmp:');
     console.log(this.madmpToCreate);
-    this.uploadService.uploadMaDmp(this.madmpToCreate)
+    this.madmpService.uploadMaDmp(this.madmpToCreate)
       .subscribe(result => {
         this.uploading = false;
         this.toastr.success('upload successful');
@@ -163,5 +163,26 @@ export class UploadComponent implements OnInit {
 
   onClearHideFieldsSelection() {
     this.resetFieldsToHide();
+  }
+
+  handleValidate() {
+    if (!this.madmpShowJson) {
+      this.toastr.info('no maDMP selected');
+      return;
+    } else {
+      this.madmpService.validateMaDmp(this.madmpShowJson).subscribe(
+        res => {
+          console.log('validation result: ');
+          console.log(res);
+          if (res) { // if null validation was successful
+            this.toastr.error('Validation not successfult: ' + res);
+          } else {
+            this.toastr.success('validation successful against current schema');
+          }
+        }, error => { // another error
+          this.toastr.error(error);
+        }
+      );
+    }
   }
 }

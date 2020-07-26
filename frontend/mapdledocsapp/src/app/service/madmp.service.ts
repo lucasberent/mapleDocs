@@ -9,7 +9,7 @@ import {ToastrService} from "ngx-toastr";
 @Injectable({
   providedIn: 'root'
 })
-export class UploadService {
+export class MadmpService {
 
   private maDmpBaseUrl: string = this.globals.backendUri + '/madmps';
 
@@ -23,5 +23,13 @@ export class UploadService {
     };
     console.log('posting madmp in service');
     return this.httpClient.post<string>(this.maDmpBaseUrl, maDmp, httpOptions);
+  }
+
+  validateMaDmp(maDmpJson): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({'Content-Type': 'application/json'}),
+      responseType: 'text' as 'json'
+    };
+    return this.httpClient.post<string>(this.maDmpBaseUrl + '/validation', maDmpJson, httpOptions);
   }
 }

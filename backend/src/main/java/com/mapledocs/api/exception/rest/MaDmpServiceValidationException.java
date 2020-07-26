@@ -7,4 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class MaDmpServiceValidationException extends RuntimeException {
     public MaDmpServiceValidationException(String s) {
     }
+
+    public MaDmpServiceValidationException(String s, Throwable t) {
+        super(s, t);
+    }
 }

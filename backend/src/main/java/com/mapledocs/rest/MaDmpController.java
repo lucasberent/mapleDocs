@@ -1,6 +1,7 @@
 package com.mapledocs.rest;
 
 import com.mapledocs.api.dto.core.MaDmpDTO;
+import com.mapledocs.api.dto.core.SchemaValidationExceptionDTO;
 import com.mapledocs.service.api.MaDmpService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,6 +28,13 @@ public class MaDmpController {
         return ResponseEntity.status(HttpStatus.CREATED).body(id);
     }
 
+    @PostMapping("/validation")
+    @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
+    public ResponseEntity<SchemaValidationExceptionDTO> validateMaDMPAgainstSchema(@RequestBody String maDmpJson) {
+        LOGGER.debug("Validating Madmp: {}", maDmpJson);
+        return ResponseEntity.status(HttpStatus.OK).body(this.maDmpService.validateForCurrentSchema(maDmpJson));
+    }
+
     @GetMapping
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
     public ResponseEntity<List<MaDmpDTO>> findAllMaDmps(@RequestParam("page") int page, @RequestParam("size") int size) {
@@ -36,7 +44,7 @@ public class MaDmpController {
 
     @GetMapping("/details/{docId}")
     @PreAuthorize("hasRole(\"ROLE_USER\") || hasRole(\"ROLE_ADMIN\")")
-    public ResponseEntity<MaDmpDTO> findOneDmap(@PathVariable String docId)  {
+    public ResponseEntity<MaDmpDTO> findOneDmap(@PathVariable String docId) {
         LOGGER.info("Finding one madmp");
         return new ResponseEntity<>(this.maDmpService.findOne(docId), HttpStatus.OK);
     }

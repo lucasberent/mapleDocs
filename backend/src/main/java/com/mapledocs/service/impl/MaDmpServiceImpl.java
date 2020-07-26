@@ -1,9 +1,9 @@
 package com.mapledocs.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mapledocs.api.dto.core.MaDMPMap;
 import com.mapledocs.api.dto.core.MaDmpDTO;
+import com.mapledocs.api.dto.core.SchemaValidationExceptionDTO;
 import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
 import com.mapledocs.api.exception.DoiServiceException;
 import com.mapledocs.api.exception.MaDmpRepositoryException;
@@ -74,13 +74,6 @@ public class MaDmpServiceImpl implements MaDmpService {
             this.requireExternalDoiCredentialsNotNull(currUser, maDmpDTO);
             this.assignNewDoiToMaDmp(parsed, getDoiServiceAuthenticationDTO(currUser, maDmpDTO));
         }
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("dmp", parsed.getDmp()); // top level dmp element is parsed out at this point
-        System.out.println("Gson parsed: " + map);
-
-        if (!this.validatesAgainstRDAmaDMPSchema(this.parseToStringOrElseServiceException(map))) {
-            throw new MaDmpServiceValidationException("maDMP does not validate against the schema " + MADMP_SCHEMA);
-        }
 
         parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
         maDmpDTO.setJson(MaDMPMap.toJsonString(parsed));
@@ -91,30 +84,15 @@ public class MaDmpServiceImpl implements MaDmpService {
         }
     }
 
-    public Boolean validatesAgainstRDAmaDMPSchema(final String json) {
+    public SchemaValidationExceptionDTO validateForCurrentSchema(final String json) {
         Schema schema = SchemaLoader.load(this.jsonSchema);
         try {
-            schema.validate(new JSONObject(
-                    new JSONTokener(json)));
+            schema.validate(new JSONObject(new JSONTokener(json)));
         } catch (org.everit.json.schema.ValidationException e) {
             LOGGER.debug("Schema validation failed: {}", e.getMessage());
-            System.out.println(json);
-            System.out.println(e);
-            System.out.println(e.getCausingExceptions());
-            System.out.println(e.getPointerToViolation());
-            e.printStackTrace();
-            return false;
+            return new SchemaValidationExceptionDTO(e.getCausingExceptions());
         }
-        return true;
-    }
-
-    private String parseToStringOrElseServiceException(final Map<String, Object> map) {
-        try {
-            return objectMapper.writeValueAsString(map);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Error parsing maDMP for validation {}", map);
-            throw new MaDmpServiceCreationException("Error parsing maDMP for validation: " + e.getMessage());
-        }
+        return null;
     }
 
     private void requireMaDmpDTONotNull(final MaDmpDTO maDmpDTO) {

@@ -5,7 +5,7 @@ The goal of this open source project is to provide a system that allows users to
 ## Features
 - Upload maDMPs as JSON files (stored in MongoDB for scalability and flexibility)
 - Hide fields of maDMPs s.t. they become invisible to other users
-- Schema validation against the maDMP schema provided by the [RDA-DMP common standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard) in frontend and backend on upload
+- Schema validation against the maDMP schema provided by the [RDA-DMP common standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
 - Optional, automatized assignment of dois to maDMPs from [Datacite](https://datacite.org/) if no doi is present on upload
 - Interactive maDMP viewer for a clear view over maDMPs 
 - Fast, powerful and extendable search of maDMPs with Elasticsearch:
@@ -80,7 +80,7 @@ Follow the links below to get a short preview of the look and some first feature
 # Resources
 ## Schema and maDMPs
 - [RDA-DMP Common Standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
-- The schema is saved in the resources folder of the backend project and under src/assets/schemas in the frontend project. If the schema is changed both of those files have to be updated. As schemas are only checked on upload backward compatibility is not a problem for already uploaded maDMPs.
+- The schema is saved in the resources folder of the backend project. This is used by the validation resource.
 
 # Contributors
 - [Alexander Selzer](https://github.com/arselzer)

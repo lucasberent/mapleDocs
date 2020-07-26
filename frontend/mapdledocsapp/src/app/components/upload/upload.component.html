@@ -13,8 +13,9 @@
 
   </form>
   <div style="padding-top: 5em;">
-    <button mat-stroked-button color="primary" (click)="handleUpload()">upload</button>
     <button mat-stroked-button (click)="onClearSelection()">clear selection</button>
+    <button mat-stroked-button (click)="handleValidate()">validate against schema</button>
+    <button mat-stroked-button color="primary" (click)="handleUpload()">upload</button>
   </div>
 </div>
 <div *ngIf="madmpShowJson" align="left">
@@ -43,7 +44,7 @@
   <button mat-stroked-button (click)="onClearHideFieldsSelection()">clear selection</button>
   <mat-divider></mat-divider>
   <div>
-    <div >
+    <div>
       <mat-label>Preview</mat-label>
       <ngx-json-viewer [json]="madmpShowJson"></ngx-json-viewer>
     </div>

@@ -1,5 +1,8 @@
 package com.mapledocs.dao.impl;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.mapledocs.api.dto.core.MaDmpDTO;
 import com.mapledocs.api.exception.ElasticsearchDaoIndexingException;
 import com.mapledocs.api.exception.MaDmpRepositoryException;
@@ -89,16 +92,33 @@ public class MongoMaDmpRepository implements MaDmpRepository {
         List<String> fieldsToHide = document.getList("fieldsToHide", String.class);
         document.remove(Constants.USER_ID_FIELD);
         document.remove("_id");
+
+        MaDmpDTO result = null;
         if (fieldsToHide != null) {
+            // When there are fields to hide, parse the document as a jsonpath context and remove the fields
+            document.remove("fieldsToHide");
+            DocumentContext jsonPathContext = JsonPath.parse(document.toJson());
             if (!documentUserId.equals(currUserId)) {
                 for (String s : fieldsToHide) {
                     document.get("dmp", Document.class).remove(s);
+                    try {
+                        jsonPathContext.delete("$.dmp." + s);
+                    }
+                    catch (PathNotFoundException e) {
+                        // Ignore
+                    }
                 }
             }
-            document.remove("fieldsToHide");
+
+            result = new MaDmpDTO(jsonPathContext.jsonString(), documentUserId);
+            result.setDocId(docId);
         }
-        MaDmpDTO result = new MaDmpDTO(document.toJson(), documentUserId);
-        result.setDocId(docId);
+        else {
+            // Otherwise, directly convert it to a MaDmpDTO
+            result = new MaDmpDTO(document.toJson(), documentUserId);
+            result.setDocId(docId);
+        }
+
         LOGGER.debug("parsing result: {}", result);
         return result;
     }

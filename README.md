@@ -75,7 +75,7 @@ Follow the links below to get a short preview of the look and some first feature
 [screencast](https://youtu.be/SuS9FClZrCI)
 
 ## Architectural Diagram
-[Diagram](https://github.com/lucasberent/mapleDocs/blob/master/architecture-diagram.png)
+![Architectural Diagram](https://raw.githubusercontent.com/lucasberent/mapleDocs/master/architecture-diagram.png)
 
 # Resources
 ## Schema and maDMPs

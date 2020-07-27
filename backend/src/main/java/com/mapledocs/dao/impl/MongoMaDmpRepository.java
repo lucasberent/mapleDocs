@@ -92,6 +92,7 @@ public class MongoMaDmpRepository implements MaDmpRepository {
         List<String> fieldsToHide = document.getList("fieldsToHide", String.class);
         document.remove(Constants.USER_ID_FIELD);
         document.remove("_id");
+        document.remove("mongoId");
 
         MaDmpDTO result = null;
         if (fieldsToHide != null) {

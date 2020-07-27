@@ -11,6 +11,8 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {MatChipInputEvent, MatChipsModule} from "@angular/material/chips";
 import {COMMA, ENTER, SPACE} from '@angular/cdk/keycodes';
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
+import {Observable} from "rxjs";
+import {startWith, map} from "rxjs/operators";
 
 // @ts-ignore
 const Ajv = require('ajv');
@@ -34,6 +36,7 @@ export class UploadComponent implements OnInit {
   doiServicePassword: string;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
   formCtrl = new FormControl();
+  filteredFields: Observable<string[]>;
 
   @ViewChild('hiddenFieldInput') hiddenFieldInput: ElementRef<HTMLInputElement>;
 
@@ -42,12 +45,21 @@ export class UploadComponent implements OnInit {
               private router: Router,
               private toastr: ToastrService,
               private dialog: MatDialog) {
+    this.filteredFields = this.formCtrl.valueChanges.pipe(
+      startWith(null),
+      map((field: string | null) => field ? this._filter(field) : this.madmpFields.slice()));
   }
 
   ngOnInit(): void {
     this.ajv = new Ajv();
     this.maDmpJsonSchema = this.httpClient.get('assets/schemas/schema-version-1.0.json')
       .subscribe(file => console.log('read schema: ' + file));
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.madmpFields.filter(field => field.toLowerCase().indexOf(filterValue) === 0);
   }
 
   handleFileInput(files) {
@@ -184,9 +196,9 @@ export class UploadComponent implements OnInit {
   }
 
   autocompleteSelected(event: MatAutocompleteSelectedEvent): void {
-    this.selectedFieldsToHide.push(event.option.viewValue);
-    this.hiddenFieldInput.nativeElement.value = '';
-    this.formCtrl.setValue(null);
+    //this.selectedFieldsToHide.push(event.option.viewValue);
+    //this.hiddenFieldInput.nativeElement.value = '';
+    this.formCtrl.setValue(event.option.viewValue);
   }
 
   onClearHideFieldsSelection() {

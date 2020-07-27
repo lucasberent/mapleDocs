@@ -19,29 +19,33 @@
   </div>
 </div>
 <div *ngIf="madmpShowJson" align="left">
-  <mat-chip-list #chipList>
-    <mat-chip *ngFor="let field of selectedFieldsToHide"
-              removable="true"
-              (removed)="removeHiddenField(field)">
-      {{field}}
-    </mat-chip>
+  <div class="hidden-fields-container">
+    <h2>Hide fields</h2>
+    <p>Specify a list of fields to hide from other users. Enter any valid jsonpath expression excluding the implicit prefix '$.dmp.'</p>
+      <p>For example: <code>modified</code>,  <code>contributor.mbox</code>,  <code>project[*].description</code></p>
+    <mat-chip-list #chipList>
+      <mat-chip *ngFor="let field of selectedFieldsToHide"
+                [removable]="true"
+                (removed)="removeHiddenField(field)">
+        {{field}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
 
-    <input placeholder="Add fields to hide (any valid jsonpath expression excluding the implicit prefix $.dmp.)"
-           #hiddenFieldInput
-           [formControl]="formCtrl"
-           [matChipInputFor]="chipList"
-           [matAutocomplete]="auto"
-           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-           matChipInputAddOnBlur="true"
-           (matChipInputTokenEnd)="addHiddenField($event)">
-  </mat-chip-list>
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="autocompleteSelected($event)">
-    <mat-option *ngFor="let field of madmpFields" [value]="field">
-      {{field}}
-    </mat-option>
-  </mat-autocomplete>
-  <mat-divider></mat-divider>
-  <button mat-stroked-button (click)="onClearHideFieldsSelection()">clear selection</button>
+      <input placeholder="Add fields to hide "
+             #hiddenFieldInput
+             [formControl]="formCtrl"
+             [matChipInputFor]="chipList"
+             [matAutocomplete]="auto"
+             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+             [matChipInputAddOnBlur]="false"
+             (matChipInputTokenEnd)="addHiddenField($event)">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="autocompleteSelected($event)">
+      <mat-option *ngFor="let field of filteredFields | async" [value]="field">
+        {{field}}
+      </mat-option>
+    </mat-autocomplete>
+  </div>
   <mat-divider></mat-divider>
   <div>
     <div>

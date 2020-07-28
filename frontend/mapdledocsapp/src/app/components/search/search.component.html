@@ -176,12 +176,12 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">
-          <mat-label>Distribution Host Url</mat-label>
+          <mat-label>Distribution Host Title</mat-label>
           <input
             type="text"
-            placeholder="Distribution Host Url"
+            placeholder="Distribution Host"
             matInput
-            [(ngModel)]="datasetDistributionHostUrl"
+            [(ngModel)]="datasetDistributionHostTitle"
             ngDefaultControl
             (keyup.enter)="doSearch()"
             (keyup)="doSearch()"

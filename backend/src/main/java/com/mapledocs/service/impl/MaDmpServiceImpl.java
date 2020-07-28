@@ -80,7 +80,7 @@ public class MaDmpServiceImpl implements MaDmpService {
         try {
             return this.mongoMaDmpRepository.saveMaDmp(maDmpDTO);
         } catch (MaDmpRepositoryException e) {
-            throw new MaDmpServiceCreationException("Error saving maDmp: " + e.getMessage());
+            throw new MaDmpServiceCreationException("Error saving maDmp with dao: " + e.getMessage());
         }
     }
 

@@ -8,5 +8,4 @@ public class AppUserDTO {
     private String login;
     private String password;
     private UserRole userRole;
-    private ExternalDoiServiceCredentialsDTO doiServiceCredentialsDTO;
 }

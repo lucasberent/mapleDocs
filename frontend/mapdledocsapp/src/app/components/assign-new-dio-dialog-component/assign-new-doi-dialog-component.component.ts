@@ -10,7 +10,6 @@ import {MatDialogRef} from "@angular/material/dialog";
 export class AssignNewDoiDialogComponentComponent implements OnInit {
 
   form: FormGroup;
-  doiServicePassword: string;
 
   constructor(
     private fb: FormBuilder,
@@ -19,12 +18,11 @@ export class AssignNewDoiDialogComponentComponent implements OnInit {
 
 
   ngOnInit() {
-    this.form = this.fb.group({
-      doiServicePassword: [this.doiServicePassword, []]});
+    this.form = this.fb.group({});
   }
 
   yes() {
-    this.dialogRef.close(this.form.value.doiServicePassword);
+    this.dialogRef.close('yes');
   }
 
   cancel() {

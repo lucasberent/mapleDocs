@@ -1,11 +1,9 @@
 package com.mapledocs.domain;
 
 import lombok.Data;
-import org.apache.catalina.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 @Data
@@ -20,7 +18,4 @@ public class AppUser {
     @NotNull
     @Column(name = "login")
     private String login;
-
-    @OneToOne
-    private ExternalDoiServiceCredentials externalDoiServiceCredentials;
 }

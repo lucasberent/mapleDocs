@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../service/auth.service';
-import {FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {first} from 'rxjs/operators';
 import {ToastrService} from "ngx-toastr";
@@ -32,10 +32,8 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       username: ['', Validators.required],
-      password: ['', Validators.required],
-      doiServiceUsername: [],
-      doiServiceDoiPrefix: []
-    }, IfOneBothFilledOutValidator);
+      password: ['', Validators.required]
+    });
   }
 
   // convenience getter for easy access to form fields
@@ -55,9 +53,7 @@ export class RegisterComponent implements OnInit {
     this.authenticationService.register(
       new RegisterDto(
         this.f.username.value,
-        this.f.password.value,
-        this.f.doiServiceUsername.value,
-        this.f.doiServiceDoiPrefix.value))
+        this.f.password.value))
       .pipe(first())
       .subscribe(
         data => {
@@ -76,25 +72,3 @@ export class RegisterComponent implements OnInit {
         });
   }
 }
-
-export const IfOneBothFilledOutValidator = (): ValidatorFn => {
-
-  return (group: FormGroup): { [key: string]: boolean } => {
-
-    let username;
-    let doiPrefix;
-
-    if (group.controls.hasOwnProperty('doiServiceUsername')) {
-      username = group.controls.doiServiceUsername;
-    }
-    if (group.controls.hasOwnProperty('doiServiceDoiPrefix')) {
-      doiPrefix = group.controls.doiServiceDoiPrefix;
-    }
-
-    if ((!username && doiPrefix) || (!doiPrefix && username)) {
-      return {ifOneBothFilledOut: false};
-    } else {
-      return {ifOneBothFilledOut: true};
-    }
-  };
-};

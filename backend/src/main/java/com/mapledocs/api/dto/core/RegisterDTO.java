@@ -2,7 +2,6 @@ package com.mapledocs.api.dto.core;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -17,6 +16,4 @@ public class RegisterDTO {
     @NotEmpty
     @Length(min = 8)
     private String password;
-    @Nullable
-    private ExternalDoiServiceCredentialsDTO externalDoiServiceCredentialsDTO;
 }

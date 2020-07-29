@@ -1,10 +1,8 @@
 package com.mapledocs.service.impl;
 
-import com.mapledocs.api.dto.core.ExternalDoiServiceCredentialsDTO;
 import com.mapledocs.api.dto.core.RegisterDTO;
 import com.mapledocs.dao.api.UserRepository;
 import com.mapledocs.domain.AppUser;
-import com.mapledocs.domain.ExternalDoiServiceCredentials;
 import com.mapledocs.domain.UserRole;
 import com.mapledocs.service.api.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -46,14 +44,6 @@ public class UserServiceImpl implements UserService {
                 StringUtils.isBlank(registerDTO.getPassword())) {
             throw new ValidationException("DTO fields missing");
         }
-
-        ExternalDoiServiceCredentialsDTO doiServiceCredentialsDTO = registerDTO.getExternalDoiServiceCredentialsDTO();
-        if (doiServiceCredentialsDTO != null) {
-            if (StringUtils.isEmpty(doiServiceCredentialsDTO.getDoiPrefix()) ||
-                    StringUtils.isEmpty(doiServiceCredentialsDTO.getUsername())) {
-                throw new ValidationException("Doi Service Credentials are missing");
-            }
-        }
     }
 
     private void requireLoginNotExists(final String login) {
@@ -68,13 +58,6 @@ public class UserServiceImpl implements UserService {
         user.setLogin(registerDTO.getLogin());
         user.setRole(UserRole.ROLE_USER);
         user.setPassword(new BCryptPasswordEncoder().encode(registerDTO.getPassword()));
-        ExternalDoiServiceCredentialsDTO doiServiceCredentialsDTO = registerDTO.getExternalDoiServiceCredentialsDTO();
-        if (doiServiceCredentialsDTO != null) {
-            ExternalDoiServiceCredentials externalDoiServiceCredentials = new ExternalDoiServiceCredentials();
-            externalDoiServiceCredentials.setUsername(registerDTO.getExternalDoiServiceCredentialsDTO().getUsername());
-            externalDoiServiceCredentials.setDoiPrefix(registerDTO.getExternalDoiServiceCredentialsDTO().getDoiPrefix());
-            user.setExternalDoiServiceCredentials(externalDoiServiceCredentials);
-        }
         return user;
     }
 }

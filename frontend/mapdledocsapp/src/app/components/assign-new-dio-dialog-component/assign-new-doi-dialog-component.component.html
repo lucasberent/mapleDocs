@@ -2,16 +2,11 @@
 
 <mat-dialog-content [formGroup]="form">
   <div>The maDMP you are about to upload does not have a doi assignend.
-    If you want to assign a new DOI enter your Datacite password and click yes
+    A new DOI will be assigned on upload.
   </div>
-  <mat-form-field>
-    <input matInput
-           placeholder="Datacite Password"
-           formControlName="doiServicePassword">
-  </mat-form-field>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button class="mat-raised-button mat-primary" (click)="yes()">Yes</button>
-  <button class="mat-raised-button" (click)="cancel()">Cancel upload</button>
+  <button class="mat-raised-button mat-primary" (click)="yes()">Continue</button>
+  <button class="mat-raised-button" (click)="cancel()">Cancel submit</button>
 </mat-dialog-actions>

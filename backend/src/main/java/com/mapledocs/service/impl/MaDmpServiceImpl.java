@@ -1,13 +1,14 @@
 package com.mapledocs.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mapledocs.api.dto.core.MaDMPMap;
 import com.mapledocs.api.dto.core.MaDmpDTO;
 import com.mapledocs.api.dto.core.SchemaValidationExceptionDTO;
-import com.mapledocs.api.dto.external.DoiServiceAuthenticateDTO;
 import com.mapledocs.api.exception.DoiServiceException;
 import com.mapledocs.api.exception.MaDmpRepositoryException;
-import com.mapledocs.api.exception.rest.*;
+import com.mapledocs.api.exception.rest.MaDmpServiceCreationException;
+import com.mapledocs.api.exception.rest.MaDmpServiceDoiAssignmentException;
+import com.mapledocs.api.exception.rest.NotFoundException;
+import com.mapledocs.api.exception.rest.NotLoggedInException;
 import com.mapledocs.dao.api.UserRepository;
 import com.mapledocs.dao.impl.MongoMaDmpRepository;
 import com.mapledocs.domain.AppUser;
@@ -39,7 +40,6 @@ public class MaDmpServiceImpl implements MaDmpService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MaDmpServiceImpl.class);
     private final static String MADMP_SCHEMA = "maDMP-schema-1.0.json";
     private final JSONObject jsonSchema;
-    private final static ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public MaDmpServiceImpl(final MongoMaDmpRepository mongoMaDmpRepository,
@@ -71,8 +71,7 @@ public class MaDmpServiceImpl implements MaDmpService {
         }
 
         if (parsed.getDmp().get("dmp_id") == null && maDmpDTO.getAssignNewDoi()) {
-            this.requireExternalDoiCredentialsNotNull(currUser, maDmpDTO);
-            this.assignNewDoiToMaDmp(parsed, getDoiServiceAuthenticationDTO(currUser, maDmpDTO));
+            this.assignNewDoiToMaDmp(parsed);
         }
 
         parsed.setFieldsToHide(maDmpDTO.getFieldsToHide());
@@ -80,7 +79,7 @@ public class MaDmpServiceImpl implements MaDmpService {
         try {
             return this.mongoMaDmpRepository.saveMaDmp(maDmpDTO);
         } catch (MaDmpRepositoryException e) {
-            throw new MaDmpServiceCreationException("Error saving maDmp: " + e.getMessage());
+            throw new MaDmpServiceCreationException("Error saving maDmp with dao: " + e.getMessage());
         }
     }
 
@@ -102,28 +101,12 @@ public class MaDmpServiceImpl implements MaDmpService {
         }
     }
 
-    private DoiServiceAuthenticateDTO getDoiServiceAuthenticationDTO(final AppUser user, final MaDmpDTO maDmpDTO) {
-        return new DoiServiceAuthenticateDTO(user.getExternalDoiServiceCredentials().getUsername(),
-                maDmpDTO.getDoiServicePassword(),
-                user.getExternalDoiServiceCredentials().getDoiPrefix());
-    }
-
-    private void requireExternalDoiCredentialsNotNull(final AppUser currUser, final MaDmpDTO maDmpDTO) {
-        if (maDmpDTO.getDoiServicePassword() == null ||
-                currUser.getExternalDoiServiceCredentials() == null ||
-                currUser.getExternalDoiServiceCredentials().getUsername() == null ||
-                currUser.getExternalDoiServiceCredentials().getDoiPrefix() == null) {
-            LOGGER.error("Missing fields for doi service authentication");
-            throw new MaDmpServiceValidationException("Missing fields for doi service authentication");
-        }
-    }
-
-    private void assignNewDoiToMaDmp(MaDMPMap maDmp, final DoiServiceAuthenticateDTO doiServiceAuthenticateDTO)
+    private void assignNewDoiToMaDmp(MaDMPMap maDmp)
             throws MaDmpServiceDoiAssignmentException {
         LOGGER.info("Trying to assign new doi to maDMP");
         String doi;
         try {
-            doi = this.doiService.getNewDoi(doiServiceAuthenticateDTO);
+            doi = this.doiService.getNewDoi();
         } catch (DoiServiceException e) {
             // alternatively the creation process can be failed here with an CreationException
             LOGGER.error("Error getting new doi from doi service {}, continuing with doi set to null", e.getMessage());

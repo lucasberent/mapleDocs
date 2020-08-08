@@ -8,11 +8,11 @@ import {ToastrService} from 'ngx-toastr';
 import {FormControl} from '@angular/forms';
 import {AssignNewDoiDialogComponentComponent} from '../assign-new-dio-dialog-component/assign-new-doi-dialog-component.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {MatChipInputEvent, MatChipsModule} from "@angular/material/chips";
+import {MatChipInputEvent} from "@angular/material/chips";
 import {COMMA, ENTER, SPACE} from '@angular/cdk/keycodes';
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {Observable} from "rxjs";
-import {startWith, map} from "rxjs/operators";
+import {map, startWith} from "rxjs/operators";
 
 // @ts-ignore
 const Ajv = require('ajv');
@@ -33,7 +33,6 @@ export class UploadComponent implements OnInit {
   madmpFields: any[];
   selectedFieldsToHide: string[] = [];
   assignNewDoi: boolean = false;
-  doiServicePassword: string;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
   formCtrl = new FormControl();
   filteredFields: Observable<string[]>;
@@ -81,7 +80,7 @@ export class UploadComponent implements OnInit {
         this.resetInputs();
       } else {
         console.log('maDmp validated successfully against schema version 1.0');
-        this.madmpToCreate = new CreateMaDmpDto(contents, [], this.assignNewDoi, this.doiServicePassword);
+        this.madmpToCreate = new CreateMaDmpDto(contents, [], this.assignNewDoi);
         this.madmpShowJson = JSON.parse(this.madmpToCreate.json);
         this.madmpFields = Object.keys(this.madmpShowJson['dmp']);
       }
@@ -109,7 +108,6 @@ export class UploadComponent implements OnInit {
         return;
       } else {
         this.madmpToCreate.assignNewDoi = true;
-        this.madmpToCreate.doiServicePassword = data;
         this.uploadMaDmpToCreate();
       }
     });

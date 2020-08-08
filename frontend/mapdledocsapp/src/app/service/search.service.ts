@@ -31,7 +31,7 @@ export class SearchService {
     this.addContactPersonIdentifierTypeQuery(searchDTO, queries);
     this.addDatasetIdentifierQuery(searchDTO, queries);
     this.addDatasetIdentifierTypeQuery(searchDTO, queries);
-    this.addDatasetDistributionHostUrl(searchDTO, queries);
+    this.addDatasetDistributionHostTitle(searchDTO, queries);
     this.addMetadataStandardIdQuery(searchDTO, queries);
     this.addMetadataStandardIdTypeQuery(searchDTO, queries);
   }
@@ -299,24 +299,27 @@ export class SearchService {
     }
   }
 
-  addDatasetDistributionHostUrl(searchDTO: SearchDTO, queries: any[]): void {
-    if (searchDTO.datasetDistributionHostUrl) {
-      const matchDatasetHostUrl: any = {
+  addDatasetDistributionHostTitle(searchDTO: SearchDTO, queries: any[]): void {
+    if (searchDTO.datasetDistributionHostTitle) {
+      const matchDatasetHostTitle: any = {
         nested: {
           path: 'dmp.dataset',
           query: {
             nested: {
               path: 'dmp.dataset.distribution',
               query: {
-                match: {
-                  'dmp.dataset.distribution.host.url': searchDTO.datasetDistributionHostUrl
+                fuzzy: {
+                  'dmp.dataset.distribution.host.title': {
+                    value: searchDTO.datasetDistributionHostTitle,
+                    fuzziness: 'AUTO',
+                  }
                 }
               }
             }
           }
         }
       };
-      queries.push(matchDatasetHostUrl);
+      queries.push(matchDatasetHostTitle);
     }
   }
 

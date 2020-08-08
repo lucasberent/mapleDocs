@@ -14,7 +14,7 @@ export class SearchDTO {
     public modificationToDate: Date,
     public page: number,
     public size: number,
-    public datasetDistributionHostUrl: string,
+    public datasetDistributionHostTitle: string,
     public metadataStandardId: string,
     public metadataStandardIdType: string
   ) {

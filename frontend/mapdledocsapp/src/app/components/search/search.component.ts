@@ -48,7 +48,7 @@ export class SearchComponent implements OnInit {
   datasetIdentifier: string;
   datasetIdentifierType: string;
   datasetIdTypes: string[] = [this.noSelectionString, 'handle', 'doi', 'ark', 'url', 'other'];
-  datasetDistributionHostUrl: string;
+  datasetDistributionHostTitle: string;
   metadataStandardId: string;
   metadataStandardIdTypes: string[] = [this.noSelectionString, 'url', 'other'];
   metadataStandardIdType: string;
@@ -189,7 +189,7 @@ export class SearchComponent implements OnInit {
       this.modificationToDate,
       this.currentPage,
       this.currentPageSize,
-      this.datasetDistributionHostUrl,
+      this.datasetDistributionHostTitle,
       this.metadataStandardId,
       this.metadataStandardIdType);
   }

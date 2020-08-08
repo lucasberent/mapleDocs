@@ -54,7 +54,10 @@ In frontend/, run `npm install` and `npm start` to start the development server
 After following the steps above for both backend and frontend, the application is reachable on localhost port 4200. The standard test user created is: 
 - username: admin
 - password: password
-- You have to adapt the Datacite credentials in the import.sql file. 
+In Order to be able to assign new dois, the Datacite account has to be configured. In the resources folder of the backend project (on the same level as application.properties) create  a file with the name "auth.properties" and the following content:
+application.rest.doiservice.username=[username]
+application.rest.doiservice.password=[password]
+application.rest.doiservice.prefix=[doi prefix]
 
 ## Importing maDMPs from the Zenodo community
 

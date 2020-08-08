@@ -51,7 +51,7 @@ public class MongoMaDmpRepository implements MaDmpRepository {
 
             mongoId = document.getObjectId("_id").toString();
         } catch (MongoException e) {
-            throw new MaDmpRepositoryException("Error saving maDmp: " + e.getMessage());
+            throw new MaDmpRepositoryException("Error saving maDmp in mongodb: " + e.getMessage());
         }
         try {
             LOGGER.info("Starting indexing ...");
@@ -62,7 +62,7 @@ public class MongoMaDmpRepository implements MaDmpRepository {
         } catch (ElasticsearchDaoIndexingException e) {
             // "rollback"
             mongoCollection.deleteOne(document);
-            throw new MaDmpRepositoryException("Error saving maDmp: " + e.getMessage());
+            throw new MaDmpRepositoryException("Error indexing maDmp: " + e.getMessage());
         }
     }
 

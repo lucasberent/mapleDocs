@@ -1,6 +1,6 @@
 # Introduction
 This project was created for the course Data Stewardship, summer term 2020 at TU Vienna.
-The goal of this open source project is to provide a system that allows users to manage and expose machine readible data management plans (maDMPs) to achieve FAIR data (see [TU Vienna FAIR](https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), [Exposing maDMPs](https://www.rd-alliance.org/groups/exposing-data-management-plans-wg)).
+The goal of this open source project is to provide a system that allows users to manage and expose machine readable data management plans (maDMPs) to achieve FAIR data (see [TU Vienna FAIR](https://www.tuwien.at/forschung/fti-support/forschungsdaten/forschungsdatenmanagement/fair-prinzipien/), [Exposing maDMPs](https://www.rd-alliance.org/groups/exposing-data-management-plans-wg)).
 
 ## Features
 - Upload maDMPs as JSON files (stored in MongoDB for scalability and flexibility)

@@ -16,7 +16,7 @@ export class MadmpdetailsComponent implements OnInit {
   }
 
   maDmp: MaDmpDto;
-  json: string = null;
+  json: any = null;
   objKeys: string[];
 
   ngOnInit(): void {

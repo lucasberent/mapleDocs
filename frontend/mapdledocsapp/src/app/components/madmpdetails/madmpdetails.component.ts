@@ -24,7 +24,8 @@ export class MadmpdetailsComponent implements OnInit {
     this.searchService.getMaDmp(id)
       .subscribe(maDmp => {
         this.maDmp = new MaDmpDto(maDmp.json, maDmp.docId, maDmp.userId, maDmp.fieldsToHide);
-        this.json = JSON.parse(maDmp.json)
+        this.json = JSON.parse(maDmp.json);
+        delete this.json.fulltextString;
       });
   }
 

@@ -19,6 +19,7 @@ public class MaDMPMap {
     private Map<String, Object> dmp;
     private List<String> fieldsToHide;
     private String mongoId;
+    private String fulltextString;
 
     public static String toJsonString(final MaDMPMap maDMPMap) {
         try {

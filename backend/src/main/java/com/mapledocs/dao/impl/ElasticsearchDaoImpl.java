@@ -17,11 +17,14 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import static com.mapledocs.util.Constants.ELASTICSEARCH_CONN_PORT;
 import static com.mapledocs.util.Constants.ELASTICSEARCH_CONN_URL;
@@ -123,6 +126,56 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
         }
     }
 
+    private String jsonObjectToFullTextString(final String json) {
+        JSONObject jsonObject = new JSONObject(json);
+
+        return jsonObjectToFullTextString(jsonObject);
+    }
+
+    private String jsonObjectToFullTextString(final JSONObject jsonObject) {
+        Iterator<String> keys = jsonObject.keys();
+
+        String fullTextField = "";
+
+        while (keys.hasNext()) {
+            String key = keys.next();
+
+            if (jsonObject.get(key) instanceof JSONObject) {
+                fullTextField += jsonObjectToFullTextString((JSONObject) jsonObject.get(key));
+            }
+            else if (jsonObject.get(key) instanceof JSONArray) {
+                fullTextField += jsonArrayToFullTextString((JSONArray) jsonObject.get(key));
+            }
+            else if (jsonObject.get(key) instanceof String) {
+                fullTextField += jsonObject.get(key) + " ";
+            }
+        }
+
+        return fullTextField;
+    }
+
+    private String jsonArrayToFullTextString(final JSONArray jsonArray) {
+        Iterator<Object> it = jsonArray.iterator();
+
+        String fullTextField = "";
+
+        while (it.hasNext()) {
+            Object obj = it.next();
+
+            if (obj instanceof JSONObject) {
+                fullTextField += jsonObjectToFullTextString((JSONObject) obj);
+            }
+            else if (obj instanceof JSONArray) {
+                fullTextField += jsonArrayToFullTextString((JSONArray) obj);
+            }
+            else if (obj instanceof String) {
+                fullTextField += obj + " ";
+            }
+        }
+
+        return fullTextField;
+    }
+
     @Override
     public SearchIndexIndexingResponseDTO indexMaDmp(final String maDmpJson, String mongoId) throws ElasticsearchDaoIndexingException {
         LOGGER.info("Indexing maDMP");
@@ -135,8 +188,13 @@ public class ElasticsearchDaoImpl implements ElasticsearchDao {
             throw new ElasticsearchDaoIndexingException("Error checking if index exists", e);
         }
 
+        String fulltextString = jsonObjectToFullTextString(maDmpJson);
+
+        System.out.println("fulltext field: " + fulltextString);
+
         MaDMPMap maDMPMap = MaDMPMap.fromJsonString(maDmpJson);
         maDMPMap.setMongoId(mongoId);
+        maDMPMap.setFulltextString(fulltextString);
 
         if (maDMPMap.getFieldsToHide() != null) {
             for (String field : maDMPMap.getFieldsToHide()) {

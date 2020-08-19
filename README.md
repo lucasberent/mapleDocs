@@ -11,6 +11,7 @@ The goal of this open source project is to provide a system that allows users to
 - Fast, powerful and extendable search of maDMPs with Elasticsearch:
     - field-wise search on maDMPs
     - combined search over multiple maDMP fields at once
+    - full-text search over the full maDMP
 - Download and save maDMPs as JSON files
 - Security: Registration and Login with JWT. Secured with Spring Security
 - Easy to use and simple UI written in Angular

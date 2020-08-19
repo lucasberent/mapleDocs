@@ -4,21 +4,25 @@ The goal of this open source project is to provide a system that allows users to
 
 ## Features
 - Upload maDMPs as JSON files (stored in MongoDB for scalability and flexibility)
-- Hide fields of maDMPs s.t. they become invisible to other users
+- Download and save maDMPs
+- Hide specified fields of maDMPs such that they become invisible to other users
+- Hide nested fields with complex JSONpath expressions
 - Schema validation against the maDMP schema provided by the [RDA-DMP common standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
-- Optional, automatized assignment of dois to maDMPs from [Datacite](https://datacite.org/) if no doi is present on upload
+- Optional, automated asignment of DOIs to maDMPs from [Datacite](https://datacite.org/) if no doi is present on upload
 - Interactive maDMP viewer for a clear view over maDMPs 
-- Fast, powerful and extendable search of maDMPs with Elasticsearch:
+- Fast, powerful search of maDMPs:
     - field-wise search on maDMPs
     - combined search over multiple maDMP fields at once
     - full-text search over the full maDMP
-- Download and save maDMPs as JSON files
+- Import maDMPs from a Zenodo community
+
+## Technical Implementation
 - Security: Registration and Login with JWT. Secured with Spring Security
 - Easy to use and simple UI written in Angular
 - Extendable and easy to maintain layered architecture
 - Built as Spring Boot application, written in Java
-- All components (MongoDB, Elasticsearch and the Spring Boot application) are deployed with Docker for a highly portable, scalable and easy way of deployment. To that end we provide a docker-compose containing the backend components. The fronend can be deployed as Angular application on a webserver
-- Moreover, we provide an automated import mechanism to import maDMPs from an external provider e.g. from zenodo, written in Python.
+- All components (MongoDB, ElasticSearch and the Spring Boot application) are deployed with Docker for a highly portable, scalable and easy way of deployment. To that end we provide a docker-compose containing the backend components. The fronend can be deployed as Angular application on a webserver
+- Search implemented with Elasticsearch for high flexibility, extendability and scalability
 
 ## Key technologies 
 ### Backend:

@@ -95,5 +95,4 @@ Follow the links below to get a short preview of the look and some first feature
 - [Lucas Berent](https://github.com/lucasberent)
 
 # License
-- https://choosealicense.com/licenses/mit/
 - [MIT](https://github.com/lucasberent/mapleDocs/blob/master/LICENSE)

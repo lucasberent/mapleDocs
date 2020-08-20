@@ -36,12 +36,14 @@ The goal of this open source project is to provide a system that allows users to
 
 # Installation and Running the project 
 ## Prerequisites
+- Java 11
+- Maven
 - Docker
+- npm and node.js
 - Tested in Chrome only
 
 ## Backend (Application Server)
-First, make sure max_map_count is at least 262144, otherwise set it with: `sudo sysctl -w vm.max_map_count=262144`. If it is
-less, the elasticsearch service might fail.
+First, make sure max_map_count is at least 262144, otherwise set its value with the command `sudo sysctl -w vm.max_map_count=262144`. If the value is too low, the elasticsearch service might fail.
  
  * Build the spring application (in backend/): `mvn -Dmaven.test.skip=true package`
  
@@ -59,10 +61,14 @@ In frontend/, run `npm install` and `npm start` to start the development server
 After following the steps above for both backend and frontend, the application is reachable on localhost port 4200. The standard test user created is: 
 - username: admin
 - password: password
+
 In Order to be able to assign new dois, the Datacite account has to be configured. In the resources folder of the backend project (on the same level as application.properties) create  a file with the name "auth.properties" and the following content:
+
+```
 application.rest.doiservice.username=[username]
 application.rest.doiservice.password=[password]
 application.rest.doiservice.prefix=[doi prefix]
+```
 
 ## Importing maDMPs from the Zenodo community
 

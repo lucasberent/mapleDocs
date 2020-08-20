@@ -8,7 +8,7 @@ The goal of this open source project is to provide a system that allows users to
 - Hide specified fields of maDMPs such that they become invisible to other users
 - Hide nested fields with complex JSONpath expressions
 - Schema validation against the maDMP schema provided by the [RDA-DMP common standard](https://github.com/RDA-DMP-Common/RDA-DMP-Common-Standard)
-- Optional, automated asignment of DOIs to maDMPs from [Datacite](https://datacite.org/) if no doi is present on upload
+- Optional, automated asignment of DOIs to maDMPs from [Datacite](https://datacite.org/) if no DOI is present on upload
 - Interactive maDMP viewer for a clear view over maDMPs 
 - Fast, powerful search of maDMPs:
     - field-wise search on maDMPs

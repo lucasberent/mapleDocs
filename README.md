@@ -79,17 +79,17 @@ Follow the links below to get a short preview of the look and some first feature
 ## Uploading maDMPs
 In this screencast we present the submission (upload) of maDMPs to the mapleDocs server, including the automated assignment of a new DOI if the maDMP to upload does not have one yet.
 
-[screencast]()
+[screencast](https://youtu.be/V8iSmcFxd88)
 
 ## Search
 Here we present another core feature: mapleDocs powerful search, encompassing the three search modes: full text search over full maDMPs, combined search and custom search.
 
-[screencast]()
+[screencast](https://youtu.be/PWKb_2rSIx8)
 
 ## Hiding fields
 In this screencast we present hiding of fields for other users with json path expressions on maDMP upload.
 
-[screencast]()
+[screencast](https://youtu.be/YT1ndTUG7TU)
 
 ## Architectural Diagram
 ![Architectural Diagram](https://raw.githubusercontent.com/lucasberent/mapleDocs/master/architecture-diagram.png)

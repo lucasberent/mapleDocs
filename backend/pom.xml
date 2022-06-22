@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <mongo.java.driver.version>3.12.3</mongo.java.driver.version>
+        <mongo.java.driver.version>3.12.8</mongo.java.driver.version>
         <io.jsonwebtoken.version>0.10.7</io.jsonwebtoken.version>
         <org.apache.commons.lang3.version>3.10</org.apache.commons.lang3.version>
         <org.apache.commons.collections4.version>4.4</org.apache.commons.collections4.version>

@@ -21,7 +21,7 @@
         <org.apache.commons.lang3.version>3.10</org.apache.commons.lang3.version>
         <org.apache.commons.collections4.version>4.4</org.apache.commons.collections4.version>
         <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
-        <org.elasticsearch.version>7.8.0</org.elasticsearch.version>
+        <org.elasticsearch.version>7.14.0</org.elasticsearch.version>
         <spring.boot.starter.test.version>2.3.0.RELEASE</spring.boot.starter.test.version>
         <everit.json.schema.version>1.3.0</everit.json.schema.version>
         <jackson.version>2.11.1</jackson.version>
